@@ -1,0 +1,25 @@
+{
+  "name": "app",
+  "main": "app.js",
+  "authors": [
+    "karthikeyan5 <karthikeyan5@users.noreply.github.com>"
+  ],
+  "description": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-strap": "^2.3.8",
+    "jquery": "^2.2.3",
+    "angular-hotkeys": "chieffancypants/angular-hotkeys#^1.7.0"
+  },
+  "resolutions": {
+    "angular": ">=1.2.16 1.4.x"
+  }
+}

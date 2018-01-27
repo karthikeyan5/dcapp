@@ -1,0 +1,60 @@
+<div style="padding: 10px;">
+    hello {{colour}}
+
+    <div class="row">
+        <label for="c1olour" class="col-sm-2 control-label">Colour:</label>
+        <div class="col-sm-4">
+            <input autocomplete="off" required type="text" class="form-control" id="c1olour" placeholder="Enter New Colour" ng-model="colour">
+        </div>
+    </div>
+
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th class="text-center">S.No</th>
+                <th class="text-center">Dia</th>
+                <th class="text-center">Roll</th>
+                <th class="text-center">Weight</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="dia in dialist track by $index" class="repeated-item">
+                <td>{{$index + 1}}</td>
+                <td class="text-capitalize">{{dia.dia}}</td>
+                <td class="text-capitalize">{{dia.roll}}</td>
+                <td class="text-capitalize">{{dia.weight}}</td>
+                <td class="hidden-print">
+                    <span ng-click="removeItem($index)" type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </span>
+                </td>
+
+            </tr>
+        </tbody>
+
+    </table>
+
+
+
+    <form name="form" class="grid-form panel panel-default " ng-submit="add(newdia)">
+        <fieldset>
+            <legend class="panel-heading">Add Dia:</legend>
+            <div data-row-span="12">
+                <div data-field-span="4" class="form-group">
+                    <label>Dia</label>
+                    <input class="form-control" id="diabox" type="text" ng-model="newdia.dia" placeholder="Enter Dia" required autocomplete="off">
+                </div>
+                <div data-field-span="4">
+                    <label>Roll</label>
+                    <input autocomplete="off" required type="number" ng-model="newdia.roll" ng-init="newdia.roll = 0">
+                </div>
+                <div data-field-span="4">
+                    <label>Weight</label>
+                    <input autocomplete="off" required type="number" ng-model="newdia.weight" ng-init="newdia.weight = 0">
+                </div>
+            </div>
+        </fieldset>
+        <input id="addbutton" class="btn btn-primary pull-right" type="submit" value="Add Item">
+    </form>
+</div>

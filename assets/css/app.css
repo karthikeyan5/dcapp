@@ -1,0 +1,163 @@
+/*
+  We're using CSS transitions for when
+  the enter and move events are triggered
+  for the element that has the .repeated-item
+  class
+*/
+.repeated-item.ng-enter, .repeated-item.ng-move {
+  -webkit-transition:0.5s linear all;
+  -moz-transition:0.5s linear all;
+  -o-transition:0.5s linear all;
+  transition:0.5s linear all;
+  opacity:0;
+}
+
+/*
+ The ng-enter-active and ng-move-active
+ are where the transition destination properties
+ are set so that the animation knows what to
+ animate.
+*/
+.repeated-item.ng-enter.ng-enter-active,
+.repeated-item.ng-move.ng-move-active {
+  opacity:1;
+}
+
+/*
+  We're using CSS keyframe animations for when
+  the leave event is triggered for the element
+  that has the .repeated-item class
+*/
+
+/*@media print {
+    table { page-break-inside:auto }
+   tr    { page-break-inside:avoid; page-break-before:always}
+}*/
+
+
+.ng-invalid
+{
+    border:1px solid #f00;
+}
+
+		.sortable {
+    cursor: pointer;
+}
+.sortable:after {
+    content: url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///xUVFf///yH5BAEAAAMALAAAAAALAAsAAAIUnC2nKLnT4or00PvyrQwrPzUZshQAOw==);
+    padding-left: 0.3em;
+}
+.st-sort-ascent:after {
+    content: '\25B2';
+}
+.st-sort-descent:after {
+    content: '\25BC';
+}
+
+
+.st-selected{
+    background: #BBDEFB !important;
+    /*color: white !important;*/
+}
+
+.grey{
+    background: lightgrey !important;
+    /*color: white !important;*/
+}
+
+.psrow{ 
+    padding: 0.1em !important;
+    /*padding-bottom: 0.1em !important;*/
+}
+.pshead{ 
+    padding: 0.1em 0.1em !important;
+    /*padding-bottom: 0.1em !important;*/
+}
+
+/*.modal
+{
+   height:80%;
+   width:170%;
+   margin-left: -35%; 
+   
+   width: 1400px; 
+}*/
+
+@media (min-width: 768px) {
+  .modal-xl {
+    width: 90%;
+   max-width:1200px;
+  }
+}
+
+.glyphicon.fast-right-spinner {
+    -webkit-animation: glyphicon-spin-r 1s infinite linear;
+    animation: glyphicon-spin-r 1s infinite linear;
+}
+
+
+@-webkit-keyframes glyphicon-spin-r {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+@keyframes glyphicon-spin-r {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+.myGrid {
+    width: 1200px;
+    height: 250px;
+  }
+  
+  
+div[contentEditable] {
+  cursor: pointer;
+  background-color: none;
+    padding: .2em;
+}
+div[contentEditable]:focus {
+  cursor: text;
+  background-color: white;
+    border: 1px solid red;
+  padding: .2em;
+}
+  
+td[contentEditable] {
+  cursor: pointer;
+  background-color: none;
+    /*padding: .2em;*/
+}
+td[contentEditable]:focus {
+  cursor: text;
+  background-color: white;
+    border: 1px solid red;
+  /*padding: .2em;*/
+}  
+
+
+.lr-sticky-header {
+    color: white;
+    background: lightblue;
+    transition: all 0.6s;
+  }
+  
+  .selected td {
+  background-color: #000;
+  color: #fff;
+}
