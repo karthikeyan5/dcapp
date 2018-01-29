@@ -154,49 +154,161 @@ app.controller('mainCtrl', function ($scope) {
 
 app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', function newclothdcCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource) {
   $scope.tabselect1();
+  $scope.colourset = [];
 
-  $scope.add = function (colour) {
-
-
+  var open = function (colour, dialist, index) {
     var modalInstance = $uibModal.open({
       animation: true,
       templateUrl: './html/colourdetails.html',
       controller: 'colourdetailsCtrl',
       size: 'md',
+      backdrop: 'static',
+      keyboard: false,
       resolve: {
         colour: function () {
           return colour;
+        },
+        dialist: function () {
+          return dialist;
+        },
+        index: function () {
+          return index;
         }
       }
     });
+
+    modalInstance.result.then(function (ret) {
+      console.log('received dialist: ', ret.dialist, 'received colour:  ', ret.colour);
+
+      if (ret.index == -1) {
+        $scope.colourset.push(ret);
+      }
+      else {
+        $scope.colourset[ret.index].colour = ret.colour;
+        // $scope.colourset[ret.index].dialist = ret.dialist;
+      }
+      $scope.newcolour = null;
+
+
+    }, function (ret) {
+      console.log('Modal dismissed at: ' + new Date(), ret);
+    });
+
+  }
+
+  $scope.add = function (colour) {
+    open(colour,[],-1);
+
+  }
+
+  $scope.roll_total = function (dialist) {
+    var total = 0;
+    dialist.map(function (dia) {
+      total += dia.roll;
+    });
+    return total;
+  }
+
+  $scope.weight_total = function (dialist) {
+    var total = 0;
+    dialist.map(function (dia) {
+      total += dia.weight;
+    });
+    return parseFloat(total.toFixed(3));
+  }
+
+  $scope.removecolour = function (index) {
+    $scope.colourset.splice(index, 1);
+    ngToast.create({
+      className: 'danger',
+      content: 'Colour deleted... '//undo
+    });
+  }
+
+  $scope.editcolour = function (index) {
+
+    open($scope.colourset[index].colour,$scope.colourset[index].dialist,index);
   }
 
 
 }]);
 
-app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', 'colour', function colourdetailsCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource, colour) {
+app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'colour','dialist','index', function colourdetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, colour,dialist,index) {
   $scope.colour = colour;
-  $scope.dialist = []
-
+  $scope.dialist = dialist;
+  $scope.index = index;
   $scope.add = function (dia) {
-    $scope.dialist.push(dia);
-    // dia
+    if ($scope.newdia.editmode == undefined) {
+      temp_dia = {};
+      temp_dia.dia = dia.dia;
+      temp_dia.roll = dia.roll;
+      temp_dia.weight = dia.weight;
+      temp_dia.comment = dia.comment;
+      $scope.dialist.push(temp_dia);
+      ngToast.create({
+        className: 'success',
+        content: 'Dia Added... '
+      });
+    }
+    else {
+      ngToast.create({
+        className: 'success',
+        content: 'Dia Updated... '
+      });
+    }
+    $scope.newdia = {}
+    $scope.newdia.roll = 0;
+    document.getElementById("diabox").focus();
   }
 
 
-//   $scope.removeItem = function(index){
-//     ngToast.dismiss();
-//     $scope.items.splice(index,1);
-//     // $scope.items_copy = angular.copy($scope.items);
-//     // $scope.items = [];
-//     // $scope.items = angular.copy($scope.items_copy);
-//     // debugger
-//     $scope.itemssizerange.splice(index,1);
-//     ngToast.create({
-//             className: 'danger',
-//             content: 'Item deleted... '//undo
-//             });
-// };
+  $scope.removedia = function (index) {
+    $scope.dialist.splice(index, 1);
+    ngToast.create({
+      className: 'danger',
+      content: 'Dia deleted... '//undo
+    });
+  }
+
+  $scope.editdia = function (index) {
+
+    $scope.newdia = $scope.dialist[index]
+    $scope.newdia.editmode = 1;
+    document.getElementById("diabox").focus();
+    ngToast.create({
+      className: 'info',
+      content: 'Please edit dia and press enter... '
+    });
+  }
+
+  $scope.roll_total = function () {
+    var total = 0;
+    $scope.dialist.map(function (dia) {
+      total += dia.roll;
+    });
+    return total;
+  }
+
+  $scope.weight_total = function () {
+    var total = 0;
+    $scope.dialist.map(function (dia) {
+      total += dia.weight;
+    });
+    return parseFloat(total.toFixed(3));
+  }
+
+  $uibModalInstance.rendered.then(function () {
+    console.log('Modal rendered at: ' + new Date())
+    document.getElementById("diabox").focus();
+  });
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  }
+
+  $scope.ok = function () {
+    $uibModalInstance.close({ dialist: $scope.dialist, colour: $scope.colour, index:index });
+  }
 
 
 }]);

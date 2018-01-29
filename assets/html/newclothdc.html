@@ -2,15 +2,71 @@
     <legend>Cloth Delivery Challan</legend>
 
 
-    <form class="form-horizontal" autocomplete="off" ng-submit="add(newcolour)">
-        <div class="form-group">
-            <label for="c1olour" class="col-sm-2 control-label">New Colour:</label>
-            <div class="col-sm-4">
-                <input autocomplete="off" required type="text" class="form-control" id="c1olour" placeholder="Enter New Colour" ng-model="newcolour">
+    <table class="table table-bordered table-striped">
+        <tr ng-repeat="item in colourset track by $index">
+            <td>Colour: {{item.colour}}</td>
+            <td>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <!-- <th class="text-center">S.No</th> -->
+                            <th class="text-center">Dia</th>
+                            <th class="text-center">Roll</th>
+                            <th class="text-center">Weight</th>
+                            <th class="text-center">Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="dia in item.dialist track by $index" class="repeated-item">
+                            <!-- <td>{{$index + 1}}</td> -->
+                            <td class="text-capitalize">{{dia.dia}}</td>
+                            <td class="text-capitalize">{{dia.roll}}</td>
+                            <td class="text-capitalize">{{dia.weight}}</td>
+                            <td class="text-capitalize">{{dia.comment}}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <strong>Total</strong>
+                            </td>
+                            <td>
+                                <strong>{{roll_total(item.dialist)}}</strong>
+                            </td>
+                            <td>
+                                <strong>{{weight_total(item.dialist)}}</strong>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </td>
+            <td class="hidden-print">
+                <span ng-click="editcolour($index)" type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">Edit</span>
+                </span>
+            </td>
+            <td class="hidden-print">
+                <span ng-click="removecolour($index)" type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </span>
+            </td>
+        </tr>
+
+    </table>
+
+
+
+    <div style="padding-top: 10px;padding-bottom: 10px;">
+        <form class="form-horizontal" autocomplete="off" ng-submit="add(newcolour)">
+            <div class="form-group">
+                <label for="c1olour" class="col-sm-2 control-label">New Colour:</label>
+                <div class="col-sm-4" style="padding-top: 10px;padding-bottom: 10px;">
+                    <input autocomplete="off" required type="text" class="form-control" id="c1olour" placeholder="Enter New Colour" ng-model="newcolour">
+                </div>
+                <div ng-show='' class="col-sm-2">
+                    <button type="submit" class="btn btn-success">Add Colour</button>
+                </div>
             </div>
-            <div ng-show='' class="col-sm-2">
-                <button type="submit" class="btn btn-success">Add Colour</button>
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
