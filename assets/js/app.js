@@ -197,7 +197,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
   }
 
   $scope.add = function (colour) {
-    open(colour,[],-1);
+    open(colour, [], -1);
 
   }
 
@@ -227,13 +227,13 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
 
   $scope.editcolour = function (index) {
 
-    open($scope.colourset[index].colour,$scope.colourset[index].dialist,index);
+    open($scope.colourset[index].colour, $scope.colourset[index].dialist, index);
   }
 
 
 }]);
 
-app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'colour','dialist','index', function colourdetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, colour,dialist,index) {
+app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'colour', 'dialist', 'index', function colourdetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, colour, dialist, index) {
   $scope.colour = colour;
   $scope.dialist = dialist;
   $scope.index = index;
@@ -307,9 +307,32 @@ app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 
   }
 
   $scope.ok = function () {
-    $uibModalInstance.close({ dialist: $scope.dialist, colour: $scope.colour, index:index });
+
+    if($scope.dialist.length < 1){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please enter atleast one dia... '
+      });
+      return;
+    }
+
+
+    $uibModalInstance.close({ dialist: $scope.dialist, colour: $scope.colour, index: index });
   }
 
+
+
+  hotkeys.bindTo($scope)
+    .add({
+      combo: 'ctrl+s',
+      description: 'Description goes here',
+      allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
+      callback: function (event, hotkey) {
+        event.preventDefault();
+        console.log('ctrl+s');
+        $scope.ok();
+      }
+    });
 
 }]);
 

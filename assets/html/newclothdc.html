@@ -12,7 +12,7 @@
                             <!-- <th class="text-center">S.No</th> -->
                             <th class="text-center">Dia</th>
                             <th class="text-center">Roll</th>
-                            <th class="text-center">Weight</th>
+                            <th class="text-center">Weight (kg)</th>
                             <th class="text-center">Comment</th>
                         </tr>
                     </thead>
@@ -21,7 +21,7 @@
                             <!-- <td>{{$index + 1}}</td> -->
                             <td class="text-capitalize">{{dia.dia}}</td>
                             <td class="text-capitalize">{{dia.roll}}</td>
-                            <td class="text-capitalize">{{dia.weight}}</td>
+                            <td class="text-capitalize">{{dia.weight| number:3}}</td>
                             <td class="text-capitalize">{{dia.comment}}</td>
                         </tr>
                     </tbody>
@@ -34,7 +34,7 @@
                                 <strong>{{roll_total(item.dialist)}}</strong>
                             </td>
                             <td>
-                                <strong>{{weight_total(item.dialist)}}</strong>
+                                <strong>{{weight_total(item.dialist)| number:3}}</strong>
                             </td>
                         </tr>
                     </tfoot>

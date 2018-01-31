@@ -14,7 +14,7 @@
                     <!-- <th class="text-center">S.No</th> -->
                     <th class="text-center">Dia</th>
                     <th class="text-center">Roll</th>
-                    <th class="text-center">Weight</th>
+                    <th class="text-center">Weight (kg)</th>
                     <th class="text-center">Comment</th>
                 </tr>
             </thead>
@@ -23,7 +23,7 @@
                     <!-- <td>{{$index + 1}}</td> -->
                     <td class="text-capitalize">{{dia.dia}}</td>
                     <td class="text-capitalize">{{dia.roll}}</td>
-                    <td class="text-capitalize">{{dia.weight}}</td>
+                    <td class="text-capitalize">{{dia.weight| number:3}}</td>
                     <td class="text-capitalize">{{dia.comment}}</td>
                     <td class="hidden-print">
                         <span ng-click="editdia($index)" type="button" class="close" aria-label="Close">
@@ -47,16 +47,17 @@
                         <strong>{{roll_total()}}</strong>
                     </td>
                     <td>
-                        <strong>{{weight_total()}}</strong>
+                        <strong>{{weight_total()| number:3}}</strong>
                     </td>
                 </tr>
             </tfoot>
         </table>
-        <div class="row">
-            <button ng-click="cancel()" ng-show="index == -1" tabindex="-1" class="btn btn-warning">Cancel</button>
-            <button ng-click="ok()" class="btn btn-success pull-right">Done</button>
-        </div>
     </div>
+    <div style="padding: 10px;" class="row">
+        <button ng-click="ok()" class="btn btn-success pull-right" data-toggle="tooltip" title="Ctrl + S">Done</button>
+        <button ng-click="cancel()" ng-show="index == -1" tabindex="-1" class="btn btn-warning">Cancel</button>
+    </div>
+
 
 
     <div style="padding: 10px;">
@@ -66,14 +67,14 @@
                 <div data-row-span="12">
                     <div data-field-span="4" class="form-group">
                         <label>Dia</label>
-                        <input id="diabox" type="number" step="0.5" min="0" ng-model="newdia.dia" placeholder="Enter Dia" required autocomplete="off">
+                        <input id="diabox" type="number" min="0" ng-model="newdia.dia" placeholder="Enter Dia" required autocomplete="off">
                     </div>
                     <div data-field-span="4">
                         <label>Roll</label>
                         <input autocomplete="off" required type="number" min="0" ng-model="newdia.roll" ng-init="newdia.roll = 0">
                     </div>
                     <div data-field-span="4">
-                        <label>Weight</label>
+                        <label>Weight (kg)</label>
                         <input autocomplete="off" required type="number" min="0.001" step="0.001" ng-model="newdia.weight">
                     </div>
                 </div>
