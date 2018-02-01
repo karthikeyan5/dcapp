@@ -35,23 +35,30 @@ module.exports.routes = {
   '/a': {
     view: 'homepage'
   },
-//    //'GET /api/:getmethod': {controller: "DcController", action:"all"},
-    'GET /api/test': 'DcController.test',
-    'GET /api/getbrand': 'DcController.getbrand',
+  //    //'GET /api/:getmethod': {controller: "DcController", action:"all"},
+  'GET /api/test': 'DcController.test',
+  'GET /api/getbrand': 'DcController.getbrand',
+  'GET /api/department': 'DcController.department',
+  'GET /api/supplier': 'DcController.supplier',
 
 
-    
-    
-//    'get /:uri1': 'DcController.bye',
-//    'get /:uri1/:uri2': 'DcController.bye',
-//    'get /:uri1/:uri2/:uri3': 'DcController.bye',
-//    'get /:uri1/:uri2/:uri3/:uri4': 'DcController.bye',
-    
-//    'get /api/:uri1': 'DcController.bye',
-//    'get /api/:uri1/:uri2': 'DcController.bye',
-//    'get /api/:uri1/:uri2/:uri3': 'DcController.bye',
-//    'get /api/:uri1/:uri2/:uri3/:uri4': 'DcController.bye'
-    
+  'POST /api/supplier': 'DcController.savesupplier',
+  'PUT /api/supplier/:id': 'DcController.updatesupplier',
+
+
+
+
+
+  //    'get /:uri1': 'DcController.bye',
+  //    'get /:uri1/:uri2': 'DcController.bye',
+  //    'get /:uri1/:uri2/:uri3': 'DcController.bye',
+  //    'get /:uri1/:uri2/:uri3/:uri4': 'DcController.bye',
+
+  //    'get /api/:uri1': 'DcController.bye',
+  //    'get /api/:uri1/:uri2': 'DcController.bye',
+  //    'get /api/:uri1/:uri2/:uri3': 'DcController.bye',
+  //    'get /api/:uri1/:uri2/:uri3/:uri4': 'DcController.bye'
+
 
   /***************************************************************************
   *                                                                          *
@@ -65,13 +72,13 @@ module.exports.routes = {
   'get /login': {
     view: 'login'
   },
-  
+
   'post /login': 'AuthController.login',
-  
+
   '/logout': 'AuthController.logout',
-  
+
   'get /signup7790844832': {
     view: 'signup'
   },
-  
+
 };

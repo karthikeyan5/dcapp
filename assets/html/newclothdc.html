@@ -31,10 +31,10 @@
                                 <strong>Total</strong>
                             </td>
                             <td>
-                                <strong>{{roll_total(item.dialist)}}</strong>
+                                <strong>{{total(item.dialist,'roll',0)}}</strong>
                             </td>
                             <td>
-                                <strong>{{weight_total(item.dialist)| number:3}}</strong>
+                                <strong>{{total(item.dialist,'weight',3)| number:3}}</strong>
                             </td>
                         </tr>
                     </tfoot>

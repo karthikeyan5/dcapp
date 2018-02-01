@@ -201,20 +201,14 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
 
   }
 
-  $scope.roll_total = function (dialist) {
-    var total = 0;
-    dialist.map(function (dia) {
-      total += dia.roll;
-    });
-    return total;
-  }
 
-  $scope.weight_total = function (dialist) {
+
+  $scope.total = function (collection, key, precision) {
     var total = 0;
-    dialist.map(function (dia) {
-      total += dia.weight;
+    collection.map(function (item) {
+      total += item[key];
     });
-    return parseFloat(total.toFixed(3));
+    return parseFloat(total.toFixed(precision));
   }
 
   $scope.removecolour = function (index) {
@@ -281,20 +275,13 @@ app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 
     });
   }
 
-  $scope.roll_total = function () {
-    var total = 0;
-    $scope.dialist.map(function (dia) {
-      total += dia.roll;
-    });
-    return total;
-  }
 
-  $scope.weight_total = function () {
+  $scope.total = function (collection, key, precision) {
     var total = 0;
-    $scope.dialist.map(function (dia) {
-      total += dia.weight;
+    collection.map(function (item) {
+      total += item[key];
     });
-    return parseFloat(total.toFixed(3));
+    return parseFloat(total.toFixed(precision));
   }
 
   $uibModalInstance.rendered.then(function () {
@@ -308,7 +295,7 @@ app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 
 
   $scope.ok = function () {
 
-    if($scope.dialist.length < 1){
+    if ($scope.dialist.length < 1) {
       ngToast.create({
         className: 'warning',
         content: 'Please enter atleast one dia... '
