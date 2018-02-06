@@ -10,7 +10,8 @@ var app = angular.module('app', ['ngRoute',
   'smart-table',
   'ui.grid',
   'angular-barcode',
-  'cleave.js']);
+  'cleave.js',
+  'ngTagsInput']);
 
 
 
@@ -22,7 +23,8 @@ app.factory('redirectInterceptor', function ($q, $location, $window) {
         $window.location.href = "/login";
         return $q.reject(response);
       } else {
-        return response;
+        // return response;
+        return $q.reject(response);
       }
     }
   }
@@ -353,12 +355,12 @@ app.controller('managemasterCtrl', ['$scope', '$uibModal', '$http', function man
   $scope.tabselect5();
 
 
-  $scope.openaddparty = function () {
+  $scope.openaddsupplier = function () {
 
     var modalInstance = $uibModal.open({
       animation: true,
-      templateUrl: './html/addparty.html',
-      controller: 'addpartyCtrl',
+      templateUrl: './html/supplier.html',
+      controller: 'addsupplierCtrl',
       size: 'lg',
       //appendTo: $(document).find('body').eq(0),//'body',
       //  backdrop: 'static',
@@ -382,12 +384,12 @@ app.controller('managemasterCtrl', ['$scope', '$uibModal', '$http', function man
   }
 
 
-  $scope.openpartylist = function () {
+  $scope.opensupplierlist = function () {
 
     var modalInstance = $uibModal.open({
       animation: true,
-      templateUrl: './html/partylist.html',
-      controller: 'partylistCtrl',
+      templateUrl: './html/supplierlist.html',
+      controller: 'supplierlistCtrl',
       size: 'xl',
       // resolve: {
       //   party: function () {
@@ -417,6 +419,365 @@ app.controller('managemasterCtrl', ['$scope', '$uibModal', '$http', function man
 
 
 }]);
+
+
+app.controller('addsupplierCtrl', ['$scope', '$http', 'ngToast', '$uibModalInstance', 'hotkeys', '$resource', function addsupplierCtrl($scope, $http, ngToast, $uibModalInstance, hotkeys, $resource) {
+
+  $http({
+    method: 'GET',
+    url: '/api/stateslist'
+  }).then(function successCallback(response) {
+    $scope.stateslist = response.data.map(function (item) { return item.state });
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'States list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+  $scope.getcities = function (state) {
+    $http({
+      method: 'GET',
+      url: '/api/statecities/' + state
+    }).then(function successCallback(response) {
+      $scope.citieslist = response.data.map(function (item) { return item.city });
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'City list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+  }
+
+  $scope.ok = function () {
+    if ((' ' + document.getElementById("departments").className + ' ').indexOf(' ' + "ng-invalid" + ' ') > -1) {
+      ngToast.create({
+        className: 'info',
+        content: 'Invalid Departments... '
+      });
+      return;
+    }
+    $scope.supplier.departments = []
+    $scope.departments.map(function (obj) {
+      $scope.supplier.departments.push(obj.id);
+    });
+
+    console.log("data sent:", $scope.supplier, "local departments:", $scope.departments);
+
+    $http({
+      method: 'POST',
+      url: '/api/supplier',
+      data: $scope.supplier
+    }).then(function successCallback(response) {
+      console.log(response);
+      if (response.status == 200) {
+        ngToast.create('Supplier Details Saved.');
+        $uibModalInstance.close("saved");
+      }
+      else {
+        var er = 'ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      }
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+  }
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  }
+
+  $http({
+    method: 'GET',
+    url: '/api/department'
+  }).then(function successCallback(response) {
+    departmentlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'States list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+  $scope.loadTags = function (query) {
+    return departmentlist.filter(function (dept) {
+      return dept.name.toUpperCase().indexOf(query.toUpperCase()) != -1;
+    });
+  };
+}]);
+
+
+app.controller('supplierlistCtrl', ['$scope', '$uibModal', '$http', function supplierlistCtrl($scope, $uibModal, $http) {
+
+
+  $http({
+    method: 'GET',
+    url: '/api/supplier?allfeilds=0'
+  }).then(function successCallback(response) {
+    $scope.rowCollection = [].concat(response.data);
+    console.log(response);
+    $scope.displayedCollection = [].concat($scope.rowCollection);
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
+
+
+
+  $scope.openeditsupplier = function (id) {
+
+
+    $http({
+      method: 'GET',
+      url: 'api/supplier?allfeilds=1&id=' + id
+    }).then(function successCallback(response) {
+      $scope.supplier = response.data[0];
+      console.log(response);
+
+
+
+      var modalInstance = $uibModal.open({
+        animation: true,
+        templateUrl: './html/supplier.html',
+        controller: 'editsupplierCtrl',
+        size: 'lg',
+        resolve: {
+          supplier: function () {
+            return $scope.supplier;
+          }
+          // ,
+          // party_safe: function () {
+          //   var party_safe
+          //   angular.copy($scope.party,party_safe)
+          //   return party_safe;
+          // }
+        }
+      });
+
+      modalInstance.result.then(function () {
+
+      }, function (ret) {
+
+
+
+        console.log('Modal dismissed at: ' + new Date(), ret);
+
+      });
+
+
+      $scope.$on("modalClosing", function (event, ret) {
+        console.log('inside modalClosing event', ret); //value should be $scope.editMade
+
+        var temppos = arrayObjectIndexOf($scope.displayedCollection, ret.id, "id");
+        console.log($scope.displayedCollection[temppos]);
+
+        Object.keys(ret).map(function (key) {
+          this[key] = ret[key]
+        }, $scope.displayedCollection[temppos])
+
+      });
+
+
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'Single Supplier fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+  }
+
+}]);
+
+
+
+
+app.controller('editsupplierCtrl', function ($scope, $rootScope, $http, $uibModalInstance, ngToast, supplier) {
+  $scope.supplier = supplier;
+
+
+  var supplier_safe = {};
+  Object.keys($scope.supplier).map(function (key) {
+    this[key] = $scope.supplier[key]
+  }, supplier_safe)
+
+  $http({
+    method: 'GET',
+    url: '/api/stateslist'
+  }).then(function successCallback(response) {
+    $scope.stateslist = response.data.map(function (item) { return item.state });
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
+
+  $scope.getcities = function (state) {
+    $http({
+      method: 'GET',
+      url: '/api/statecities/' + state
+    }).then(function successCallback(response) {
+      $scope.citieslist = response.data.map(function (item) { return item.city });
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+      });
+
+  }
+
+  $http({
+    method: 'GET',
+    url: '/api/department'
+  }).then(function successCallback(response) {
+    departmentlist = response.data;
+    $scope.departments = departmentlist.filter(function (dept) {
+      return $scope.supplier.departments_list? $scope.supplier.departments_list.split(",").indexOf(dept.name) > -1:false;
+    });
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'States list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+  $scope.loadTags = function (query) {
+    return departmentlist.filter(function (dept) {
+      return dept.name.toUpperCase().indexOf(query.toUpperCase()) != -1;
+    });
+  };
+
+
+  $scope.ok = function () {
+
+    if ((' ' + document.getElementById("departments").className + ' ').indexOf(' ' + "ng-invalid" + ' ') > -1) {
+      ngToast.create({
+        className: 'info',
+        content: 'Invalid Departments... '
+      });
+      return;
+    }
+
+    $scope.supplier_diff = {}
+    Object.keys(supplier_safe).map(function (key) {
+      if (key != 'departments_list') {
+        if (supplier_safe[key] != $scope.supplier[key]) {
+          this[key] = $scope.supplier[key]
+        }
+      }
+    }, $scope.supplier_diff)
+
+    dlist_temp = supplier_safe.departments_list? supplier_safe.departments_list.split(","):[];
+    dept_diff_flag = 0;
+    if (dlist_temp.length == $scope.departments.length) {
+      $scope.departments.map(function (dept) {
+        if (dlist_temp.indexOf(dept.name) == -1) {
+          dept_diff_flag = 1;
+        }
+      });
+    }
+    else {
+      dept_diff_flag = 1;
+    }
+
+    if (dept_diff_flag == 1) {
+      $scope.supplier_diff.departments = []
+      $scope.departments.map(function (obj) {
+        $scope.supplier_diff.departments.push(obj.id);
+      });
+    }
+
+
+
+    console.log("supplier_diff: ", $scope.supplier_diff, $scope.supplier, supplier_safe);
+    if (Object.keys($scope.supplier_diff).length < 1) {
+      ngToast.create({
+        className: 'warning',
+        content: 'No Changes Made'
+      });
+      return;
+    }
+
+
+
+
+    $http({
+      method: 'PUT',
+      url: '/api/supplier/' + $scope.supplier.id,
+      data: $scope.supplier_diff,
+      headers: { 'Accept': 'application/json' }
+    }).then(function successCallback(response) {
+      console.log(response);
+
+      $http({
+        method: 'GET',
+        url: 'api/supplier?allfeilds=1&id=' + $scope.supplier.id
+      }).then(function successCallback(response) {
+        supplier_safe = response.data[0];
+        $scope.supplier.modified_time = supplier_safe.modified_time;
+        console.log(response);
+        ngToast.create('Supplier Details Saved.');
+      },
+        function errorCallback(response) {
+          console.log(response);
+          var er = 'Single party fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+          ngToast.create({
+            className: 'danger',
+            content: er
+          });
+        });
+    }).catch(
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+  }
+  $scope.$on("modal.closing", function () {
+    $rootScope.$broadcast("modalClosing", supplier_safe);
+  });
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss(supplier_safe);
+  }
+});
+
+
+
 
 
 app.config(function ($routeProvider) {

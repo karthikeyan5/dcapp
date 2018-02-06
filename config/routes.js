@@ -40,9 +40,13 @@ module.exports.routes = {
   'GET /api/getbrand': 'DcController.getbrand',
   'GET /api/department': 'DcController.department',
   'GET /api/supplier': 'DcController.supplier',
+  'GET /api/stateslist': 'DcController.stateslist',    
+  'GET /api/statecities/:state': 'DcController.statecities',  
 
 
   'POST /api/supplier': 'DcController.savesupplier',
+
+
   'PUT /api/supplier/:id': 'DcController.updatesupplier',
 
 
