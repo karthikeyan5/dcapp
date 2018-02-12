@@ -2,7 +2,7 @@
 <html ng-app="app" lang="en" ng-controller="titleCtrl">
 
 <head>
-    <title>{{brand}} DC</title>
+    <title ng-cloak>{{brand}} DC</title>
     <link rel="apple-touch-icon" sizes="57x57" href="./apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="./apple-touch-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="./apple-touch-icon-72x72.png">
@@ -85,7 +85,7 @@
     <toast class="hidden-print"></toast>
     <!-- -->
     <div class="container">
-        <div class="page-header hidden-print">
+        <div class="page-header hidden-print" ng-cloak>
             <h1> {{brand}}
                 <small>Delivery Challan application</small>
                 <a href="/logout">

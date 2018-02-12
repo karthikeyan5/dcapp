@@ -26,7 +26,7 @@ module.exports = {
     },
     supplier: function (req, res) {
         // ---- 
-        // ---- param are - allfeilds,department(comma seperated for multiple)
+        // ---- param are - allfeilds,department(comma seperated ids for multiple), id
         // ---- 
 
         // console.log('all', req.allParams());
@@ -141,7 +141,7 @@ module.exports = {
                             del_list = [];
                             if (results.length == 1) {
                                 temp_del_list = results[0]['dept'].split(",");
-                                temp_del_list.map(function(item){
+                                temp_del_list.map(function (item) {
                                     del_list.push(parseInt(item));
                                 });
                                 // console.log("del_list: ",del_list );
@@ -231,7 +231,44 @@ module.exports = {
             }
         });
     },
+    savecdc: function (req, res) {
+        q = "INSERT INTO cdc (idsupplier, naming_series, department, dc_date, lot_number, rateperkg, vehicle_number, comment, blame_user) \
+                        VALUES (?,?,?,?,?,?,?,?,?);";
+        d = [req.body.supplier_details.id, req.body.naming_series, req.body.department, dateFormat(req.body.dc_date, 'yyyy-mm-dd'), req.body.lot_number, req.body.rateperkg, req.body.vehicle_number, req.body.comment, req.user.email];
+        temp = {}
 
+        Dc.query(q, d, function (err, results) {
+            if (err) return res.serverError(err);
+            else {
+                temp.cdc_insert = results;
+                temp.idcdc = results.insertId;
+                flag = 0;
+                q1 = "INSERT INTO cdcitems (idcdc, colour, cdc_colour_index, dia, roll, weight, comment, blame_user) VALUES ";
+                d1 = [];
+                req.body.items.forEach((element, index) => {
+                    element.dialist.forEach(dialist => {
+                        if (flag == 1) q1 = q1.concat(", ");
+                        q1 = q1.concat("(?,?,?,?,?,?,?,?)");
+                        flag = 1;
+                        d1.push(temp.idcdc, element.colour, index, dialist.dia, dialist.roll, dialist.weight, dialist.comment, req.user.email);
+                    });
+                });
+                Dc.query(q1, d1, function (err, results) {
+                    if (err) return res.serverError(err);
+                    else {
+                        temp.cdcitems_insert = results;
+                        Dc.query("SELECT cdc.naming_series,cdc.dc_number,series.length FROM cdc,series WHERE cdc.naming_series = series.name AND cdc.id = ?", [temp.idcdc], function (err, results) {
+                            if (err) return res.serverError(err);
+                            else {
+                                temp.dc = results[0];
+                                return res.ok(temp);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    },
 
 
     test: function (req, res) {

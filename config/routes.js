@@ -45,6 +45,7 @@ module.exports.routes = {
 
 
   'POST /api/supplier': 'DcController.savesupplier',
+  'POST /api/cdc': 'DcController.savecdc',
 
 
   'PUT /api/supplier/:id': 'DcController.updatesupplier',

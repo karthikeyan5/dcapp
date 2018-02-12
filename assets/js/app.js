@@ -154,9 +154,68 @@ app.controller('mainCtrl', function ($scope) {
 
 });
 
-app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', function newclothdcCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource) {
+app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', '$route', function newclothdcCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource, $route) {
   $scope.tabselect1();
-  $scope.colourset = [];
+  $scope.cdc = {};
+  $scope.cdc.items = [];
+  $scope.cdc.naming_series = "SDDC-1718-";
+  $scope.cdc.supplier_details = null;
+  $scope.dynamicPopover = [];
+  $scope.dynamicPopover.templateUrl = "supplierpopup.html";
+
+  $scope.$on('$viewContentLoaded', function () {
+    setTimeout(function () {
+      console.log("yeah!!!");
+      document.getElementById("department").focus();
+    }, 100);
+  });
+
+  window.onbeforeunload = function () {
+    return $scope.cdc.items.length > 0 ? "If you leave this page you will lose your unsaved changes." : null;
+  }
+  $scope.$on('$locationChangeStart', function (event) {
+
+    if ($scope.cdc.items.length > 0) {
+      var answer = confirm("If you leave this page you will lose your unsaved changes.")
+      if (!answer) {
+        event.preventDefault();
+      }
+    }
+    // return $scope.cdc.items.length > 0 ? "If you leave this page you will lose your unsaved changes." : null;
+  });
+
+  $scope.setsupplier = function () {
+    $scope.cdc.supplier_details = $scope.dynamicPopover.cdc.supplier_details;
+    $scope.popoverIsOpen = false;
+    // angular.forEach($scope.agentkeymap, function (value, key) {
+    //   if (value.idagent === $scope.cdc.supplier_details.idagent)
+    //     $scope.cdc.supplier_details.agent = value.agentname;
+    // });
+    a = findPos(document.getElementById("c1olour"));
+    $('html, body').animate({ scrollTop: a - 400 }, 'slow');
+    document.getElementById("c1olour").focus();
+  };
+
+  $scope.focussuppliername = function (event1) {
+    event1.preventDefault()
+    //console.log("in focuspartyname()");
+    // $scope.popoverIsOpen = !$scope.popoverIsOpen;
+    $scope.popoverIsOpen = true;
+    //document.getElementById("date").focus();
+    //  setTimeout(function(){ document.getElementById("supplierbox").focus();},100);//10ms find a permant solution
+    $scope.focussupplierbox();
+  };
+
+  $scope.focussupplierbox = function () {
+    setTimeout(function () { document.getElementById("supplierbox").focus(); document.getElementById("supplierbox").select(); }, 100);
+  };
+
+  $scope.showaddress = function () {
+    if ($scope.cdc.supplier_details === null)
+      return false;
+    else
+      return true;
+  };
 
   var open = function (colour, dialist, index) {
     var modalInstance = $uibModal.open({
@@ -166,6 +225,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
       size: 'md',
       backdrop: 'static',
       keyboard: false,
+      // animation:false,
       resolve: {
         colour: function () {
           return colour;
@@ -183,11 +243,18 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
       console.log('received dialist: ', ret.dialist, 'received colour:  ', ret.colour);
 
       if (ret.index == -1) {
-        $scope.colourset.push(ret);
+        delete ret.index;
+        $scope.cdc.items.push(ret);
+        modalInstance.closed.then(function () {
+          a = findPos(document.getElementById("c1olour"));
+          $('html, body').animate({ scrollTop: a - 400 }, 'slow');
+          document.getElementById("c1olour").focus();
+        });
+
       }
       else {
-        $scope.colourset[ret.index].colour = ret.colour;
-        // $scope.colourset[ret.index].dialist = ret.dialist;
+        $scope.cdc.items[ret.index].colour = ret.colour;
+        // $scope.cdc.items[ret.index].dialist = ret.dialist;
       }
       $scope.newcolour = null;
 
@@ -204,6 +271,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
   }
 
 
+  $scope.grand_total_weight = arr => arr.reduce((a, b) => a + $scope.total(b.dialist, 'weight', 3), 0)
 
   $scope.total = function (collection, key, precision) {
     var total = 0;
@@ -214,7 +282,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
   }
 
   $scope.removecolour = function (index) {
-    $scope.colourset.splice(index, 1);
+    $scope.cdc.items.splice(index, 1);
     ngToast.create({
       className: 'danger',
       content: 'Colour deleted... '//undo
@@ -223,11 +291,283 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
 
   $scope.editcolour = function (index) {
 
-    open($scope.colourset[index].colour, $scope.colourset[index].dialist, index);
+    open($scope.cdc.items[index].colour, $scope.cdc.items[index].dialist, index);
+  }
+
+  $http({
+    method: 'GET',
+    url: '/api/department'
+  }).then(function successCallback(response) {
+    $scope.departmentlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'Department list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+
+  $scope.getsuppliers = function (state) {
+    $scope.cdc.supplier_details = null;
+    $http({
+      method: 'GET',
+      url: '/api/supplier?allfeilds=1&department=' + $scope.cdc.department
+    }).then(function successCallback(response) {
+      $scope.supplierlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+      });
+
+  }
+  // probs: does not get unbind when a modal opens
+  // hotkeys.bindTo($scope)
+  // .add({
+  //   combo: 'ctrl+s',
+  //   description: 'Save Current DC',
+  //   allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
+  //   callback: function (event, hotkey) {
+  //     event.preventDefault();
+  //     console.log('ctrl+s');
+  //     $scope.savedc();
+  //   }
+  // });
+
+
+  $scope.cleardc = () => {
+    $route.reload();
   }
 
 
+  var opendcmodal = function (cdc) {
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: './html/cdcmodal.html',
+      controller: 'cdcmodalCtrl',
+      size: 'xl',
+      windowTopClass: 'hidden-print',
+      resolve: {
+        cdc: function () {
+          return cdc;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (ret) {
+      console.log(ret);
+
+
+    }, function (ret) {
+      console.log('Modal dismissed at: ' + new Date(), ret);
+    });
+
+    $scope.$on("modalClosing", function (event, ret) {
+      console.log('inside modalClosing event', ret);
+
+      if (ret) {
+        $scope.cleardc();
+      }
+
+
+    });
+
+
+  }
+
+
+  $scope.savedc = () => {
+
+    if (!$scope.cdc.department) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select Department and Supplier... '
+      });
+      return;
+    }
+
+    if ($scope.cdc.supplier_details === null) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select Supplier... '
+      });
+      return;
+    }
+
+    if ($scope.cdc.items.length < 1) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Nothing to Deliver?... '
+      });
+      return;
+    }
+
+    $scope.cdc.department_name = $scope.departmentlist.filter(item => item.id == $scope.cdc.department)[0].name;
+
+    opendcmodal($scope.cdc);
+
+
+  }
+
+
+
+
+  // datepicker stuff - to be decoded later
+  $scope.today = function () {
+    $scope.cdc.dc_date = new Date();
+  };
+  $scope.today();
+
+  $scope.clear = function () {
+    $scope.cdc.dc_date = null;
+  };
+
+  $scope.inlineOptions = {
+    customClass: getDayClass,
+    minDate: new Date(),
+    showWeeks: true
+  };
+
+  $scope.dateOptions = {
+    dateDisabled: disabled,
+    formatYear: 'yy',
+    maxDate: new Date(2020, 5, 22),
+    minDate: new Date(),
+    startingDay: 1
+  };
+
+  // Disable weekend selection
+  function disabled(data) {
+    var date = data.date,
+      mode = data.mode;
+    //return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    return false;
+  }
+
+  $scope.toggleMin = function () {
+    $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+    $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+  };
+
+  $scope.toggleMin();
+
+  $scope.open1 = function () {
+    $scope.popup1.opened = true;
+  };
+
+  $scope.open2 = function () {
+    $scope.popup2.opened = true;
+  };
+
+  $scope.setDate = function (year, month, day) {
+    $scope.cdc.dc_date = new Date(year, month, day);
+  };
+
+  $scope.altInputFormats = ['d!.M!.yyyy', 'd!.M!.yy', 'd!/M!/yyyy', 'd!/M!/yy'];//,'d!.M!','d!.M!.yy'];
+
+  $scope.popup1 = {
+    opened: false
+  };
+
+  $scope.popup2 = {
+    opened: false
+  };
+
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  var afterTomorrow = new Date();
+  afterTomorrow.setDate(tomorrow.getDate() + 1);
+  $scope.events = [
+    {
+      date: tomorrow,
+      status: 'full'
+    },
+    {
+      date: afterTomorrow,
+      status: 'partially'
+    }
+  ];
+
+  function getDayClass(data) {
+    var date = data.date,
+      mode = data.mode;
+    if (mode === 'day') {
+      var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
+
+      for (var i = 0; i < $scope.events.length; i++) {
+        var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
+
+        if (dayToCheck === currentDay) {
+          return $scope.events[i].status;
+        }
+      }
+    }
+
+    return '';
+  }
+
+
+
 }]);
+
+
+app.controller('cdcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibModal, cdc, ngToast, $rootScope) {
+  $scope.cdc = cdc;
+  if ($scope.cdc.dc_number) $scope.disablesave = true;
+  else $scope.disablesave = false;
+
+
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += item[key];
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+
+
+  $scope.save = () => {
+    $scope.disablesave = true;
+    $http({
+      method: 'POST',
+      url: '/api/cdc',
+      data: $scope.cdc
+    }).then(function successCallback(response) {
+      console.log(response);
+      ngToast.create('DC Details Saved.');
+      $scope.cdc.dc_number = response.data.dc.dc_number;
+      $scope.cdc.dc_no_length = response.data.dc.length;
+      setTimeout(function () { $scope.print(); }, 800);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        $scope.disablesave = false;
+        var er = 'ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+  }
+
+
+  $scope.$on("modal.closing", function () {
+    $rootScope.$broadcast("modalClosing", $scope.cdc.dc_number ? $scope.cdc.dc_number : undefined);
+  });
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  }
+
+  $scope.print = function () {
+    window.print();
+  }
+
+});
 
 app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'colour', 'dialist', 'index', function colourdetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, colour, dialist, index) {
   $scope.colour = colour;
@@ -314,7 +654,7 @@ app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 
   hotkeys.bindTo($scope)
     .add({
       combo: 'ctrl+s',
-      description: 'Description goes here',
+      description: 'Save Current Dia Details',
       allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
       callback: function (event, hotkey) {
         event.preventDefault();
@@ -515,7 +855,7 @@ app.controller('addsupplierCtrl', ['$scope', '$http', 'ngToast', '$uibModalInsta
   },
     function errorCallback(response) {
       console.log(response);
-      var er = 'States list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      var er = 'Department list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
       ngToast.create({
         className: 'danger',
         content: er
@@ -658,7 +998,7 @@ app.controller('editsupplierCtrl', function ($scope, $rootScope, $http, $uibModa
   }).then(function successCallback(response) {
     departmentlist = response.data;
     $scope.departments = departmentlist.filter(function (dept) {
-      return $scope.supplier.departments_list? $scope.supplier.departments_list.split(",").indexOf(dept.name) > -1:false;
+      return $scope.supplier.departments_list ? $scope.supplier.departments_list.split(",").indexOf(dept.name) > -1 : false;
     });
     console.log(response);
   },
@@ -697,7 +1037,7 @@ app.controller('editsupplierCtrl', function ($scope, $rootScope, $http, $uibModa
       }
     }, $scope.supplier_diff)
 
-    dlist_temp = supplier_safe.departments_list? supplier_safe.departments_list.split(","):[];
+    dlist_temp = supplier_safe.departments_list ? supplier_safe.departments_list.split(",") : [];
     dept_diff_flag = 0;
     if (dlist_temp.length == $scope.departments.length) {
       $scope.departments.map(function (dept) {
@@ -968,8 +1308,8 @@ app.filter('INR', function () {
   return function (input) {
     if (!isNaN(input)) {
       var currencySymbol = '₹ ';
-      //var output = Number(input).toLocaleString('en-IN');   <-- This method is not working fine in all browsers!           
-      var result = input.toString().split('.');
+      //var output = Number(input).toLocaleString('en-IN');   <-- This method is not working fine in all browsers!  
+      var result = input.toFixed(2).split('.');
 
       var lastThree = result[0].substring(result[0].length - 3);
       var otherNumbers = result[0].substring(0, result[0].length - 3);
@@ -984,5 +1324,22 @@ app.filter('INR', function () {
       return currencySymbol + output;
     }
   }
+});
+
+
+app.filter('minLength', function () {
+  return function (input, len, pad) {
+    if (!input) return ''
+    input = input.toString();
+    if (input.length >= len) return input;
+    else {
+      pad = (pad || 0).toString();
+      return new Array(1 + len - input.length).join(pad) + input;
+    }
+  };
+  // {{ 22 | minLength:4 }} //Returns "0022"
+  // {{ 22 | minLength:4:"-" }} //Returns "--22"
+  // {{ "aa" | minLength:4:"&nbsp;" }} //Returns "  aa"
+  // {{ 1234567 | minLength:4 }} //Returns "1234567"
 });
 

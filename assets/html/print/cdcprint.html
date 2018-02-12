@@ -1,0 +1,159 @@
+<style media="print" type="text/css">
+    @page {
+        /*size: A5;*/
+        margin: 4mm 1mm 2mm 10mm;
+    }
+
+    body {
+        /* this affects the margin on the content before sending to printer */
+        margin: 0px;
+        font-size: 18px;
+        
+    }
+    /* tr:nth-child(even) td {
+    background-color: #D3D3D3 !important;
+  } */
+
+    html {
+        -webkit-print-color-adjust: exact;
+        background-color: #FFFFFF;
+        margin: 0px;
+        /* this affects the margin on the html before sending to printer */
+    }
+</style>
+
+<div style="border:1px solid #666; border-radius: 10px; border-collapse: collapse;" class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 text-center" style="border-bottom:1px solid #666;">
+            <strong style="font-size:1.75em;">Essdee Knitting Mills Private Limited</strong>
+            <br>
+            <small> {{cdc.department_name}} Delivery Challan</small>
+        </div>
+    </div>
+    <div class="row" style="border-bottom:1px solid #666;">
+        <div class="col-xs-4" style="border-right:1px solid #ddd;">From:
+            <br>
+            <strong>Essdee Knitting Mills Private Limited,</strong>
+            <br>No.4(1) First Floor, 3rd Street,
+            <br>Sivasakthi Nagar, K.T.C School Road
+            <br>Tirupur, Tamil Nadu - 641604
+            <br>GSTIN: 33AAECE7034R1ZA
+        </div>
+
+        <div class="col-xs-4" style="border-left:1px solid #ddd; border-right:1px solid #ddd; padding-right: 1px;">To:
+            <br>
+            <strong style="font-size:1.3em;" class="text-capitalize">{{cdc.supplier_details.name.toLowerCase()}}</strong>,
+            <small style="white-space: nowrap;">(id = {{cdc.supplier_details.id}})</small>
+            <span ng-show="cdc.supplier_details.address1">
+                <br>{{cdc.supplier_details.address1}},</span>
+            <span ng-show="cdc.supplier_details.address2">
+                <br>{{cdc.supplier_details.address2}},</span>
+            <br> {{cdc.supplier_details.city + ", "}} {{cdc.supplier_details.state}}{{cdc.supplier_details.pincode?" - "+cdc.supplier_details.pincode+".":".";}}
+            <br> {{cdc.supplier_details.gstin? "GSTIN: "+cdc.supplier_details.gstin:"";}}
+        </div>
+        <div class="col-xs-4" style="border-left:1px solid #ddd;">
+            <div class="row" style="border-bottom:1px solid #ddd;">
+                <div class="col-xs-5 text-right" style=" padding-right: 4px; padding-left:0px;">Date:</div>
+                <div class="col-xs-7" style="padding-left:0px;">{{cdc.dc_date | date:'dd.MM.yyyy'}}</div>
+            </div>
+            <div class="row" style="border-bottom:1px solid #ddd; ">
+                <div class="col-xs-5 text-right" style=" padding-right: 4px; padding-left:0px;">DC No.:</div>
+                <div class="col-xs-7" style="padding-left:0px;">
+                    <small>{{cdc.naming_series + " "}}</small>
+                    <strong>{{ cdc.dc_number | minLength:cdc.dc_no_length }}</strong>
+                </div>
+            </div>
+            <div class="row" style="border-bottom:1px solid #ddd; ">
+                <div class="col-xs-5 text-right" style=" padding-right: 4px; padding-left:0px;">Process:</div>
+                <div class="col-xs-7" style="padding-left:0px;">{{cdc.department_name}}</div>
+            </div>
+            <div class="row" style="border-bottom:1px solid #ddd; ">
+                <div class="col-xs-5 text-right" style=" padding-right: 4px; padding-left:0px;">Lot Number:</div>
+                <div class="col-xs-7" style="padding-left:0px;">{{cdc.lot_number}}</div>
+            </div>
+            <div class="row" style="border-bottom:1px solid #ddd; ">
+                <div class="col-xs-5 text-right" style=" padding-right: 4px; padding-left:0px;">Vehicle Number:</div>
+                <div class="col-xs-7" style="padding-left:0px;">{{cdc.vehicle_number}}</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-5 text-right" style=" padding-right: 4px; padding-left:0px;">SCN:</div>
+                <div class="col-xs-7" style="padding-left:0px;">998821</div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="border-bottom:1px solid #666;">
+        <div class="col-xs-12 text-center">Particulars</div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12" style="border-bottom:1px solid #666; padding-top: 8px;">
+            <table class="table table-bordered table-striped"  style="margin-bottom:5px;"> 
+                <tr ng-repeat="item in cdc.items track by $index">
+                    <td style="font-size:1.5em;">Colour:
+                        <span class="text-capitalize">{{item.colour.toLowerCase()}}</span>
+                    </td>
+                    <td>
+                        <table class="table table-bordered table-striped" style="margin-bottom:0px;">
+                            <thead>
+                                <tr>
+                                    <!-- <th class="text-center">S.No</th> -->
+                                    <th class="text-center pshead">Dia</th>
+                                    <th class="text-center pshead">Roll</th>
+                                    <th class="text-center pshead">Weight (kg)</th>
+                                    <th class="text-center pshead">Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="dia in item.dialist track by $index" class="repeated-item">
+                                    <!-- <td>{{$index + 1}}</td> -->
+                                    <td class="text-center psrow">{{dia.dia}}</td>
+                                    <td class="text-center psrow">{{dia.roll}}</td>
+                                    <td class="text-center psrow">{{dia.weight| number:3}}</td>
+                                    <td class="text-center psrow">{{dia.comment}}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td class="text-center psrow">
+                                        <strong>Total</strong>
+                                    </td>
+                                    <td class="text-center psrow">
+                                        <strong>{{total(item.dialist,'roll',0)}}</strong>
+                                    </td>
+                                    <td class="text-center psrow">
+                                        <strong>{{total(item.dialist,'weight',3)| number:3}}</strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row" ng-show="cdc.comment" style="border-bottom:1px solid #666;">
+        <div class="col-xs-12">DC Comments: {{cdc.comment}}</div>
+    </div>
+    <div class="row" style="border-bottom:1px solid #666;">
+        <div class="col-xs-12">Estimated value of Goods: {{grand_total_weight(cdc.items)*cdc.rateperkg|INR}}</div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6 text-center" style="border-right:1px solid #666;">
+            Receiver's Signature
+            <br>
+            <br>
+            <br>
+            <br>
+            <div class="row">
+                <div class="col-xs-7 text-left">Name: </div>
+                <div class="col-xs-5 text-left">Desigination: </div>
+            </div>
+        </div>
+        <div class="col-xs-6 text-right">
+            <small>For </small>
+            <strong>Essdee Knitting Mills Private Limited</strong>
+            <br>
+            <br>
+            <br> Authorised Signatory
+        </div>
+    </div>
+</div>
