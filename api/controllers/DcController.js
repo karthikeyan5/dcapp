@@ -56,7 +56,7 @@ module.exports = {
             q_where = " WHERE supplier.id = ? ";
             d.push(req.param('id'));
         }
-        q = q.concat(q_from, q_where, ' group by supplier.modified_time desc;');
+        q = q.concat(q_from, q_where, ' order by supplier.modified_time desc;');
 
         Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
@@ -234,7 +234,7 @@ module.exports = {
     savecdc: function (req, res) {
         q = "INSERT INTO cdc (idsupplier, naming_series, department, dc_date, lot_number, rateperkg, vehicle_number, comment, blame_user) \
                         VALUES (?,?,?,?,?,?,?,?,?);";
-        d = [req.body.supplier_details.id, req.body.naming_series, req.body.department, dateFormat(req.body.dc_date, 'yyyy-mm-dd'), req.body.lot_number, req.body.rateperkg, req.body.vehicle_number, req.body.comment, req.user.email];
+        d = [req.body.supplier_id, req.body.naming_series, req.body.department, dateFormat(req.body.dc_date, 'yyyy-mm-dd'), req.body.lot_number, req.body.rateperkg, req.body.vehicle_number, req.body.comment, req.user.email];
         temp = {}
 
         Dc.query(q, d, function (err, results) {
@@ -268,6 +268,129 @@ module.exports = {
                 });
             }
         });
+    },
+    cdc: function (req, res) {
+        // ---- 
+        // ---- param are - items(available automaticaly if only one dc is returned) ,id, dc_number, naming_series, idsupplier, lot_number, vehicle_number, 
+        // ----             comment, department, after_dc_date (yyyymmdd), before_dc_date , limit, offset    
+        // ---- 
+        q = "SELECT \
+        cdc.id idcdc, \
+        cdc.naming_series, \
+        series.length dc_no_length, \
+        cdc.dc_number, \
+        cdc.department, \
+        department.name department_name, \
+        cdc.dc_date, \
+        cdc.lot_number, \
+        cdc.rateperkg, \
+        cdc.vehicle_number, \
+        cdc.comment, \
+        cdc.status, \
+        cdc.modified_time, \
+        supplier.id supplier_id, \
+        supplier.name supplier_name, \
+        supplier.address1 supplier_address1, \
+        supplier.address2 supplier_address2, \
+        supplier.city supplier_city, \
+        supplier.state supplier_state, \
+        supplier.pincode supplier_pincode, \
+        supplier.phone1 supplier_phone1, \
+        supplier.phone2 supplier_phone2, \
+        supplier.gstin supplier_gstin, \
+        supplier.email supplier_email \
+      FROM cdc LEFT JOIN supplier ON cdc.idsupplier = supplier.id \
+        LEFT JOIN department ON cdc.department = department.id \
+        LEFT JOIN series ON cdc.naming_series = series.name WHERE 1 = 1 ";
+        d = []
+        q_where = ""
+        limit = Number.MAX_SAFE_INTEGER;
+        offset = 0;
+
+        if (req.param('limit') && !isNaN(parseInt(req.param('limit')))) limit = parseInt(req.param('limit'));
+        if (req.param('offset') && !isNaN(parseInt(req.param('offset')))) offset = parseInt(req.param('offset'));
+
+        param_equal_list = ["id", "dc_number", "naming_series", "idsupplier", "lot_number", "department"];
+        param_equal_list.forEach(function (param) {
+            if (req.param(param) != undefined) {
+                q = q.concat(" AND cdc.", param, " = ? ");
+                d.push(req.param(param));
+            }
+        });
+
+        param_like_list = ["vehicle_number", "comment"];
+        param_like_list.forEach(function (param) {
+            if (req.param(param) != undefined) {
+                q = q.concat(" AND cdc.", param, " LIKE ? ");
+                d.push("%" + req.param(param) + "%");
+            }
+        });
+
+        if (req.param('after_dc_date') != undefined) {
+            q = q.concat(" AND cdc.dc_date >= ? ")
+            d.push(req.param('after_dc_date'));
+        }
+        if (req.param('before_dc_date') != undefined) {
+            q = q.concat(" AND cdc.dc_date <= ? ")
+            d.push(req.param('before_dc_date'));
+        }
+
+        q = q.concat(' order by cdc.id desc LIMIT ?,?;');
+        d.push(offset, limit);
+
+        Dc.query(q, d, function (err, results) {
+            if (err) return res.serverError(err);
+            else {
+                if (results.length == 1) {
+                    temp = results;
+                    Dc.query('SELECT colour, cdc_colour_index, dia, roll, weight, comment FROM cdcitems WHERE idcdc = ? ORDER BY id;', [temp[0].idcdc], function (err, results) {
+                        if (err) return res.serverError(err);
+                        else {
+                            temp[0].items = results;
+                            return res.ok(temp);
+                        }
+                    });
+                }
+                else {
+                    return res.ok(results);
+                }
+            }
+        });
+    },
+    updatecdc: function (req, res) {
+
+
+        flag = 0;
+        q = "UPDATE cdc "
+        d = []
+        column_list = ["status"];
+        column_list.map(function (column) {
+            if (req.body[column] != undefined) {
+                if (flag == 0) { q = q.concat("SET "); flag = 1; }
+                else { q = q.concat(","); }
+                q = q.concat(column, " = ? ");
+                d.push(req.body[column]);
+            }
+        });
+
+        // blame_user and final touches
+        if (flag == 0) {
+            q = q.concat("SET ");
+            flag = 1;
+        }
+        else {
+            q = q.concat(",");
+        }
+        q = q.concat("blame_user = ?, modified_time = now() WHERE id = ?;");
+        d.push(req.user.email)
+        d.push(req.param("id"))
+        // console.log(q,d);
+
+        Dc.query(q, d, function (err, results) {
+            if (err) return res.serverError(err);
+            return res.ok(results);
+        })
+
     },
 
 

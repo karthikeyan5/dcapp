@@ -1,0 +1,60 @@
+<div style="padding-top:10px;" ng-class="{'hidden-print':hidelist}">
+	<legend>Cloth DC List</legend>
+	<table st-safe-src="rowCollection" st-table="displayedCollection" class="table table-bordered table-striped table-hover">
+	<thead>
+	<tr >
+		<th class="text-center">S.No</th>
+		<th class="sortable" st-sort="dc_date">DC Date</th>
+		<th class="sortable" st-sort="getters.dc_number">DC Number</th>
+		<th class="sortable" st-sort="supplier_name">Supplier Name</th>
+		<th class="sortable" st-sort="supplier_city">City</th>
+		<th class="sortable" st-sort="lot_number">Lot Number</th>
+		<th class="sortable" st-sort="department">Department</th>
+		<th class="sortable" st-sort="vehicle_number">Vehicle Number</th>
+
+		<!--<th class="sortable" st-sort="agentname">No. of Cartons</th>-->
+	</tr>
+	<tr>
+		<!--<th>
+			<input st-search="firstName" placeholder="search for firstname" class="input-sm form-control" type="search"/>
+		</th>-->
+		<th colspan="8">
+			<input st-delay="0" st-search placeholder="Start typing to filter" class="input-sm form-control" type="search" autofocus/>
+		</th>
+		<!--<th>
+			<input st-search="{{selectedPredicate}}" placeholder="bound predicate" class="input-sm form-control" type="search"/>
+		</th>-->
+	</tr>
+	</thead>
+	<tbody> 
+	<tr ng-repeat="row in displayedCollection" style="cursor: pointer;">
+		<td ng-click="open(row)">{{$index + 1}}</td>		
+		<td ng-click="open(row)" ng-init="row.date = ds(row.dc_date)">{{row.dc_date | date:'dd.MM.yyyy'}}</td>
+		<td ng-click="open(row)" ng-init="row.dc_no = getters.dc_number(row)" style="white-space: nowrap;" ng-if="row.status == 'active'">{{row.naming_series}}{{ row.dc_number | minLength:row.dc_no_length }}</td>
+		<td ng-click="open(row)" ng-init="row.dc_no = getters.dc_number(row)" style="white-space: nowrap; text-decoration: line-through;" ng-if="row.status == 'inactive'">{{row.naming_series}}{{ row.dc_number | minLength:row.dc_no_length }}</td>
+		<td ng-click="open(row)" class="text-capitalize">{{row.supplier_name.toLowerCase()}}</td>
+		<td ng-click="open(row)" class="text-capitalize">{{row.supplier_city.toLowerCase()}}</td>
+		<td ng-click="open(row)">{{row.lot_number}}</td>
+		<td ng-click="open(row)">{{row.department_name}}</td>
+		<td ng-click="open(row)">{{row.vehicle_number}}</td>
+	</tr>
+	</tbody>
+	<tfoot>
+	<tr ng-show="showpagination == true">
+		<td colspan="4" class="text-center">
+			<div st-items-by-page="itemsByPage" st-pagination="" st-template="html/pagination.custom.html"></div>
+		</td>
+		<td colspan="3" ng-if="pages.length >= 2">
+			<label>Show all
+				<input type="checkbox" ng-model="showall" ng-click="updateItemsByPage()">
+			</label>
+		</td>
+	</tr>
+	</tfoot>
+</table>
+	
+
+	
+	
+</div>
+<ng-include src="'./html/print/cdcprint.html'" class="visible-print-block" ng-if="cdc.dc_number && cdc.items && cdc.items.length > 0"></ng-include>

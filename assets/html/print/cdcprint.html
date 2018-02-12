@@ -7,9 +7,10 @@
     body {
         /* this affects the margin on the content before sending to printer */
         margin: 0px;
-        font-size: 18px;
-        
+        font-size: 12px;
+        /* font-size: 18px; */
     }
+
     /* tr:nth-child(even) td {
     background-color: #D3D3D3 !important;
   } */
@@ -19,6 +20,12 @@
         background-color: #FFFFFF;
         margin: 0px;
         /* this affects the margin on the html before sending to printer */
+    }
+</style>
+<style>
+    body {
+        /* font-size: 18px; */
+        /* font-size: 12px; */
     }
 </style>
 
@@ -42,14 +49,14 @@
 
         <div class="col-xs-4" style="border-left:1px solid #ddd; border-right:1px solid #ddd; padding-right: 1px;">To:
             <br>
-            <strong style="font-size:1.3em;" class="text-capitalize">{{cdc.supplier_details.name.toLowerCase()}}</strong>,
-            <small style="white-space: nowrap;">(id = {{cdc.supplier_details.id}})</small>
-            <span ng-show="cdc.supplier_details.address1">
-                <br>{{cdc.supplier_details.address1}},</span>
-            <span ng-show="cdc.supplier_details.address2">
-                <br>{{cdc.supplier_details.address2}},</span>
-            <br> {{cdc.supplier_details.city + ", "}} {{cdc.supplier_details.state}}{{cdc.supplier_details.pincode?" - "+cdc.supplier_details.pincode+".":".";}}
-            <br> {{cdc.supplier_details.gstin? "GSTIN: "+cdc.supplier_details.gstin:"";}}
+            <strong style="font-size:1.3em;" class="text-capitalize">{{cdc.supplier_name.toLowerCase()}}</strong>,
+            <small style="white-space: nowrap;">(id = {{cdc.supplier_id}})</small>
+            <span ng-show="cdc.supplier_address1">
+                <br>{{cdc.supplier_address1}},</span>
+            <span ng-show="cdc.supplier_address2">
+                <br>{{cdc.supplier_address2}},</span>
+            <br> {{cdc.supplier_city + ", "}} {{cdc.supplier_state}}{{cdc.supplier_pincode?" - "+cdc.supplier_pincode+".":".";}}
+            <br> {{cdc.supplier_gstin? "GSTIN: "+cdc.supplier_gstin:"";}}
         </div>
         <div class="col-xs-4" style="border-left:1px solid #ddd;">
             <div class="row" style="border-bottom:1px solid #ddd;">
@@ -58,9 +65,14 @@
             </div>
             <div class="row" style="border-bottom:1px solid #ddd; ">
                 <div class="col-xs-5 text-right" style=" padding-right: 4px; padding-left:0px;">DC No.:</div>
-                <div class="col-xs-7" style="padding-left:0px;">
+                <div class="col-xs-7" style="padding-left:0px;" ng-if="cdc.status == 'active'">
                     <small>{{cdc.naming_series + " "}}</small>
                     <strong>{{ cdc.dc_number | minLength:cdc.dc_no_length }}</strong>
+                </div>
+                <div class="col-xs-7" style="padding-left:0px;" ng-if="cdc.status == 'inactive'">
+                    <small style="text-decoration: line-through;">{{cdc.naming_series + " "}}</small>
+                    <strong style="text-decoration: line-through;">{{ cdc.dc_number | minLength:cdc.dc_no_length }}</strong> 
+                    <span>(Cancelled)</span>
                 </div>
             </div>
             <div class="row" style="border-bottom:1px solid #ddd; ">
@@ -86,7 +98,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12" style="border-bottom:1px solid #666; padding-top: 8px;">
-            <table class="table table-bordered table-striped"  style="margin-bottom:5px;"> 
+            <table class="table table-bordered table-striped" style="margin-bottom:5px;">
                 <tr ng-repeat="item in cdc.items track by $index">
                     <td style="font-size:1.5em;">Colour:
                         <span class="text-capitalize">{{item.colour.toLowerCase()}}</span>

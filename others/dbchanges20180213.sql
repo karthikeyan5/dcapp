@@ -1,0 +1,1 @@
+ALTER TABLE cdc MODIFY rateperkg INT;

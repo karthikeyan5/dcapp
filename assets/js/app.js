@@ -8,7 +8,7 @@ var app = angular.module('app', ['ngRoute',
   'angular-loading-bar',
   'ngResource',
   'smart-table',
-  'ui.grid',
+  // 'ui.grid',
   'angular-barcode',
   'cleave.js',
   'ngTagsInput']);
@@ -159,7 +159,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
   $scope.cdc = {};
   $scope.cdc.items = [];
   $scope.cdc.naming_series = "SDDC-1718-";
-  $scope.cdc.supplier_details = null;
+  $scope.cdc.supplier_id = null;
   $scope.dynamicPopover = [];
   $scope.dynamicPopover.templateUrl = "supplierpopup.html";
 
@@ -185,7 +185,17 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
   });
 
   $scope.setsupplier = function () {
-    $scope.cdc.supplier_details = $scope.dynamicPopover.cdc.supplier_details;
+    $scope.cdc.supplier_id = $scope.dynamicPopover.supplier_details.id;
+    $scope.cdc.supplier_name = $scope.dynamicPopover.supplier_details.name;
+    $scope.cdc.supplier_address1 = $scope.dynamicPopover.supplier_details.address1;
+    $scope.cdc.supplier_address2 = $scope.dynamicPopover.supplier_details.address2;
+    $scope.cdc.supplier_city = $scope.dynamicPopover.supplier_details.city;
+    $scope.cdc.supplier_state = $scope.dynamicPopover.supplier_details.state;
+    $scope.cdc.supplier_pincode = $scope.dynamicPopover.supplier_details.pincode;
+    $scope.cdc.supplier_gstin = $scope.dynamicPopover.supplier_details.gstin;
+    $scope.cdc.supplier_phone1 = $scope.dynamicPopover.supplier_details.phone1;
+    $scope.cdc.supplier_phone2 = $scope.dynamicPopover.supplier_details.phone2;
+    $scope.cdc.supplier_email = $scope.dynamicPopover.supplier_details.email;
     $scope.popoverIsOpen = false;
     // angular.forEach($scope.agentkeymap, function (value, key) {
     //   if (value.idagent === $scope.cdc.supplier_details.idagent)
@@ -211,7 +221,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
   };
 
   $scope.showaddress = function () {
-    if ($scope.cdc.supplier_details === null)
+    if ($scope.cdc.supplier_id === null)
       return false;
     else
       return true;
@@ -312,7 +322,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
 
 
   $scope.getsuppliers = function (state) {
-    $scope.cdc.supplier_details = null;
+    $scope.cdc.supplier_id = null;
     $http({
       method: 'GET',
       url: '/api/supplier?allfeilds=1&department=' + $scope.cdc.department
@@ -390,7 +400,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
       return;
     }
 
-    if ($scope.cdc.supplier_details === null) {
+    if ($scope.cdc.supplier_id === null) {
       ngToast.create({
         className: 'warning',
         content: 'Please select Supplier... '
@@ -567,6 +577,31 @@ app.controller('cdcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibM
     window.print();
   }
 
+  $scope.canceldc = () => {
+    // TBD:add the cancelcdcmodal then a reason the update all the way down when model is closed
+    var answer = confirm("Cancel DC? WARNING!!! This cannot be undone.")
+    send_data = { status: 2 }
+    if (answer) {
+      $http({
+        method: 'PUT',
+        url: '/api/cdc/' + $scope.cdc.idcdc,
+        data: send_data
+      }).then(function successCallback(response) {
+        console.log(response);
+        ngToast.create('DC Cancelled....');
+        $scope.cdc.status = 'inactive'
+      },
+        function errorCallback(response) {
+          console.log(response);
+          var er = 'DC Cancel ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+          ngToast.create({
+            className: 'danger',
+            content: er
+          });
+        });
+    }
+  }
+
 });
 
 app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'colour', 'dialist', 'index', function colourdetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, colour, dialist, index) {
@@ -676,6 +711,131 @@ app.controller('newpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
 
 app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', function viewclothdcCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource) {
   $scope.tabselect3();
+
+  $scope.grand_total_weight = arr => arr.reduce((a, b) => a + $scope.total(b.dialist, 'weight', 3), 0);
+  $scope.displayedCollection = [];
+  $scope.rowCollection = [];
+  $scope.itemsByPage = 75;
+  $scope.showall = false;
+  $scope.showpagination = true;
+  $scope.hidelist = false;
+  $scope.updateItemsByPage = function () {
+    if ($scope.showall == true) {
+      $scope.showpagination = false;
+      $scope.itemsByPage = $scope.rowCollection.length;
+    }
+  }
+  $scope.ds = function (a) {
+    var b = new Date(a);
+    return b.toString('dd.MM.yyyy');
+  }
+
+
+
+  $scope.getters = {
+    dc_number: function (value) {
+      //this will sort by the length of the first name string
+      return value.naming_series + Array(value.dc_no_length - String(value.dc_number).length + 1).join('0') + value.dc_number;
+    }
+  }
+
+  $http({
+    method: 'GET',
+    url: '/api/cdc'
+  }).then(function successCallback(response) {
+    $scope.rowCollection = [].concat(response.data);
+    console.log(response);
+    $scope.displayedCollection = [].concat($scope.rowCollection);
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
+
+  single_cdc_loading = false;
+  $scope.open = function (item) {
+
+    if (single_cdc_loading) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please wait loading... '
+      });
+      return;
+    }
+    single_cdc_loading = true;
+    $http({
+      method: 'GET',
+      url: '/api/cdc?id=' + item.idcdc
+    }).then(function successCallback(response) {
+      console.log(response);
+      $scope.cdc = response.data[0];
+      temp_items = {}
+      $scope.cdc.items.forEach(element => {
+        if (!temp_items[element.cdc_colour_index]) {
+          temp_items[element.cdc_colour_index] = {}
+          temp_items[element.cdc_colour_index].colour = element.colour;
+          temp_items[element.cdc_colour_index].dialist = [];
+        }
+        temp_items[element.cdc_colour_index].dialist.push({ dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
+      });
+      cdc_colour_index_list = Object.keys(temp_items).sort();
+      $scope.cdc.items = [];
+      cdc_colour_index_list.forEach(x => {
+        $scope.cdc.items.push(temp_items[x]);
+      });
+      $scope.hidelist = true;
+      var modalInstance = $uibModal.open({
+        animation: true,
+        templateUrl: './html/cdcmodal.html',
+        controller: 'cdcmodalCtrl',
+        size: 'xl',
+        windowTopClass: 'hidden-print',
+        resolve: {
+          cdc: function () {
+            return $scope.cdc;
+          }
+        }
+      });
+
+      modalInstance.result.then(function (generated) {
+
+      }, function (ret) {
+
+        console.log('Modal dismissed at: ' + new Date(), ret);
+
+      });
+
+      $scope.$on("modalClosing", function (event, ret) {
+        console.log('inside modalClosing event', ret);
+
+        $scope.cdc = {};
+        single_cdc_loading = false;
+        $scope.hidelist = false;
+
+      });
+
+
+
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'Single cdc fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+        single_cdc_loading = false;
+      });
+
+
+  }
+
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += item[key];
+    });
+    return parseFloat(total.toFixed(precision));
+  }
 
 
 }]);

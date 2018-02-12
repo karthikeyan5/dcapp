@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="supplierpopup.html">
     <div>
         <form>
-            <input class="form-control" id="supplierbox" type="text" ng-model="dynamicPopover.cdc.supplier_details" uib-typeahead="item as item.name for item in supplierlist | filter:$viewValue | limitTo:25" typeahead-template-url="customTemplate.html" placeholder="Enter Supplier Name / id" autofocus typeahead-on-select="setsupplier()" required autocomplete="off" typeahead-editable="false" typeahead-focus-on-select = "false" typeahead-min-length="0" ng-blur="popoverIsOpen = false">
+            <input class="form-control" id="supplierbox" type="text" ng-model="dynamicPopover.supplier_details" uib-typeahead="item as item.name for item in supplierlist | filter:$viewValue | limitTo:25" typeahead-template-url="customTemplate.html" placeholder="Enter Supplier Name / id" autofocus typeahead-on-select="setsupplier()" required autocomplete="off" typeahead-editable="false" typeahead-focus-on-select = "false" typeahead-min-length="0" ng-blur="popoverIsOpen = false">
         </form>        
         <script type="text/ng-template" id="customTemplate.html">
             <a style="cursor: pointer;">
@@ -59,15 +59,15 @@
                     popover-is-open="popoverIsOpen" ng-click="focussupplierbox()">
                     <div class="panel-body">
                         <address class="text-justified" ng-show="showaddress()">
-                            <strong class="text-capitalize">{{cdc.supplier_details.name.toLowerCase()}}</strong>,
-                            <small style="white-space: nowrap;">(id = {{cdc.supplier_details.id}})</small>
-                            <span ng-show="cdc.supplier_details.address1">
-                                <br>{{cdc.supplier_details.address1}},</span>
-                            <span ng-show="cdc.supplier_details.address2">
-                                <br>{{cdc.supplier_details.address2}},</span>
-                            <br> {{cdc.supplier_details.city + ", "}} {{cdc.supplier_details.state}}{{cdc.supplier_details.pincode?"
-                            - "+cdc.supplier_details.pincode+".":".";}}
-                            <br> {{cdc.supplier_details.gstin? "GSTIN: "+cdc.supplier_details.gstin:"";}}
+                            <strong class="text-capitalize">{{cdc.supplier_name.toLowerCase()}}</strong>,
+                            <small style="white-space: nowrap;">(id = {{cdc.supplier_id}})</small>
+                            <span ng-show="cdc.supplier_address1">
+                                <br>{{cdc.supplier_address1}},</span>
+                            <span ng-show="cdc.supplier_address2">
+                                <br>{{cdc.supplier_address2}},</span>
+                            <br> {{cdc.supplier_city + ", "}} {{cdc.supplier_state}}{{cdc.supplier_pincode?"
+                            - "+cdc.supplier_pincode+".":".";}}
+                            <br> {{cdc.supplier_gstin? "GSTIN: "+cdc.supplier_gstin:"";}}
                         </address>
                         <div ng-show="!showaddress()">
                             <br>
@@ -142,13 +142,13 @@
                 </div>
                 <label for="vehicle_number" class="col-md-2 col-md-offset-2 control-label">Vehicle Number:</label>
                 <div class="col-md-2">
-                    <input autocomplete="false" required type="text" class="form-control" id="vehicle_number" placeholder="Vehicle Number" ng-model="cdc.vehicle_number">
+                    <input autocomplete="false" required type="text" maxlength="12" class="form-control" id="vehicle_number" placeholder="Vehicle Number" ng-model="cdc.vehicle_number">
                 </div>
             </div>
             <div class="form-group">
                 <label for="comment" class="col-md-2 control-label">DC Comments:</label>
                 <div class="col-md-8">
-                    <input autocomplete="false" type="text" class="form-control" id="comment" placeholder="Comments" ng-model="cdc.comment">
+                    <input autocomplete="false" type="text" maxlength="120" class="form-control" id="comment" placeholder="Comments" ng-model="cdc.comment">
                 </div>
             </div>
 
@@ -173,4 +173,4 @@
         </form>
     </div>
 </div>
-<ng-include src="'./html/print/cdcprint.html'" class="visible-print-block" ng-show="cdc.dc_number"></ng-include>
+<ng-include src="'./html/print/cdcprint.html'" class="visible-print-block" ng-if="cdc.dc_number && cdc.items && cdc.items.length > 0"></ng-include>
