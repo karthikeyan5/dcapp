@@ -392,6 +392,47 @@ module.exports = {
         })
 
     },
+    item: function (req, res) {
+        // params: id,naming_series, uid, status('active','inactive')
+        q = 'SELECT * from iteminfo WHERE 1=1 ';
+        d = [];
+        q_where = '';
+
+        param_equal_list = ["id", "naming_series", "uid"];
+        param_equal_list.forEach(function (param) {
+            if (req.param(param) != undefined) {
+                q_where = q_where.concat(" AND iteminfo.", param, " = ? ");
+                d.push(req.param(param));
+            }
+        });
+
+        if (req.param('status') == 'active' || req.param('status') == 'inactive') {
+            q_where = q_where.concat(" AND iteminfo.status = ? ");
+            d.push(req.param('status'));
+        }
+        q = q.concat(q_where);
+
+        Dc.query(q, d, function (err, results) {
+            if (err) return res.serverError(err);
+            else {
+                temp = {}
+                temp.items = results;
+                Dc.query('SELECT sizerange.* FROM sizerange,(SELECT DISTINCT sizerange FROM iteminfo WHERE 1 = 1 ' + q_where + ') as iteminfo WHERE sizerange.idsize = iteminfo.sizerange;', d, function (err, results) {
+                    if (err) return res.serverError(err);
+                    else {
+                        temp.sizerange = results;
+                        Dc.query('SELECT sizetype.* FROM sizetype,(SELECT DISTINCT idsizetype FROM iteminfo,sizerange WHERE sizerange.idsize = iteminfo.sizerange ' + q_where + ') as sizerange WHERE sizerange.idsizetype = sizetype.id;', d, function (err, results) {
+                            if (err) return res.serverError(err);
+                            else {      
+                                temp.sizetype = results;
+                                return res.ok(temp);
+                            }
+                        })
+                    }
+                });
+            }
+        });
+    },
 
 
     test: function (req, res) {

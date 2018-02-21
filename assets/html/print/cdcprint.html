@@ -65,7 +65,7 @@
             </div>
             <div class="row" style="border-bottom:1px solid #ddd; ">
                 <div class="col-xs-5 text-right" style=" padding-right: 4px; padding-left:0px;">DC No.:</div>
-                <div class="col-xs-7" style="padding-left:0px;" ng-if="cdc.status == 'active'">
+                <div class="col-xs-7" style="padding-left:0px;" ng-if="cdc.status != 'inactive'">
                     <small>{{cdc.naming_series + " "}}</small>
                     <strong>{{ cdc.dc_number | minLength:cdc.dc_no_length }}</strong>
                 </div>

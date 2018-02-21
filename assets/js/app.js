@@ -171,11 +171,11 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
   });
 
   window.onbeforeunload = function () {
-    return $scope.cdc.items.length > 0 ? "If you leave this page you will lose your unsaved changes." : null;
+    return $scope.cdc.items.length > 0 && !$scope.cdc.dc_number? "If you leave this page you will lose your unsaved changes." : null;
   }
   $scope.$on('$locationChangeStart', function (event) {
 
-    if ($scope.cdc.items.length > 0) {
+    if ($scope.cdc.items.length > 0 && !$scope.cdc.dc_number) {
       var answer = confirm("If you leave this page you will lose your unsaved changes.")
       if (!answer) {
         event.preventDefault();
@@ -404,6 +404,14 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
       ngToast.create({
         className: 'warning',
         content: 'Please select Supplier... '
+      });
+      return;
+    }
+
+    if ($scope.cdc.dc_date === undefined) {
+      ngToast.create({
+        className: 'warning',
+        content: 'invalid DC Date... '
       });
       return;
     }
