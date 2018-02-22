@@ -210,7 +210,17 @@ module.exports = {
         });
     },
     department: function (req, res) {
-        Dc.query('SELECT id,name FROM department;', function (err, results) {
+        q = 'SELECT id,name FROM department ';
+        d = [];
+
+        if (req.param("dept_type") != undefined) {
+            q = q.concat(" WHERE dept_type = ? ");
+            dept_type = isNaN(parseInt(req.param("dept_type")))?req.param("dept_type"):parseInt(req.param("dept_type"));
+            d.push(dept_type);
+        }
+        q = q.concat(";");
+
+        Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
             return res.ok(results);
         });

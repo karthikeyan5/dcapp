@@ -22,7 +22,7 @@
                     <p class="form-control">{{cdc.lot_number}}</p>
                 </div>
                 <label for="p1in" class="col-md-2 col-md-offset-1 control-label">DC No:</label>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <p class="form-control"  ng-if="cdc.status != 'inactive'">{{cdc.naming_series}}
                         <span ng-if="cdc.dc_number">{{ cdc.dc_number | minLength:cdc.dc_no_length }}</span>
                     </p>

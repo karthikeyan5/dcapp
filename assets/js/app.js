@@ -171,7 +171,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
   });
 
   window.onbeforeunload = function () {
-    return $scope.cdc.items.length > 0 && !$scope.cdc.dc_number? "If you leave this page you will lose your unsaved changes." : null;
+    return $scope.cdc.items.length > 0 && !$scope.cdc.dc_number ? "If you leave this page you will lose your unsaved changes." : null;
   }
   $scope.$on('$locationChangeStart', function (event) {
 
@@ -306,7 +306,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
 
   $http({
     method: 'GET',
-    url: '/api/department'
+    url: '/api/department?dept_type=1'
   }).then(function successCallback(response) {
     $scope.departmentlist = response.data;
     console.log(response);
@@ -323,6 +323,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
 
   $scope.getsuppliers = function (state) {
     $scope.cdc.supplier_id = null;
+    $scope.supplierlist = [];
     $http({
       method: 'GET',
       url: '/api/supplier?allfeilds=1&department=' + $scope.cdc.department

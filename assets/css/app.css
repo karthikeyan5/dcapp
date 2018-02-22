@@ -161,3 +161,12 @@ td[contentEditable]:focus {
   background-color: #000;
   color: #fff;
 }
+
+#loading-bar .bar {
+    height: 6px !important;
+    background: rgb(95, 196, 255);
+  }
+  
+  #loading-bar .peg {
+    height: 6px !important;
+  }
