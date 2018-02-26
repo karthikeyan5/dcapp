@@ -23,7 +23,7 @@
                 </div>
                 <label for="p1in" class="col-md-2 col-md-offset-1 control-label">DC No:</label>
                 <div class="col-md-3">
-                    <p class="form-control"  ng-if="cdc.status != 'inactive'">{{cdc.naming_series}}
+                    <p class="form-control" ng-if="cdc.status != 'inactive'">{{cdc.naming_series}}
                         <span ng-if="cdc.dc_number">{{ cdc.dc_number | minLength:cdc.dc_no_length }}</span>
                     </p>
                     <p class="form-control" style="text-decoration: line-through;" ng-if="cdc.status == 'inactive'">{{cdc.naming_series}}
@@ -94,7 +94,13 @@
                     </tr>
                 </table>
                 <div class="form-group">
-                    <label for="rateperkg" class="col-md-2 control-label">Rate of goods per kg:</label>
+                    <label class="col-md-3 control-label">Estimated value of Goods:</label>
+                    <div class="col-md-2">
+                        <p class="form-control">{{grand_total_weight(cdc.items)*cdc.rateperkg|INR}}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="rateperkg" class="col-md-3 control-label">Rate of goods per kg:</label>
                     <div class="col-md-2">
                         <p class="form-control" id="rateperkg">{{cdc.rateperkg}}</p>
                     </div>
@@ -104,7 +110,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="comment" class="col-md-2 control-label">DC Comments:</label>
+                    <label for="comment" class="col-md-3 control-label">DC Comments:</label>
                     <div class="col-md-8">
                         <p class="form-control" id="comment">{{cdc.comment}}</p>
                     </div>

@@ -536,6 +536,7 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
 
 app.controller('cdcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibModal, cdc, ngToast, $rootScope) {
   $scope.cdc = cdc;
+  $scope.grand_total_weight = arr => arr.reduce((a, b) => a + $scope.total(b.dialist, 'weight', 3), 0);
   if ($scope.cdc.dc_number) $scope.disablesave = true;
   else $scope.disablesave = false;
 
@@ -697,12 +698,12 @@ app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 
 
   hotkeys.bindTo($scope)
     .add({
-      combo: 'ctrl+s',
+      combo: 'ctrl+d',
       description: 'Save Current Dia Details',
       allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
       callback: function (event, hotkey) {
         event.preventDefault();
-        console.log('ctrl+s');
+        console.log('ctrl+d');
         $scope.ok();
       }
     });
@@ -711,12 +712,522 @@ app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 
 
 
 
-app.controller('newpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', function newpiecesdcCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource) {
+app.controller('newpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', '$route', function newpiecesdcCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource, $route) {
   $scope.tabselect2();
+  $scope.pdc = {};
+  $scope.currentSize = { size1: 'size 1', size2: 'size 2', size3: 'size 3', size4: 'size 4', size5: 'size 5', size6: 'size 6', size7: 'size 7', size8: 'size 8', size9: 'size 9', size10: 'size 10' };
+  $scope.sizestate = [true, true, true, true, true, true, true, true, true, true];
+  $scope.pdc.items = [];
+  $scope.pdc.naming_series = "SDDC-1718-";
+  $scope.pdc.supplier_id = null;
+  $scope.dynamicPopover = [];
+  $scope.dynamicPopover.templateUrl = "supplierpopup.html";
+  $scope.newitem = {};
+
+  $scope.$on('$viewContentLoaded', function () {
+    setTimeout(function () {
+      console.log("yeah!!!");
+      document.getElementById("department").focus();
+    }, 100);
+  });
+
+  window.onbeforeunload = function () {
+    return $scope.pdc.items.length > 0 && !$scope.pdc.dc_number ? "If you leave this page you will lose your unsaved changes." : null;
+  }
+  $scope.$on('$locationChangeStart', function (event) {
+
+    if ($scope.pdc.items.length > 0 && !$scope.pdc.dc_number) {
+      var answer = confirm("If you leave this page you will lose your unsaved changes.")
+      if (!answer) {
+        event.preventDefault();
+      }
+    }
+    // return $scope.pdc.items.length > 0 ? "If you leave this page you will lose your unsaved changes." : null;
+  });
+
+  $scope.setsupplier = function () {
+    $scope.pdc.supplier_id = $scope.dynamicPopover.supplier_details.id;
+    $scope.pdc.supplier_name = $scope.dynamicPopover.supplier_details.name;
+    $scope.pdc.supplier_address1 = $scope.dynamicPopover.supplier_details.address1;
+    $scope.pdc.supplier_address2 = $scope.dynamicPopover.supplier_details.address2;
+    $scope.pdc.supplier_city = $scope.dynamicPopover.supplier_details.city;
+    $scope.pdc.supplier_state = $scope.dynamicPopover.supplier_details.state;
+    $scope.pdc.supplier_pincode = $scope.dynamicPopover.supplier_details.pincode;
+    $scope.pdc.supplier_gstin = $scope.dynamicPopover.supplier_details.gstin;
+    $scope.pdc.supplier_phone1 = $scope.dynamicPopover.supplier_details.phone1;
+    $scope.pdc.supplier_phone2 = $scope.dynamicPopover.supplier_details.phone2;
+    $scope.pdc.supplier_email = $scope.dynamicPopover.supplier_details.email;
+    $scope.popoverIsOpen = false;
+    // a = findPos(document.getElementById("c1olour"));
+    // $('html, body').animate({ scrollTop: a - 400 }, 'slow');
+    // document.getElementById("c1olour").focus();
+  };
+
+  $scope.focussuppliername = function (event1) {
+    event1.preventDefault()
+    //console.log("in focuspartyname()");
+    // $scope.popoverIsOpen = !$scope.popoverIsOpen;
+    $scope.popoverIsOpen = true;
+    //document.getElementById("date").focus();
+    //  setTimeout(function(){ document.getElementById("supplierbox").focus();},100);//10ms find a permant solution
+    $scope.focussupplierbox();
+  };
+
+  $scope.focussupplierbox = function () {
+    setTimeout(function () { document.getElementById("supplierbox").focus(); document.getElementById("supplierbox").select(); }, 100);
+  };
+
+  $scope.showaddress = function () {
+    if ($scope.pdc.supplier_id === null)
+      return false;
+    else
+      return true;
+  };
+
+  // $scope.grand_total_weight = arr => arr.reduce((a, b) => a + $scope.total(b.dialist, 'weight', 3), 0)
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += item[key];
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+
+  $http({
+    method: 'GET',
+    url: '/api/department?dept_type=2'
+  }).then(function successCallback(response) {
+    $scope.departmentlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'Department list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+  $scope.getsuppliers = function (state) {
+    $scope.pdc.supplier_id = null;
+    $scope.supplierlist = [];
+    $http({
+      method: 'GET',
+      url: '/api/supplier?allfeilds=1&department=' + $scope.pdc.department
+    }).then(function successCallback(response) {
+      $scope.supplierlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+      });
+
+  }
+
+  $scope.cleardc = () => {
+    $route.reload();
+  }
+
+  $http({
+    method: 'GET',
+    url: '/api/item?itemstatus=active'
+  }).then(function successCallback(response) {
+    console.log(response);
+    $scope.itemlist = [];
+    $scope.sizerangelist = response.data.sizerange;
+    $scope.sizetypelist = response.data.sizetype;
+    angular.forEach(response.data.items, function (value, key) {
+      var temp = { naming_series: value.naming_series, name: value.name, id: value.id, sizerange: value.sizerange };
+      this.push(temp);
+    }, $scope.itemlist);
+  }, function errorCallback(response) {
+    console.log(response);
+  });
+
+
+  $scope.setnameid = function () {
+    $scope.newitem = {};
+    $scope.pdc.itemname = $scope.newitemdetails ? $scope.newitemdetails.name : undefined;
+    $scope.pdc.iditem = $scope.newitemdetails ? $scope.newitemdetails.id : undefined;
+    $scope.pdc.item_naming_series = $scope.newitemdetails ? $scope.newitemdetails.naming_series : undefined;
+
+    if (!$scope.newitemdetails) {
+      return;
+    }
+
+
+    if ($scope.idsizerange && $scope.idsizerange != $scope.newitemdetails.sizerange && $scope.pdc.items.length > 0) {
+      var answer = confirm("Size Mismatch....  Do you want to DELETE ALL item entries?")
+      if (!answer) {
+        event.preventDefault();
+        $scope.newitemdetails = undefined;
+        $scope.pdc.iditem = undefined;
+        $scope.pdc.itemname = undefined;
+        return;
+      }
+      else {
+        $scope.pdc.items = [];
+      }
+    }
+
+    angular.forEach($scope.sizerangelist, function (value, key) {
+      if ($scope.newitemdetails.sizerange == value.idsize) {
+        $scope.idsizetype = value.idsizetype;
+        $scope.sizerange = value;
+        var temp = [];
+        temp.push(value.size1 === 0 ? true : false);
+        temp.push(value.size2 === 0 ? true : false);
+        temp.push(value.size3 === 0 ? true : false);
+        temp.push(value.size4 === 0 ? true : false);
+        temp.push(value.size5 === 0 ? true : false);
+        temp.push(value.size6 === 0 ? true : false);
+        temp.push(value.size7 === 0 ? true : false);
+        temp.push(value.size8 === 0 ? true : false);
+        temp.push(value.size9 === 0 ? true : false);
+        temp.push(value.size10 === 0 ? true : false);
+        $scope.sizestate = temp;
+      }
+    }, $scope.sizestate);
+
+    angular.forEach($scope.sizetypelist, function (value, key) {
+      if ($scope.idsizetype == value.id) {
+        $scope.currentSize = value;
+        $scope.sizetype = value;
+      }
+    }, $scope.currentSize);
+
+
+    if (!$scope.idsizerange || $scope.pdc.items.length == 0) {
+      setTimeout(function () { $scope.focuspart() }, 100);
+    }
+    $scope.idsizerange = $scope.newitemdetails.sizerange;
+
+
+  };
+
+
+  $scope.focuspart = function () {
+    // console.log("heloooooinside", document.getElementById("partbox"));
+    a = findPos(document.getElementById("partbox"));
+    $('html, body').animate({ scrollTop: a - 400 }, 'slow');
+    document.getElementById("partbox").focus();
+  }
+
+
+  $scope.add = function (item) {
+    if ((($scope.newitem.size1 + $scope.newitem.size2 + $scope.newitem.size3 + $scope.newitem.size4 + $scope.newitem.size5 + $scope.newitem.size6 + $scope.newitem.size7 + $scope.newitem.size8 + $scope.newitem.size9 + $scope.newitem.size10) == 0)
+      && (($scope.newitem.wsize1 + $scope.newitem.wsize2 + $scope.newitem.wsize3 + $scope.newitem.wsize4 + $scope.newitem.wsize5 + $scope.newitem.wsize6 + $scope.newitem.wsize7 + $scope.newitem.wsize8 + $scope.newitem.wsize9 + $scope.newitem.wsize10) == 0)) {
+      ngToast.create({
+        className: 'danger',
+        content: 'Empty !!! Item not added...<br>Please try again...'
+      });
+      return;
+    }
+
+    if (item.index == undefined) {
+      $scope.pdc.items.push(item);
+      ngToast.create({
+        className: 'success',
+        content: 'Item added...'
+      });
+    }
+    else {
+      index_temp = item.index;
+      $scope.pdc.items[index_temp] = item;
+      ngToast.create({
+        className: 'success',
+        content: 'Item Updated...'
+      });
+    }
+
+    $scope.clearnewitem();
+  }
+
+  $scope.clearnewitem = function () {
+    $scope.newitem = { "size1": 0, "wsize1": 0, "size2": 0, "wsize2": 0, "size3": 0, "wsize3": 0, "size4": 0, "wsize4": 0, "size5": 0, "wsize5": 0, "size6": 0, "wsize6": 0, "size7": 0, "wsize7": 0, "size8": 0, "wsize8": 0, "size9": 0, "wsize9": 0, "size10": 0, "wsize10": 0, "part": undefined, "colour": undefined, "comment": undefined };
+    setTimeout(function () { $scope.focuspart() }, 100);
+  }
+
+  $scope.remove = function (collection, index) {
+    collection.splice(index, 1);
+    ngToast.create({
+      className: 'danger',
+      content: 'Deleted... '//undo
+    });
+  }
+
+  $scope.edit = function (collection, index) {
+    angular.copy(collection[index], $scope.newitem);
+    $scope.newitem.index = index;
+  }
+
+
+  var opendcmodal = function (pdc) {
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: './html/pdcmodal.html',
+      controller: 'pdcmodalCtrl',
+      size: 'xl',
+      windowTopClass: 'hidden-print',
+      resolve: {
+        pdc: function () {
+          return pdc;
+        },
+        sizetype: function () {
+          return $scope.sizetype;
+        },
+        sizerange: function () {
+          return $scope.sizerange;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (ret) {
+      console.log(ret);
+
+
+    }, function (ret) {
+      console.log('Modal dismissed at: ' + new Date(), ret);
+    });
+
+    $scope.$on("modalClosing", function (event, ret) {
+      console.log('inside modalClosing event', ret);
+
+      if (ret) {
+        $scope.cleardc();
+      }
+
+
+    });
+
+
+  }
+
+
+  $scope.savedc = () => {
+
+    if (!$scope.pdc.department) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select Department and Supplier... '
+      });
+      return;
+    }
+
+    if ($scope.pdc.supplier_id === null) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select Supplier... '
+      });
+      return;
+    }
+
+    if ($scope.pdc.dc_date === undefined) {
+      ngToast.create({
+        className: 'warning',
+        content: 'invalid DC Date... '
+      });
+      return;
+    }
+
+    if ($scope.pdc.items.length < 1) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Nothing to Deliver?... '
+      });
+      return;
+    }
+
+    $scope.pdc.department_name = $scope.departmentlist.filter(item => item.id == $scope.pdc.department)[0].name;
+
+    opendcmodal($scope.pdc);
+
+
+  }
+
+
+
+
+
+
+  // datepicker stuff - to be decoded later
+  $scope.today = function () {
+    $scope.pdc.dc_date = new Date();
+  };
+  $scope.today();
+
+  $scope.clear = function () {
+    $scope.pdc.dc_date = null;
+  };
+
+  $scope.inlineOptions = {
+    customClass: getDayClass,
+    minDate: new Date(),
+    showWeeks: true
+  };
+
+  $scope.dateOptions = {
+    dateDisabled: disabled,
+    formatYear: 'yy',
+    maxDate: new Date(2020, 5, 22),
+    minDate: new Date(),
+    startingDay: 1
+  };
+
+  // Disable weekend selection
+  function disabled(data) {
+    var date = data.date,
+      mode = data.mode;
+    //return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    return false;
+  }
+
+  $scope.toggleMin = function () {
+    $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+    $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+  };
+
+  $scope.toggleMin();
+
+  $scope.open1 = function () {
+    $scope.popup1.opened = true;
+  };
+
+  $scope.open2 = function () {
+    $scope.popup2.opened = true;
+  };
+
+  $scope.setDate = function (year, month, day) {
+    $scope.pdc.dc_date = new Date(year, month, day);
+  };
+
+  $scope.altInputFormats = ['d!.M!.yyyy', 'd!.M!.yy', 'd!/M!/yyyy', 'd!/M!/yy'];//,'d!.M!','d!.M!.yy'];
+
+  $scope.popup1 = {
+    opened: false
+  };
+
+  $scope.popup2 = {
+    opened: false
+  };
+
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  var afterTomorrow = new Date();
+  afterTomorrow.setDate(tomorrow.getDate() + 1);
+  $scope.events = [
+    {
+      date: tomorrow,
+      status: 'full'
+    },
+    {
+      date: afterTomorrow,
+      status: 'partially'
+    }
+  ];
+
+  function getDayClass(data) {
+    var date = data.date,
+      mode = data.mode;
+    if (mode === 'day') {
+      var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
+
+      for (var i = 0; i < $scope.events.length; i++) {
+        var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
+
+        if (dayToCheck === currentDay) {
+          return $scope.events[i].status;
+        }
+      }
+    }
+
+    return '';
+  }
 
 
 }]);
 
+app.controller('pdcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibModal, pdc, sizerange, sizetype, ngToast, $rootScope) {
+  $scope.pdc = pdc;
+  $scope.sizerange = sizerange;
+  $scope.sizetype = sizetype;
+  if ($scope.pdc.dc_number) $scope.disablesave = true;
+  else $scope.disablesave = false;
+
+
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += item[key];
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+
+
+  $scope.save = () => {
+    $scope.disablesave = true;
+    $http({
+      method: 'POST',
+      url: '/api/pdc',
+      data: $scope.pdc
+    }).then(function successCallback(response) {
+      console.log(response);
+      ngToast.create('DC Details Saved.');
+      $scope.pdc.dc_number = response.data.dc.dc_number;
+      $scope.pdc.dc_no_length = response.data.dc.length;
+      setTimeout(function () { $scope.print(); }, 800);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        $scope.disablesave = false;
+        var er = 'ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+  }
+
+
+  $scope.$on("modal.closing", function () {
+    $rootScope.$broadcast("modalClosing", $scope.pdc.dc_number ? $scope.pdc.dc_number : undefined);
+  });
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  }
+
+  $scope.print = function () {
+    window.print();
+  }
+
+  $scope.canceldc = () => {
+    // TBD:add the cancelpdcmodal then a reason the update all the way down when model is closed
+    var answer = confirm("Cancel DC? WARNING!!! This cannot be undone.")
+    send_data = { status: 2 }
+    if (answer) {
+      $http({
+        method: 'PUT',
+        url: '/api/pdc/' + $scope.pdc.idpdc,
+        data: send_data
+      }).then(function successCallback(response) {
+        console.log(response);
+        ngToast.create('DC Cancelled....');
+        $scope.pdc.status = 'inactive'
+      },
+        function errorCallback(response) {
+          console.log(response);
+          var er = 'DC Cancel ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+          ngToast.create({
+            className: 'danger',
+            content: er
+          });
+        });
+    }
+  }
+
+});
 
 app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', function viewclothdcCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource) {
   $scope.tabselect3();
@@ -852,6 +1363,139 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
 
 app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', function viewpiecesdcCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource) {
   $scope.tabselect4();
+  $scope.displayedCollection = [];
+  $scope.rowCollection = [];
+  $scope.itemsByPage = 75;
+  $scope.showall = false;
+  $scope.showpagination = true;
+  $scope.hidelist = false;
+  $scope.updateItemsByPage = function () {
+    if ($scope.showall == true) {
+      $scope.showpagination = false;
+      $scope.itemsByPage = $scope.rowCollection.length;
+    }
+  }
+  $scope.ds = function (a) {
+    var b = new Date(a);
+    return b.toString('dd.MM.yyyy');
+  }
+
+
+
+  $scope.getters = {
+    dc_number: function (value) {
+      //this will sort by the length of the first name string
+      return value.naming_series + Array(value.dc_no_length - String(value.dc_number).length + 1).join('0') + value.dc_number;
+    }
+  }
+
+  $http({
+    method: 'GET',
+    url: '/api/pdc'
+  }).then(function successCallback(response) {
+    $scope.rowCollection = [].concat(response.data);
+    console.log(response);
+    $scope.displayedCollection = [].concat($scope.rowCollection);
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
+
+  single_pdc_loading = false;
+  $scope.open = function (item) {
+
+    if (single_pdc_loading) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please wait loading... '
+      });
+      return;
+    }
+    single_pdc_loading = true;
+    $http({
+      method: 'GET',
+      url: '/api/pdc?id=' + item.idpdc
+    }).then(function successCallback(response) {
+      console.log(response);
+      $scope.pdc = response.data[0];
+      $scope.sizerange = $scope.pdc.sizerange[0];
+      $scope.sizetype = $scope.pdc.sizetype[0];
+
+      // temp_items = {}
+      // $scope.pdc.items.forEach(element => {
+      //   if (!temp_items[element.pdc_colour_index]) {
+      //     temp_items[element.pdc_colour_index] = {}
+      //     temp_items[element.pdc_colour_index].colour = element.colour;
+      //     temp_items[element.pdc_colour_index].dialist = [];
+      //   }
+      //   temp_items[element.pdc_colour_index].dialist.push({ dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
+      // });
+      // pdc_colour_index_list = Object.keys(temp_items).sort();
+      // $scope.pdc.items = [];
+      // pdc_colour_index_list.forEach(x => {
+      //   $scope.pdc.items.push(temp_items[x]);
+      // });
+      $scope.hidelist = true;
+      var modalInstance = $uibModal.open({
+        animation: true,
+        templateUrl: './html/pdcmodal.html',
+        controller: 'pdcmodalCtrl',
+        size: 'xl',
+        windowTopClass: 'hidden-print',
+        resolve: {
+          pdc: function () {
+            return $scope.pdc;
+          },
+          sizerange: function () {
+            return $scope.sizerange;
+          },
+          sizetype: function () {
+            return $scope.sizetype;
+          }
+        }
+      });
+
+      modalInstance.result.then(function (generated) {
+
+      }, function (ret) {
+
+        console.log('Modal dismissed at: ' + new Date(), ret);
+
+      });
+
+      $scope.$on("modalClosing", function (event, ret) {
+        console.log('inside modalClosing event', ret);
+
+        $scope.pdc = {};
+        single_pdc_loading = false;
+        $scope.hidelist = false;
+
+      });
+
+
+
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'Single pdc fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+        single_pdc_loading = false;
+      });
+
+
+  }
+
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += item[key];
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+
 
 
 }]);

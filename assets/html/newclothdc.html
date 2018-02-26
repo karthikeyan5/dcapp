@@ -16,7 +16,7 @@
 <div style="padding-top: 10px;padding-bottom: 10px;" class="hidden-print">
     <!-- {{cdc | json}} -->
     <legend>Cloth Delivery Challan</legend>
- 
+
     <form id="form1" class="form-horizontal" autocomplete="off" ng-submit="savedc()">
         <div class="form-group">
             <label for="department" class="col-md-2 control-label">D.C. Type (Department):</label>
@@ -65,8 +65,7 @@
                                 <br>{{cdc.supplier_address1}},</span>
                             <span ng-show="cdc.supplier_address2">
                                 <br>{{cdc.supplier_address2}},</span>
-                            <br> {{cdc.supplier_city + ", "}} {{cdc.supplier_state}}{{cdc.supplier_pincode?"
-                            - "+cdc.supplier_pincode+".":".";}}
+                            <br> {{cdc.supplier_city + ", "}} {{cdc.supplier_state}}{{cdc.supplier_pincode?" - "+cdc.supplier_pincode+".":".";}}
                             <br> {{cdc.supplier_gstin? "GSTIN: "+cdc.supplier_gstin:"";}}
                         </address>
                         <div ng-show="!showaddress()">
@@ -136,17 +135,25 @@
                 </tr>
             </table>
             <div class="form-group">
-                <label for="rateperkg" class="col-md-2 control-label">Rate of goods per kg:</label>
+                <label class="col-md-3 control-label">Estimated value of Goods:</label>
                 <div class="col-md-2">
-                    <input autocomplete="false" required type="number"  min="0" step="0.01" class="form-control" id="rateperkg" placeholder="rate" ng-model="cdc.rateperkg">
-                </div>
-                <label for="vehicle_number" class="col-md-2 col-md-offset-2 control-label">Vehicle Number:</label>
-                <div class="col-md-2">
-                    <input autocomplete="false" required type="text" maxlength="12" class="form-control" id="vehicle_number" placeholder="Vehicle Number" ng-model="cdc.vehicle_number">
+                    <p readonly class="form-control">{{grand_total_weight(cdc.items)*cdc.rateperkg|INR}}</p>
                 </div>
             </div>
             <div class="form-group">
-                <label for="comment" class="col-md-2 control-label">DC Comments:</label>
+                <label for="rateperkg" class="col-md-3 control-label">Rate of goods per kg:</label>
+                <div class="col-md-2">
+                    <input autocomplete="false" required type="number" min="0" step="0.01" class="form-control" id="rateperkg" placeholder="rate"
+                        ng-model="cdc.rateperkg">
+                </div>
+                <label for="vehicle_number" class="col-md-2 col-md-offset-2 control-label">Vehicle Number:</label>
+                <div class="col-md-2">
+                    <input autocomplete="false" required type="text" maxlength="12" class="form-control" id="vehicle_number" placeholder="Vehicle Number"
+                        ng-model="cdc.vehicle_number">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="comment" class="col-md-3 control-label">DC Comments:</label>
                 <div class="col-md-8">
                     <input autocomplete="false" type="text" maxlength="120" class="form-control" id="comment" placeholder="Comments" ng-model="cdc.comment">
                 </div>
@@ -154,11 +161,11 @@
 
 
         </div>
-        <input class="btn btn-success pull-right" type="submit" ng-click="" value="Save DC" style="Display:inline-block;"> 
+        <input class="btn btn-success pull-right" type="submit" ng-click="" value="Save DC" style="Display:inline-block;">
         <!-- data-toggle="tooltip" title="Ctrl + S"> -->
-        <input class="btn btn-danger " type="button" ng-click="cleardc()" value="Clear DC" tabindex="-1" style="Display:inline-block;">    
+        <input class="btn btn-danger " type="button" ng-click="cleardc()" value="Clear DC" tabindex="-1" style="Display:inline-block;">
     </form>
-   
+
     <div style="padding-top: 10px;padding-bottom: 10px;">
         <form class="form-horizontal" autocomplete="off" ng-submit="add(newcolour)">
             <div class="form-group">

@@ -1,0 +1,278 @@
+<div class="modal-header hidden-print">
+    <h3 class="text-center">Cloth Delivery Challan</h3>
+</div>
+
+<div style="padding: 10px;" class="hidden-print">
+    <div style="padding-top: 10px;padding-bottom: 10px;">
+        <!-- {{pdc | json}} -->
+        <form id="form1" class="form-horizontal" autocomplete="off">
+            <div class="form-group">
+                <label for="department" class="col-md-2 control-label">D.C. Type (Department):</label>
+                <div class="col-md-3">
+                    <p class="form-control">{{pdc.department_name}}</p>
+                </div>
+                <label for="datebox" class="col-md-2 col-md-offset-1 control-label">DC Date:</label>
+                <div class="col-md-2">
+                    <p class="form-control">{{pdc.dc_date | date:'dd.MM.yyyy'}}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="n1ame" class="col-md-2 control-label">Lot Number:</label>
+                <div class="col-md-3">
+                    <p class="form-control">{{pdc.lot_number}}</p>
+                </div>
+                <label for="p1in" class="col-md-2 col-md-offset-1 control-label">DC No:</label>
+                <div class="col-md-3">
+                    <p class="form-control" ng-if="pdc.status != 'inactive'">{{pdc.naming_series}}
+                        <span ng-if="pdc.dc_number">{{ pdc.dc_number | minLength:pdc.dc_no_length }}</span>
+                    </p>
+                    <p class="form-control" style="text-decoration: line-through;" ng-if="pdc.status == 'inactive'">{{pdc.naming_series}}
+                        <span ng-if="pdc.dc_number">{{ pdc.dc_number | minLength:pdc.dc_no_length }}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="addressss" class="col-md-2 control-label">Supplier name:</label>
+                <div class="col-md-4 col-md-offset-0 panel panel-default">
+                    <div class="panel-body">
+                        <address class="text-justified">
+                            <strong class="text-capitalize">{{pdc.supplier_name.toLowerCase()}}</strong>,
+                            <small style="white-space: nowrap;">(id = {{pdc.supplier_id}})</small>
+                            <span ng-show="pdc.supplier_address1">
+                                <br>{{pdc.supplier_address1}},</span>
+                            <span ng-show="pdc.supplier_address2">
+                                <br>{{pdc.supplier_address2}},</span>
+                            <br> {{pdc.supplier_city + ", "}} {{pdc.supplier_state}}{{pdc.supplier_pincode?" - "+pdc.supplier_pincode+".":".";}}
+                            <br> {{pdc.supplier_gstin? "GSTIN: "+pdc.supplier_gstin:"";}}
+                        </address>
+                    </div>
+                </div>
+                <label for="p1in" class="col-md-2 control-label">Delivery Item:</label>
+                <div class="col-md-4">
+                    <p class="form-control">{{pdc.item_naming_series}} {{pdc.itemname}}</p>
+                </div>
+            </div>
+
+
+
+
+            <div ng-show="pdc.items.length > 0">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-center pshead">S.No</th>
+                            <th class="text-center pshead">Part</th>
+                            <th class="text-center pshead">Colour</th>
+                            <th class="text-center pshead">Comment</th>
+                            <td class="text-center pshead" style="white-space: nowrap;" ng-show="sizerange.size1===0?false:true">{{sizetype.size1}}</td>
+                            <td class="text-center pshead" style="white-space: nowrap;" ng-show="sizerange.size2===0?false:true">{{sizetype.size2}}</td>
+                            <td class="text-center pshead" style="white-space: nowrap;" ng-show="sizerange.size3===0?false:true">{{sizetype.size3}}</td>
+                            <td class="text-center pshead" style="white-space: nowrap;" ng-show="sizerange.size4===0?false:true">{{sizetype.size4}}</td>
+                            <td class="text-center pshead" style="white-space: nowrap;" ng-show="sizerange.size5===0?false:true">{{sizetype.size5}}</td>
+                            <td class="text-center pshead" style="white-space: nowrap;" ng-show="sizerange.size6===0?false:true">{{sizetype.size6}}</td>
+                            <td class="text-center pshead" style="white-space: nowrap;" ng-show="sizerange.size7===0?false:true">{{sizetype.size7}}</td>
+                            <td class="text-center pshead" style="white-space: nowrap;" ng-show="sizerange.size8===0?false:true">{{sizetype.size8}}</td>
+                            <td class="text-center pshead" style="white-space: nowrap;" ng-show="sizerange.size9===0?false:true">{{sizetype.size9}}</td>
+                            <td class="text-center pshead" style="white-space: nowrap;" ng-show="sizerange.size10===0?false:true">{{sizetype.size10}}</td>
+                            <th class="text-center pshead">
+                                <strong>Total</strong>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="row in pdc.items track by $index" class="repeated-item">
+                            <td class="psrow">{{$index + 1}}</td>
+                            <td class="text-capitalize psrow">{{row.part}}</td>
+                            <td class="text-capitalize psrow">{{row.colour}}</td>
+                            <td class="text-capitalize psrow">{{row.comment}}</td>
+                            <td class="text-center psrow" ng-show="sizerange.size1===0?false:true">
+                                <span ng-show="row.size1 != 0">{{row.size1}} Pcs
+                                    <br>
+                                </span>
+                                <small ng-show="row.wsize1 != 0" class="pull-right">({{row.wsize1 | number:3}} KG)</small>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size2===0?false:true">
+                                <span ng-show="row.size2 != 0">{{row.size2}} Pcs
+                                    <br>
+                                </span>
+                                <small ng-show="row.wsize2 != 0" class="pull-right">({{row.wsize2 | number:3}} KG)</small>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size3===0?false:true">
+                                <span ng-show="row.size3 != 0">{{row.size3}} Pcs
+                                    <br>
+                                </span>
+                                <small ng-show="row.wsize3 != 0" class="pull-right">({{row.wsize3 | number:3}} KG)</small>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size4===0?false:true">
+                                <span ng-show="row.size4 != 0">{{row.size4}} Pcs
+                                    <br>
+                                </span>
+                                <small ng-show="row.wsize4 != 0" class="pull-right">({{row.wsize4 | number:3}} KG)</small>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size5===0?false:true">
+                                <span ng-show="row.size5 != 0">{{row.size5}} Pcs
+                                    <br>
+                                </span>
+                                <small ng-show="row.wsize5 != 0" class="pull-right">({{row.wsize5 | number:3}} KG)</small>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size6===0?false:true">
+                                <span ng-show="row.size6 != 0">{{row.size6}} Pcs
+                                    <br>
+                                </span>
+                                <small ng-show="row.wsize6 != 0" class="pull-right">({{row.wsize6 | number:3}} KG)</small>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size7===0?false:true">
+                                <span ng-show="row.size7 != 0">{{row.size7}} Pcs
+                                    <br>
+                                </span>
+                                <small ng-show="row.wsize7 != 0" class="pull-right">({{row.wsize7 | number:3}} KG)</small>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size8===0?false:true">
+                                <span ng-show="row.size8 != 0">{{row.size8}} Pcs
+                                    <br>
+                                </span>
+                                <small ng-show="row.wsize8 != 0" class="pull-right">({{row.wsize8 | number:3}} KG)</small>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size9===0?false:true">
+                                <span ng-show="row.size9 != 0">{{row.size9}} Pcs
+                                    <br>
+                                </span>
+                                <small ng-show="row.wsize9 != 0" class="pull-right">({{row.wsize9 | number:3}} KG)</small>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size10===0?false:true">
+                                <span ng-show="row.size10 != 0">{{row.size10}} Pcs
+                                    <br>
+                                </span>
+                                <small ng-show="row.wsize10 != 0" class="pull-right">({{row.wsize10 | number:3}} KG)</small>
+                            </td>
+                            <td class="text-center psrow">
+                                <strong> {{row.size1+row.size2+row.size3+row.size4+row.size5+row.size6+row.size7+row.size8+row.size9+row.size10}}
+                                    Pcs
+                                    <br>
+                                    <small class="pull-right">({{(row.wsize1+row.wsize2+row.wsize3+row.wsize4+row.wsize5+row.wsize6+row.wsize7+row.wsize8+row.wsize9+row.wsize10)
+                                        | number:3}} KG)</small>
+                                </strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <strong class="pull-right">Total</strong>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size1===0?false:true">
+                                <strong>{{total(pdc.items,'size1',0)}} Pcs
+                                    <br>
+                                    <small class="pull-right">({{total(pdc.items,'wsize1',3)}} KG)</small>
+                                </strong>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size2===0?false:true">
+                                <strong>{{total(pdc.items,'size2',0)}} Pcs
+                                    <br>
+                                    <small class="pull-right">({{total(pdc.items,'wsize2',3)}} KG)</small>
+                                </strong>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size3===0?false:true">
+                                <strong>{{total(pdc.items,'size3',0)}} Pcs
+                                    <br>
+                                    <small class="pull-right">({{total(pdc.items,'wsize3',3)}} KG)</small>
+                                </strong>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size4===0?false:true">
+                                <strong>{{total(pdc.items,'size4',0)}} Pcs
+                                    <br>
+                                    <small class="pull-right">({{total(pdc.items,'wsize4',3)}} KG)</small>
+                                </strong>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size5===0?false:true">
+                                <strong>{{total(pdc.items,'size5',0)}} Pcs
+                                    <br>
+                                    <small class="pull-right">({{total(pdc.items,'wsize5',3)}} KG)</small>
+                                </strong>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size6===0?false:true">
+                                <strong>{{total(pdc.items,'size6',0)}} Pcs
+                                    <br>
+                                    <small class="pull-right">({{total(pdc.items,'wsize6',3)}} KG)</small>
+                                </strong>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size7===0?false:true">
+                                <strong>{{total(pdc.items,'size7',0)}} Pcs
+                                    <br>
+                                    <small class="pull-right">({{total(pdc.items,'wsize7',3)}} KG)</small>
+                                </strong>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size8===0?false:true">
+                                <strong>{{total(pdc.items,'size8',0)}} Pcs
+                                    <br>
+                                    <small class="pull-right">({{total(pdc.items,'wsize8',3)}} KG)</small>
+                                </strong>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size9===0?false:true">
+                                <strong>{{total(pdc.items,'size9',0)}} Pcs
+                                    <br>
+                                    <small class="pull-right">({{total(pdc.items,'wsize9',3)}} KG)</small>
+                                </strong>
+                            </td>
+                            <td class="text-center psrow" ng-show="sizerange.size10===0?false:true">
+                                <strong>{{total(pdc.items,'size10',0)}} Pcs
+                                    <br>
+                                    <small class="pull-right">({{total(pdc.items,'wsize10',3)}} KG)</small>
+                                </strong>
+                            </td>
+                            <td class="text-center psrow">
+                                <strong> {{total(pdc.items,'size1',0)+total(pdc.items,'size2',0)+total(pdc.items,'size3',0)+total(pdc.items,'size4',0)+total(pdc.items,'size5',0)+total(pdc.items,'size6',0)+total(pdc.items,'size7',0)+total(pdc.items,'size8',0)+total(pdc.items,'size9',0)+total(pdc.items,'size10',0)}}
+                                    Pcs
+                                    <br>
+                                    <small class="pull-right">({{(total(pdc.items,'wsize1',3)+total(pdc.items,'wsize2',3)+total(pdc.items,'wsize3',3)+total(pdc.items,'wsize4',3)+total(pdc.items,'wsize5',3)+total(pdc.items,'wsize6',3)+total(pdc.items,'wsize7',3)+total(pdc.items,'wsize8',3)+total(pdc.items,'wsize9',3)+total(pdc.items,'wsize10',0))
+                                        | number:3}} KG)</small>
+                                </strong>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Estimated value of Goods:</label>
+                    <div class="col-md-2">
+                        <p readonly class="form-control">{{((total(pdc.items,'wsize1',3)+total(pdc.items,'wsize2',3)+total(pdc.items,'wsize3',3)+total(pdc.items,'wsize4',3)+total(pdc.items,'wsize5',3)+total(pdc.items,'wsize6',3)+total(pdc.items,'wsize7',3)+total(pdc.items,'wsize8',3)+total(pdc.items,'wsize9',3)+total(pdc.items,'wsize10',0))*pdc.rateperkg)+pdc.additionalvalue|INR}}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="rateperkg" class="col-md-3 control-label">Rate of goods per kg:</label>
+                    <div class="col-md-2">
+                        <p class="form-control" id="rateperkg">{{pdc.rateperkg}}</p>
+                    </div>
+                    <label for="vehicle_number" class="col-md-2 col-md-offset-2 control-label">Vehicle Number:</label>
+                    <div class="col-md-2">
+                        <p class="form-control" id="vehicle_number">{{pdc.vehicle_number}}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="additionalvalue" class="col-md-3 control-label">Additional Goods Value:</label>
+                    <div class="col-md-2">
+                        <p class="form-control" id="additionalvalue">{{pdc.additionalvalue}}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="comment" class="col-md-3 control-label">DC Comments:</label>
+                    <div class="col-md-8">
+                        <p class="form-control" id="comment">{{pdc.comment}}</p>
+                    </div>
+                </div>
+
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-footer" ng-if="!pdc.dc_number">
+    <button ng-click="cancel()" class="btn btn-warning">Edit</button>
+    <button ng-click="save()" class="btn btn-primary pull-right" ng-disabled="disablesave">Save and Print</button>
+</div>
+
+<div class="modal-footer" ng-if="pdc.dc_number">
+    <button ng-click="canceldc()" ng-if="pdc.status == 'active'" class="btn btn-danger pull-left" tabindex="-1">Cancel Current DC</button>
+    <button ng-click="cancel()" class="btn btn-warning">Close</button>
+    <button ng-click="print()" class="btn btn-primary pull-right">Print</button>
+</div>

@@ -44,13 +44,16 @@ module.exports.routes = {
   'GET /api/statecities/:state': 'DcController.statecities',  
   'GET /api/cdc': 'DcController.cdc',
   'GET /api/item': 'DcController.item',
+  'GET /api/pdc': 'DcController.pdc',
 
   'POST /api/supplier': 'DcController.savesupplier',
   'POST /api/cdc': 'DcController.savecdc',
+  'POST /api/pdc': 'DcController.savepdc',
 
 
   'PUT /api/supplier/:id': 'DcController.updatesupplier',
   'PUT /api/cdc/:id': 'DcController.updatecdc',
+  'PUT /api/pdc/:id': 'DcController.updatepdc',
 
 
 

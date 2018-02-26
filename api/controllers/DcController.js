@@ -215,7 +215,7 @@ module.exports = {
 
         if (req.param("dept_type") != undefined) {
             q = q.concat(" WHERE dept_type = ? ");
-            dept_type = isNaN(parseInt(req.param("dept_type")))?req.param("dept_type"):parseInt(req.param("dept_type"));
+            dept_type = isNaN(parseInt(req.param("dept_type"))) ? req.param("dept_type") : parseInt(req.param("dept_type"));
             d.push(dept_type);
         }
         q = q.concat(";");
@@ -416,9 +416,9 @@ module.exports = {
             }
         });
 
-        if (req.param('status') == 'active' || req.param('status') == 'inactive') {
+        if (req.param('itemstatus') == 'active' || req.param('itemstatus') == 'inactive') {
             q_where = q_where.concat(" AND iteminfo.status = ? ");
-            d.push(req.param('status'));
+            d.push(req.param('itemstatus'));
         }
         q = q.concat(q_where);
 
@@ -433,7 +433,7 @@ module.exports = {
                         temp.sizerange = results;
                         Dc.query('SELECT sizetype.* FROM sizetype,(SELECT DISTINCT idsizetype FROM iteminfo,sizerange WHERE sizerange.idsize = iteminfo.sizerange ' + q_where + ') as sizerange WHERE sizerange.idsizetype = sizetype.id;', d, function (err, results) {
                             if (err) return res.serverError(err);
-                            else {      
+                            else {
                                 temp.sizetype = results;
                                 return res.ok(temp);
                             }
@@ -443,8 +443,182 @@ module.exports = {
             }
         });
     },
+    savepdc: function (req, res) {
+        q = "INSERT INTO pdc (idsupplier, iditem, naming_series, department, dc_date, lot_number, rateperkg, additionalvalue, vehicle_number, comment, blame_user) \
+                        VALUES (?,?,?,?,?,?,?,?,?,?,?);";
+        d = [req.body.supplier_id, req.body.iditem, req.body.naming_series, req.body.department, dateFormat(req.body.dc_date, 'yyyy-mm-dd'), req.body.lot_number, req.body.rateperkg, req.body.additionalvalue, req.body.vehicle_number, req.body.comment, req.user.email];
+        temp = {}
+
+        Dc.query(q, d, function (err, results) {
+            if (err) return res.serverError(err);
+            else {
+                temp.pdc_insert = results;
+                temp.idpdc = results.insertId;
+                flag = 0;
+                q1 = "INSERT INTO pdcitems (idpdc, colour, part, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment, blame_user) VALUES ";
+                d1 = [];
+                req.body.items.forEach((element, index) => {
+                    if (flag == 1) q1 = q1.concat(", ");
+                    q1 = q1.concat("(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    flag = 1;
+                    d1.push(temp.idpdc, element.colour, element.part, element.size1, element.size2, element.size3, element.size4, element.size5, element.size6, element.size7, element.size8, element.size9, element.size10, element.wsize1, element.wsize2, element.wsize3, element.wsize4, element.wsize5, element.wsize6, element.wsize7, element.wsize8, element.wsize9, element.wsize10, element.comment, req.user.email);
+                });
+                Dc.query(q1, d1, function (err, results) {
+                    if (err) return res.serverError(err);
+                    else {
+                        temp.pdcitems_insert = results;
+                        Dc.query("SELECT pdc.naming_series,pdc.dc_number,series.length FROM pdc,series WHERE pdc.naming_series = series.name AND pdc.id = ?", [temp.idpdc], function (err, results) {
+                            if (err) return res.serverError(err);
+                            else {
+                                temp.dc = results[0];
+                                return res.ok(temp);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    },
+    pdc: function (req, res) {
+        // ---- 
+        // ---- param are - items(available automaticaly if only one dc is returned) ,id, dc_number, naming_series, idsupplier, iditem, lot_number, vehicle_number, 
+        // ----             comment, department, after_dc_date (yyyymmdd), before_dc_date , limit, offset    
+        // ---- 
+        q = "SELECT \
+        pdc.id idpdc, \
+        pdc.naming_series, \
+        iteminfo.naming_series item_naming_series, \
+        pdc.iditem, \
+        iteminfo.name itemname, \
+        series.length dc_no_length, \
+        pdc.dc_number, \
+        pdc.department, \
+        department.name department_name, \
+        pdc.dc_date, \
+        pdc.lot_number, \
+        pdc.rateperkg, \
+        pdc.additionalvalue, \
+        pdc.vehicle_number, \
+        pdc.comment, \
+        pdc.status, \
+        pdc.modified_time, \
+        supplier.id supplier_id, \
+        supplier.name supplier_name, \
+        supplier.address1 supplier_address1, \
+        supplier.address2 supplier_address2, \
+        supplier.city supplier_city, \
+        supplier.state supplier_state, \
+        supplier.pincode supplier_pincode, \
+        supplier.phone1 supplier_phone1, \
+        supplier.phone2 supplier_phone2, \
+        supplier.gstin supplier_gstin, \
+        supplier.email supplier_email \
+      FROM pdc LEFT JOIN supplier ON pdc.idsupplier = supplier.id \
+        LEFT JOIN department ON pdc.department = department.id \
+        LEFT JOIN iteminfo ON pdc.iditem = iteminfo.id \
+        LEFT JOIN series ON pdc.naming_series = series.name WHERE 1 = 1 ";
+        d = []
+        q_where = ""
+        limit = Number.MAX_SAFE_INTEGER;
+        offset = 0;
+
+        if (req.param('limit') && !isNaN(parseInt(req.param('limit')))) limit = parseInt(req.param('limit'));
+        if (req.param('offset') && !isNaN(parseInt(req.param('offset')))) offset = parseInt(req.param('offset'));
+
+        param_equal_list = ["id", "dc_number", "naming_series", "idsupplier", "iditem", "lot_number", "department"];
+        param_equal_list.forEach(function (param) {
+            if (req.param(param) != undefined) {
+                q = q.concat(" AND pdc.", param, " = ? ");
+                d.push(req.param(param));
+            }
+        });
+
+        param_like_list = ["vehicle_number", "comment"];
+        param_like_list.forEach(function (param) {
+            if (req.param(param) != undefined) {
+                q = q.concat(" AND pdc.", param, " LIKE ? ");
+                d.push("%" + req.param(param) + "%");
+            }
+        });
+
+        if (req.param('after_dc_date') != undefined) {
+            q = q.concat(" AND pdc.dc_date >= ? ")
+            d.push(req.param('after_dc_date'));
+        }
+        if (req.param('before_dc_date') != undefined) {
+            q = q.concat(" AND pdc.dc_date <= ? ")
+            d.push(req.param('before_dc_date'));
+        }
+
+        q = q.concat(' order by pdc.id desc LIMIT ?,?;');
+        d.push(offset, limit);
+
+        Dc.query(q, d, function (err, results) {
+            if (err) return res.serverError(err);
+            else {
+                if (results.length == 1) {
+                    temp = results;
+                    Dc.query('SELECT colour, part, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment FROM pdcitems WHERE idpdc = ? ORDER BY id;', [temp[0].idpdc], function (err, results) {
+                        if (err) return res.serverError(err);
+                        else {
+                            temp[0].items = results;
+                            Dc.query('SELECT sizerange.* FROM sizerange,iteminfo WHERE sizerange.idsize = iteminfo.sizerange AND iteminfo.id = ?;', [temp[0].iditem], function (err, results) {
+                                if (err) return res.serverError(err);
+                                else {
+                                    temp[0].sizerange = results;
+                                    Dc.query('SELECT sizetype.* FROM sizetype, sizerange, iteminfo WHERE sizerange.idsizetype = sizetype.id AND sizerange.idsize = iteminfo.sizerange AND iteminfo.id = ?;', [temp[0].iditem], function (err, results) {
+                                        if (err) return res.serverError(err);
+                                        else {
+                                            temp[0].sizetype = results;
+                                            return res.ok(temp);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+                else {
+                    return res.ok(results);
+                }
+            }
+        });
+    },
+    updatepdc: function (req, res) {
 
 
+        flag = 0;
+        q = "UPDATE pdc "
+        d = []
+        column_list = ["status"];
+        column_list.map(function (column) {
+            if (req.body[column] != undefined) {
+                if (flag == 0) { q = q.concat("SET "); flag = 1; }
+                else { q = q.concat(","); }
+                q = q.concat(column, " = ? ");
+                d.push(req.body[column]);
+            }
+        });
+
+        // blame_user and final touches
+        if (flag == 0) {
+            q = q.concat("SET ");
+            flag = 1;
+        }
+        else {
+            q = q.concat(",");
+        }
+        q = q.concat("blame_user = ?, modified_time = now() WHERE id = ?;");
+        d.push(req.user.email)
+        d.push(req.param("id"))
+        // console.log(q,d);
+
+        Dc.query(q, d, function (err, results) {
+            if (err) return res.serverError(err);
+            return res.ok(results);
+        })
+
+    },
     test: function (req, res) {
         // console.log(req.param(0),req.param(1),req.param(2))
         Dc.query("Select now();", [], function (err, results) {
