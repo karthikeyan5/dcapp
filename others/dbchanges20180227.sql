@@ -46,3 +46,7 @@ as row_diff)
 END;
 
 
+CREATE UNIQUE INDEX master_colour_name_uindex ON master_colour (name);
+
+CREATE UNIQUE INDEX master_lot_name_uindex ON master_lot (name);
+

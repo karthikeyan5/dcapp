@@ -1,5 +1,7 @@
 CREATE SCHEMA `dcdb` DEFAULT CHARACTER SET utf8;
 
+USE dcdb;
+
 CREATE TABLE `dbinfo` (
   `infoid` INT(11) NOT NULL AUTO_INCREMENT,
   `infoname` VARCHAR(45) NOT NULL,
