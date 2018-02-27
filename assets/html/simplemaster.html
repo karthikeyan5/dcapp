@@ -1,0 +1,25 @@
+<div class="modal-header">
+    <h3 class="text-center text-capitalize">{{master_name.toLowerCase()}}</h3>
+</div>
+
+
+<div>
+    <form class="form-horizontal" autocomplete="off" ng-submit="ok()">
+        <div class="form-group">
+            <label for="n1ame" class="col-sm-2 control-label text-capitalize">{{master_name.toLowerCase()}} Name:</label>
+            <div class="col-sm-7">
+                <input autocomplete="false" required type="text" class="form-control" id="n1ame" placeholder="Enter Name" ng-model="master.name">
+            </div>
+        </div> 
+        <div class="form-group">
+            <label for="desc" class="col-sm-2 control-label text-capitalize">{{master_name.toLowerCase()}} Description:</label>
+            <div class="col-sm-7">
+                <input autocomplete="false" type="text" class="form-control" id="desc" placeholder="Enter Description" ng-model="master.desc">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Save</button>
+            <button ng-click="cancel()" class="btn btn-warning">Cancel</button>
+        </div>
+    </form>
+</div>

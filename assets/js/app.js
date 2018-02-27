@@ -207,7 +207,12 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
   };
 
   $scope.focussuppliername = function (event1) {
-    event1.preventDefault()
+    if (event1 != null) {
+      event1.preventDefault()
+    }
+    if($scope.cdc.supplier_id != null ){
+      return;
+    }
     //console.log("in focuspartyname()");
     // $scope.popoverIsOpen = !$scope.popoverIsOpen;
     $scope.popoverIsOpen = true;
@@ -319,6 +324,39 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
         content: er
       });
     });
+
+
+    $http({
+      method: 'GET',
+      url: '/api/lot?status=active'
+    }).then(function successCallback(response) {
+      $scope.lotlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'LOT list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+  
+    $http({
+      method: 'GET',
+      url: '/api/colour?status=active'
+    }).then(function successCallback(response) {
+      $scope.colourlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'Colour list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
 
 
   $scope.getsuppliers = function (state) {
@@ -764,7 +802,12 @@ app.controller('newpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
   };
 
   $scope.focussuppliername = function (event1) {
-    event1.preventDefault()
+    if (event1 != null) {
+      event1.preventDefault()
+    }
+    if($scope.pdc.supplier_id != null ){
+      return;
+    }
     //console.log("in focuspartyname()");
     // $scope.popoverIsOpen = !$scope.popoverIsOpen;
     $scope.popoverIsOpen = true;
@@ -803,6 +846,38 @@ app.controller('newpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
     function errorCallback(response) {
       console.log(response);
       var er = 'Department list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+  $http({
+    method: 'GET',
+    url: '/api/lot?status=active'
+  }).then(function successCallback(response) {
+    $scope.lotlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'LOT list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+  $http({
+    method: 'GET',
+    url: '/api/colour?status=active'
+  }).then(function successCallback(response) {
+    $scope.colourlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'Colour list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
       ngToast.create({
         className: 'danger',
         content: er
@@ -1570,6 +1645,33 @@ app.controller('managemasterCtrl', ['$scope', '$uibModal', '$http', function man
   }
 
 
+  $scope.openaddsimplemaster = function (master_name) {
+
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: './html/simplemaster.html',
+      controller: 'addsimplemasterCtrl',
+      size: 'lg',
+      //appendTo: $(document).find('body').eq(0),//'body',
+      //  backdrop: 'static',
+      // keyboard: false,
+      resolve: {
+        master_name: function () {
+          return master_name;
+        },
+      }
+    });
+
+    modalInstance.result.then(function (saved) {
+      // if (saved == 1)
+      // location.reload();
+    }, function (ret) {
+      console.log('Modal dismissed at: ' + new Date(), ret);
+
+    });
+  }
+
+
 
 }]);
 
@@ -1682,6 +1784,41 @@ app.controller('addsupplierCtrl', ['$scope', '$http', 'ngToast', '$uibModalInsta
   };
 }]);
 
+app.controller('addsimplemasterCtrl', ['$scope', '$http', 'ngToast', '$uibModalInstance', 'hotkeys', '$resource', 'master_name', function addsimplemasterCtrl($scope, $http, ngToast, $uibModalInstance, hotkeys, $resource, master_name) {
+
+  $scope.master_name = master_name;
+
+
+  $scope.ok = function () {
+
+    console.log("data sent:", $scope.master);
+
+    $http({
+      method: 'POST',
+      url: '/api/' + $scope.master_name,
+      data: $scope.master
+    }).then(function successCallback(response) {
+      console.log(response);
+      ngToast.create('Supplier Details Saved.');
+      $uibModalInstance.close("saved");
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+  }
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  }
+
+
+}]);
 
 app.controller('supplierlistCtrl', ['$scope', '$uibModal', '$http', function supplierlistCtrl($scope, $uibModal, $http) {
 

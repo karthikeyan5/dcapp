@@ -619,6 +619,158 @@ module.exports = {
         })
 
     },
+    savecolour: function (req, res) {
+        Dc.query("INSERT into master_colour (name, `desc`, blame_user) VALUES (?,?,?);", [req.body.name, req.body.desc, req.user.email], function (err, results) {
+            if (err) return res.serverError(err);
+            else {
+                return res.ok(results);
+            }
+        });
+    },
+    updatecolour: function (req, res) {
+
+
+        flag = 0;
+        q = "UPDATE master_colour "
+        d = []
+        column_list = ["name", "desc", "status"];
+        column_list.map(function (column) {
+            if (req.body[column] != undefined) {
+                if (flag == 0) { q = q.concat("SET "); flag = 1; }
+                else { q = q.concat(","); }
+                q = q.concat(column, " = ? ");
+                d.push(req.body[column]);
+            }
+        });
+
+        // blame_user and final touches
+        if (flag == 0) {
+            q = q.concat("SET ");
+            flag = 1;
+        }
+        else {
+            q = q.concat(",");
+        }
+        q = q.concat("blame_user = ?, modified_time = now() WHERE id = ?;");
+        d.push(req.user.email)
+        d.push(req.param("id"))
+        Dc.query(q, d, function (err, results) {
+            if (err) return res.serverError(err);
+            else {
+                return res.ok(results);
+            }
+        });
+    },
+    colour: function (req, res) {
+        q = '';
+        d = [];
+
+        if (req.param('allfeilds') == '1') {
+            q = "SELECT * FROM master_colour where 1 = 1 ";
+        }
+        else {
+            q = "SELECT name FROM master_colour where 1 = 1 ";
+        }
+
+        param_equal_list = ["id","status"];
+        param_equal_list.forEach(function (param) {
+            if (req.param(param) != undefined) {
+                q = q.concat(" AND ", param, " = ? ");
+                d.push(req.param(param));
+            }
+        });
+
+        param_like_list = ["name", "desc"];
+        param_like_list.forEach(function (param) {
+            if (req.param(param) != undefined) {
+                q = q.concat(" AND ", param, " LIKE ? ");
+                d.push("%" + req.param(param) + "%");
+            }
+        });
+
+        q = q.concat(";");
+
+        Dc.query(q, d, function (err, results) {
+            if (err) return res.serverError(err);
+            return res.ok(results);
+        });
+    },
+    savelot: function (req, res) {
+        Dc.query("INSERT into master_lot (name, `desc`, blame_user) VALUES (?,?,?);", [req.body.name, req.body.desc, req.user.email], function (err, results) {
+            if (err) return res.serverError(err);
+            else {
+                return res.ok(results);
+            }
+        });
+    },
+    updatelot: function (req, res) {
+
+
+        flag = 0;
+        q = "UPDATE master_lot "
+        d = []
+        column_list = ["name", "desc", "status"];
+        column_list.map(function (column) {
+            if (req.body[column] != undefined) {
+                if (flag == 0) { q = q.concat("SET "); flag = 1; }
+                else { q = q.concat(","); }
+                q = q.concat(column, " = ? ");
+                d.push(req.body[column]);
+            }
+        });
+
+        // blame_user and final touches
+        if (flag == 0) {
+            q = q.concat("SET ");
+            flag = 1;
+        }
+        else {
+            q = q.concat(",");
+        }
+        q = q.concat("blame_user = ?, modified_time = now() WHERE id = ?;");
+        d.push(req.user.email)
+        d.push(req.param("id"))
+        Dc.query(q, d, function (err, results) {
+            if (err) return res.serverError(err);
+            else {
+                return res.ok(results);
+            }
+        });
+    },
+    lot: function (req, res) {
+        q = '';
+        d = [];
+
+        if (req.param('allfeilds') == '1') {
+            q = "SELECT * FROM master_lot where 1 = 1 ";
+        }
+        else {
+            q = "SELECT name FROM master_lot where 1 = 1 ";
+        }
+
+        param_equal_list = ["id","status"];
+        param_equal_list.forEach(function (param) {
+            if (req.param(param) != undefined) {
+                q = q.concat(" AND ", param, " = ? ");
+                d.push(req.param(param));
+            }
+        });
+
+        param_like_list = ["name", "desc"];
+        param_like_list.forEach(function (param) {
+            if (req.param(param) != undefined) {
+                q = q.concat(" AND ", param, " LIKE ? ");
+                d.push("%" + req.param(param) + "%");
+            }
+        });
+
+        q = q.concat(";");
+        
+        Dc.query(q, d, function (err, results) {
+            if (err) return res.serverError(err);
+            return res.ok(results);
+        });
+    },
     test: function (req, res) {
         // console.log(req.param(0),req.param(1),req.param(2))
         Dc.query("Select now();", [], function (err, results) {
