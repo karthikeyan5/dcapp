@@ -61,3 +61,14 @@ INSERT INTO master_colour (name, `desc`, status, blame_user) VALUES ('BRAVO LIGH
 INSERT INTO master_colour (name, `desc`, status, blame_user) VALUES ('BRAVO DARK', null, 'active', 'NA');
 
 
+
+
+INSERT INTO sizerange (idsizetype, name, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10) VALUES (1, '80 - 90', 0, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+
+
+INSERT INTO dcdb.iteminfo ( naming_series, uid, name, sizerange, pieces, boxespercarton, category, status, blame_user)
+  SELECT 'ESSDEE ' , iditem, name, sizerange, pieces, boxespercarton, category, status , 'NA' FROM essdeemillsdb.iteminfo;
+
+INSERT INTO dcdb.iteminfo ( naming_series, uid, name, sizerange, pieces, boxespercarton, category, status, blame_user)
+  SELECT 'D&B ' , iditem, name, sizerange, pieces, boxespercarton, category, status , 'NA' FROM dnbmillsdb.iteminfo;
+

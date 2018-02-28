@@ -267,10 +267,11 @@ module.exports = {
                     if (err) return res.serverError(err);
                     else {
                         temp.cdcitems_insert = results;
-                        Dc.query("SELECT cdc.naming_series,cdc.dc_number,series.length FROM cdc,series WHERE cdc.naming_series = series.name AND cdc.id = ?", [temp.idcdc], function (err, results) {
+                        Dc.query("SELECT cdc.naming_series,cdc.dc_number,series.length, now() as server_time FROM cdc,series WHERE cdc.naming_series = series.name AND cdc.id = ?", [temp.idcdc], function (err, results) {
                             if (err) return res.serverError(err);
                             else {
                                 temp.dc = results[0];
+                                temp.dc.current_user = req.user.email;
                                 return res.ok(temp);
                             }
                         });
@@ -357,6 +358,8 @@ module.exports = {
                         if (err) return res.serverError(err);
                         else {
                             temp[0].items = results;
+                            temp[0].server_time = new Date();
+                            temp[0].current_user = req.user.email;
                             return res.ok(temp);
                         }
                     });
@@ -467,10 +470,11 @@ module.exports = {
                     if (err) return res.serverError(err);
                     else {
                         temp.pdcitems_insert = results;
-                        Dc.query("SELECT pdc.naming_series,pdc.dc_number,series.length FROM pdc,series WHERE pdc.naming_series = series.name AND pdc.id = ?", [temp.idpdc], function (err, results) {
+                        Dc.query("SELECT pdc.naming_series,pdc.dc_number,series.length, now() as server_time FROM pdc,series WHERE pdc.naming_series = series.name AND pdc.id = ?", [temp.idpdc], function (err, results) {
                             if (err) return res.serverError(err);
                             else {
                                 temp.dc = results[0];
+                                temp.dc.current_user = req.user.email;
                                 return res.ok(temp);
                             }
                         });
@@ -562,6 +566,8 @@ module.exports = {
                         if (err) return res.serverError(err);
                         else {
                             temp[0].items = results;
+                            temp[0].server_time = new Date();
+                            temp[0].current_user = req.user.email;
                             Dc.query('SELECT sizerange.* FROM sizerange,iteminfo WHERE sizerange.idsize = iteminfo.sizerange AND iteminfo.id = ?;', [temp[0].iditem], function (err, results) {
                                 if (err) return res.serverError(err);
                                 else {

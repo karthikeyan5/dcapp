@@ -92,7 +92,7 @@
                     </div>
                 </div>
             </div>
-            <label for="p1in" class="col-md-2 control-label">Delivery Item:</label>
+            <label for="p1in" class="col-md-2 control-label">Item:</label>
             <div class="col-md-4">
                 <input class="form-control input-sm" name="itembox" id="itembox" type="text" ng-model="newitemdetails" uib-typeahead="item as item.name for item in itemlist | filter:$viewValue | limitTo:25"
                     placeholder="Enter item name / id" typeahead-on-select="setnameid()" ng-change="setnameid()" required autocomplete="off"

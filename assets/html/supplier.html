@@ -8,7 +8,7 @@
         <div class="form-group" style="margin-top:15px;">
             <label for="s1tate1" class="col-sm-2 control-label">State:</label>
             <div class="col-sm-4">
-                <input autocomplete="false" type="text" class="form-control" id="s1tate1" typeahead-on-select="getcities(supplier.state)"
+                <input autocomplete="false" maxlength="45" type="text" class="form-control" id="s1tate1" typeahead-on-select="getcities(supplier.state)"
                     placeholder="Enter State" ng-model="supplier.state" uib-typeahead="state for state in stateslist | filter:$viewValue | limitTo:8"
                     typeahead-focus-first="false" autocomplete="off" autofocus>
                 <span ng-show="(stateslist.indexOf(supplier.state) == -1)&& (supplier.state != undefined) && (supplier.state != '')">Creating New State!!!</span>
@@ -21,26 +21,26 @@
             <div class="form-group">
                 <label for="n1ame" class="col-sm-2 control-label">Supplier Name:</label>
                 <div class="col-sm-7">
-                    <input autocomplete="false" required type="text" class="form-control" id="n1ame" placeholder="Enter Supplier name" ng-model="supplier.name">
+                    <input autocomplete="false" maxlength="100" required type="text" class="form-control" id="n1ame" placeholder="Enter Supplier name" ng-model="supplier.name">
                 </div>
             </div>
             <div class="form-group" style="margin-bottom:0px;">
                 <label for="a1ddress1" class="col-sm-2 control-label">Address Line 1:</label>
                 <div class="col-sm-8">
-                    <input autocomplete="false" type="text" class="form-control" id="a1ddress1" placeholder="Enter Address line 1" ng-model="supplier.address1">
+                    <input autocomplete="false" maxlength="100" type="text" class="form-control" id="a1ddress1" placeholder="Enter Address line 1" ng-model="supplier.address1">
                 </div>
             </div>
             <div class="form-group" style="margin-bottom:0px;">
                 <label for="a1ddress2" class="col-sm-2 control-label">Address Line 2:</label>
-                <div class="col-sm-8">
-                    <input autocomplete="false" type="text" class="form-control" id="a1ddress2" placeholder="Enter Address line 2 (optional)"
+                <div class="col-sm-8"> 
+                    <input autocomplete="false" maxlength="100" type="text" class="form-control" id="a1ddress2" placeholder="Enter Address line 2 (optional)"
                         ng-model="supplier.address2">
                 </div>
             </div>
             <div class="form-group">
                 <label for="c1ity" class="col-sm-2 control-label">City:</label>
                 <div class="col-sm-4">
-                    <input autocomplete="false" required type="text" class="form-control" id="c1ity" placeholder="Enter City" ng-model="supplier.city"
+                    <input autocomplete="false" required type="text" maxlength="45" class="form-control" id="c1ity" placeholder="Enter City" ng-model="supplier.city"
                         uib-typeahead="city for city in citieslist | filter:$viewValue | limitTo:8" typeahead-focus-first="false"
                         autocomplete="off">
                     <span ng-show="(citieslist.indexOf(supplier.city) == -1)&& (supplier.city != undefined) && (supplier.city != '')">Creating New City!!!</span>
@@ -60,11 +60,11 @@
             <div class="form-group">
                 <label for="p1hone1" class="col-sm-2 control-label">Primary Phone:</label>
                 <div class="col-sm-3">
-                    <input autocomplete="false" type="text" class="form-control" id="p1hone1" placeholder="Enter Phone" ng-model="supplier.phone1">
+                    <input autocomplete="false" maxlength="15" type="text" class="form-control" id="p1hone1" placeholder="Enter Phone" ng-model="supplier.phone1">
                 </div>
                 <label for="p1hone2" class="col-sm-3 control-label">Secondary Phone:</label>
                 <div class="col-sm-3">
-                    <input autocomplete="false" type="text" class="form-control" id="p1hone2" placeholder="Enter Phone (optional)" ng-model="supplier.phone2">
+                    <input autocomplete="false" maxlength="15" type="text" class="form-control" id="p1hone2" placeholder="Enter Phone (optional)" ng-model="supplier.phone2">
                 </div>
             </div>
             <div class="form-group">
@@ -74,13 +74,13 @@
                 </div>
                 <label for="e1mail" class="col-sm-2 control-label">Email:</label>
                 <div class="col-sm-4">
-                    <input autocomplete="false" type="text" class="form-control" id="e1mail" placeholder="Enter Email (optional)" ng-model="supplier.email">
+                    <input autocomplete="false" maxlength="50" type="text" class="form-control" id="e1mail" placeholder="Enter Email (optional)" ng-model="supplier.email">
                 </div>
             </div>
             <div class="form-group">
                 <label for="o1d" class="col-sm-2 control-label">Other Details:</label>
                 <div class="col-sm-10">
-                    <input autocomplete="false" type="text" class="form-control" id="o1d" placeholder="(optional)" ng-model="supplier.otherdetails">
+                    <input autocomplete="false" maxlength="150" type="text" class="form-control" id="o1d" placeholder="(optional)" ng-model="supplier.otherdetails">
                 </div>
             </div>
             <!-- <div ng-show="supplier.idsupplier" class="form-group">

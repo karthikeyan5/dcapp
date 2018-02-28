@@ -599,6 +599,8 @@ app.controller('cdcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibM
       ngToast.create('DC Details Saved.');
       $scope.cdc.dc_number = response.data.dc.dc_number;
       $scope.cdc.dc_no_length = response.data.dc.length;
+      $scope.cdc.server_time = response.data.dc.server_time;
+      $scope.cdc.current_user = response.data.dc.current_user;
       setTimeout(function () { $scope.print(); }, 800);
     },
       function errorCallback(response) {
@@ -1251,6 +1253,8 @@ app.controller('pdcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibM
       ngToast.create('DC Details Saved.');
       $scope.pdc.dc_number = response.data.dc.dc_number;
       $scope.pdc.dc_no_length = response.data.dc.length;
+      $scope.pdc.server_time = response.data.dc.server_time;
+      $scope.pdc.current_user = response.data.dc.current_user;
       setTimeout(function () { $scope.print(); }, 800);
     },
       function errorCallback(response) {
