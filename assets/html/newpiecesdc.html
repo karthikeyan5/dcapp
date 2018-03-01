@@ -15,7 +15,7 @@
 
 <script type="text/ng-template" id="itemCustomTemplate.html">
     <a style="cursor: pointer;">
-            <span ng-bind-html="match.model.naming_series | uibTypeaheadHighlight:query"></span> 
+            <!-- <span ng-bind-html="match.model.naming_series | uibTypeaheadHighlight:query"></span>  -->
         <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
     </a>
 </script>
@@ -94,7 +94,7 @@
             </div>
             <label for="p1in" class="col-md-2 control-label">Item:</label>
             <div class="col-md-4">
-                <input class="form-control input-sm" name="itembox" id="itembox" type="text" ng-model="newitemdetails" uib-typeahead="item as item.name for item in itemlist | filter:$viewValue | limitTo:25"
+                <input class="form-control input-sm" name="itembox" id="itembox" type="text" ng-model="newitemdetails" uib-typeahead="item as item.fullname for item in itemlist | filter:$viewValue | limitTo:25"
                     placeholder="Enter item name / id" typeahead-on-select="setnameid()" ng-change="setnameid()" required autocomplete="off"
                     typeahead-editable="false" typeahead-focus-on-select="false" typeahead-template-url="itemCustomTemplate.html">
             </div>

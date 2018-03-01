@@ -915,7 +915,7 @@ app.controller('newpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
     $scope.sizerangelist = response.data.sizerange;
     $scope.sizetypelist = response.data.sizetype;
     angular.forEach(response.data.items, function (value, key) {
-      var temp = { naming_series: value.naming_series, name: value.name, id: value.id, sizerange: value.sizerange };
+      var temp = { naming_series: value.naming_series,  fullname: value.naming_series.concat(' ',value.name), name: value.name, id: value.id, sizerange: value.sizerange };
       this.push(temp);
     }, $scope.itemlist);
   }, function errorCallback(response) {
