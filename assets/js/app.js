@@ -1907,6 +1907,10 @@ app.controller('supplierlistCtrl', ['$scope', '$uibModal', '$http', function sup
 
   }
 
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("close clicked");
+  }
+
 }]);
 
 
