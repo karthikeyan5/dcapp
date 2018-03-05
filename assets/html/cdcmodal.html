@@ -132,3 +132,9 @@
     <button ng-click="cancel()" class="btn btn-warning">Close</button>
     <button ng-click="print()" class="btn btn-primary pull-right">Print</button>
 </div>
+<div class="modal-footer" ng-if="cdc.modified_time">
+    <div class="row">
+        <div class="col-md-6">Last Modified Time: {{cdc.modified_time | date:'EEEE, MMMM dd, yyyy HH:mm:ss.sss'}}</div>
+        <div class="col-md-6">Last Modified User: {{cdc.blame_user}}</div>
+    </div>
+</div>

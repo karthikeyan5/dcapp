@@ -299,6 +299,7 @@ module.exports = {
         cdc.comment, \
         cdc.status, \
         cdc.modified_time, \
+        cdc.blame_user, \
         supplier.id supplier_id, \
         supplier.name supplier_name, \
         supplier.address1 supplier_address1, \
@@ -506,6 +507,7 @@ module.exports = {
         pdc.comment, \
         pdc.status, \
         pdc.modified_time, \
+        pdc.blame_user, \
         supplier.id supplier_id, \
         supplier.name supplier_name, \
         supplier.address1 supplier_address1, \
@@ -678,7 +680,7 @@ module.exports = {
             q = "SELECT name FROM master_colour where 1 = 1 ";
         }
 
-        param_equal_list = ["id","status"];
+        param_equal_list = ["id", "status"];
         param_equal_list.forEach(function (param) {
             if (req.param(param) != undefined) {
                 q = q.concat(" AND ", param, " = ? ");
@@ -754,7 +756,7 @@ module.exports = {
             q = "SELECT name FROM master_lot where 1 = 1 ";
         }
 
-        param_equal_list = ["id","status"];
+        param_equal_list = ["id", "status"];
         param_equal_list.forEach(function (param) {
             if (req.param(param) != undefined) {
                 q = q.concat(" AND ", param, " = ? ");
@@ -771,7 +773,7 @@ module.exports = {
         });
 
         q = q.concat(";");
-        
+
         Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
             return res.ok(results);
