@@ -1,0 +1,1 @@
+ALTER TABLE cdcitems MODIFY dia FLOAT;
