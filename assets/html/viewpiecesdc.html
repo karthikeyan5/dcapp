@@ -42,7 +42,12 @@
 	</tr>
 	</tbody>
 	<tfoot>
-	<tr ng-show="showpagination == true">
+	<tr ng-if="loadAll == false">
+		<td colspan="8" class="text-center">
+			<div class="btn btn-danger"  ng-click="loadAllItems()">Load All</div>
+		</td>
+	</tr>
+	<tr ng-show="showpagination == true && rowCollection.length > itemsByPage">
 		<td colspan="5" class="text-center">
 			<div st-items-by-page="itemsByPage" st-pagination="" st-template="html/pagination.custom.html"></div>
 		</td>

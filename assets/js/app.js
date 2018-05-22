@@ -1314,9 +1314,16 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
   $scope.grand_total_weight = arr => arr.reduce((a, b) => a + $scope.total(b.dialist, 'weight', 3), 0);
   $scope.displayedCollection = [];
   $scope.rowCollection = [];
+  $scope.loadAll = false;
   $scope.itemsByPage = 75;
   $scope.showpagination = true;
   $scope.hidelist = false;
+  $scope.loadAllItems = function () {
+    
+      $scope.loadAll = true;
+      callListAPI(Number.MAX_SAFE_INTEGER)
+    
+  }
   $scope.updateItemsByPage = function () {
     if ($scope.showpagination == true)  {
       $scope.showpagination = false;
@@ -1337,9 +1344,10 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
     }
   }
 
+  let callListAPI = function (limit) {
   $http({
     method: 'GET',
-    url: '/api/cdc'
+    url: '/api/cdc?limit='+limit
   }).then(function successCallback(response) {
     $scope.rowCollection = [].concat(response.data);
     console.log(response);
@@ -1348,6 +1356,8 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
     function errorCallback(response) {
       console.log(response);
     });
+  }
+  callListAPI($scope.itemsByPage);
 
   single_cdc_loading = false;
   $scope.open = function (item) {
@@ -1443,9 +1453,16 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
   $scope.tabselect4();
   $scope.displayedCollection = [];
   $scope.rowCollection = [];
+  $scope.loadAll = false;
   $scope.itemsByPage = 75;
   $scope.showpagination = true;
   $scope.hidelist = false;
+  $scope.loadAllItems = function () {
+    
+    $scope.loadAll = true;
+    callListAPI(Number.MAX_SAFE_INTEGER)
+  
+}
   $scope.updateItemsByPage = function () {
     if ($scope.showpagination == true) {
       $scope.showpagination = false;
@@ -1466,9 +1483,10 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
     }
   }
 
+  let callListAPI = function (limit) {
   $http({
     method: 'GET',
-    url: '/api/pdc'
+    url: '/api/pdc?limit='+limit
   }).then(function successCallback(response) {
     $scope.rowCollection = [].concat(response.data);
     console.log(response);
@@ -1477,6 +1495,8 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
     function errorCallback(response) {
       console.log(response);
     });
+  }
+  callListAPI($scope.itemsByPage);
 
   single_pdc_loading = false;
   $scope.open = function (item) {
