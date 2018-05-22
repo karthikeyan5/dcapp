@@ -44,10 +44,8 @@
 		<td colspan="4" class="text-center">
 			<div st-items-by-page="itemsByPage" st-pagination="" st-template="html/pagination.custom.html"></div>
 		</td>
-		<td colspan="3" ng-if="pages.length >= 2">
-			<label>Show all
-				<input type="checkbox" ng-model="showall" ng-click="updateItemsByPage()">
-			</label>
+		<td colspan="3" ng-if="rowCollection.length > itemsByPage">
+			<div class="btn btn-primary"  ng-click="updateItemsByPage()">Show All</div>
 		</td>
 	</tr>
 	</tfoot>

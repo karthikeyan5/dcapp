@@ -1315,11 +1315,10 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
   $scope.displayedCollection = [];
   $scope.rowCollection = [];
   $scope.itemsByPage = 75;
-  $scope.showall = false;
   $scope.showpagination = true;
   $scope.hidelist = false;
   $scope.updateItemsByPage = function () {
-    if ($scope.showall == true) {
+    if ($scope.showpagination == true)  {
       $scope.showpagination = false;
       $scope.itemsByPage = $scope.rowCollection.length;
     }
@@ -1445,11 +1444,10 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
   $scope.displayedCollection = [];
   $scope.rowCollection = [];
   $scope.itemsByPage = 75;
-  $scope.showall = false;
   $scope.showpagination = true;
   $scope.hidelist = false;
   $scope.updateItemsByPage = function () {
-    if ($scope.showall == true) {
+    if ($scope.showpagination == true) {
       $scope.showpagination = false;
       $scope.itemsByPage = $scope.rowCollection.length;
     }
