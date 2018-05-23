@@ -1473,13 +1473,14 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
 }
 
   $scope.applyFilters = function () {
-
     $scope.filterString = '';
     Object.keys($scope.filter).map(function(key){
       if($scope.filter[key] != null)
         $scope.filterString+='&'+key+'='+$scope.filter[key];
     });
     callListAPI($scope.itemsByPage,$scope.filterString)
+    $scope.showpagination = true;
+    $scope.loadAll = false;
   
 }
   $scope.clearFilters = function () {
@@ -1490,6 +1491,8 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
     $scope.filter_supplier = null;
     $scope.filter_item = null;
     callListAPI($scope.itemsByPage,$scope.filterString)
+    $scope.showpagination = true;
+    $scope.loadAll = false;
 
 }
 $scope.setnameid = function () {
@@ -1588,9 +1591,6 @@ $scope.setnameid = function () {
 
 
   let callListAPI = function (limit,filterString) {
-  // let filterString = '';
-  // if(department !=null) filterString = '&department='+department;
-  //   console.log("api");
   $http({
     method: 'GET',
     url: '/api/pdc?limit='+limit+filterString
