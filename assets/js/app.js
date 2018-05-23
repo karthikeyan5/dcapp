@@ -1453,14 +1453,53 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
   $scope.tabselect4();
   $scope.displayedCollection = [];
   $scope.rowCollection = [];
+  $scope.filter = {};
+  $scope.addFilter = false;
   $scope.loadAll = false;
   $scope.itemsByPage = 75;
   $scope.showpagination = true;
   $scope.hidelist = false;
+  $scope.isCollapsed = true;
+  $scope.filterString = '';
+
+  $scope.addFilters = function () {
+
+    if($scope.addFilter == false){
+      $scope.addFilter = true;
+      downloadFilterList();
+    }
+    $scope.isCollapsed = !$scope.isCollapsed;
+    console.log($scope.isCollapsed)
+}
+
+  $scope.applyFilters = function () {
+
+    $scope.filterString = '';
+    Object.keys($scope.filter).map(function(key){
+      if($scope.filter[key] != null)
+        $scope.filterString+='&'+key+'='+$scope.filter[key];
+    });
+    callListAPI($scope.itemsByPage,$scope.filterString)
+  
+}
+  $scope.clearFilters = function () {
+    $scope.filterString = '';
+    Object.keys($scope.filter).map(function(key){
+        $scope.filter[key] = null;
+    });
+    $scope.filter_supplier = null;
+    $scope.filter_item = null;
+    callListAPI($scope.itemsByPage,$scope.filterString)
+
+}
+$scope.setnameid = function () {
+  $scope.filter.iditem = $scope.filter_item.id;
+
+}
+
   $scope.loadAllItems = function () {
-    
     $scope.loadAll = true;
-    callListAPI(Number.MAX_SAFE_INTEGER)
+    callListAPI(Number.MAX_SAFE_INTEGER,$scope.filterString)
   
 }
   $scope.updateItemsByPage = function () {
@@ -1474,7 +1513,9 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
     return b.toString('dd.MM.yyyy');
   }
 
-
+  $scope.setsupplierFilter = function () {
+    $scope.filter.idsupplier = $scope.filter_supplier.id;
+  }
 
   $scope.getters = {
     dc_number: function (value) {
@@ -1483,10 +1524,76 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
     }
   }
 
-  let callListAPI = function (limit) {
+  let downloadFilterList = function(){
   $http({
     method: 'GET',
-    url: '/api/pdc?limit='+limit
+    url: '/api/department?dept_type=2'
+  }).then(function successCallback(response) {
+    $scope.departmentlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'Department list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+    $http({
+      method: 'GET',
+      url: '/api/lot?status=active'
+    }).then(function successCallback(response) {
+      $scope.lotlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'LOT list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+      $http({
+        method: 'GET',
+        url: '/api/supplier?allfeilds=0'
+      }).then(function successCallback(response) {
+        $scope.supplierlist = response.data;
+        console.log(response);
+      },
+        function errorCallback(response) {
+          console.log(response);
+        });
+
+        $http({
+          method: 'GET',
+          url: '/api/item?itemstatus=active'
+        }).then(function successCallback(response) {
+          console.log(response);
+          $scope.itemlist = [];
+          $scope.sizerangelist = response.data.sizerange;
+          $scope.sizetypelist = response.data.sizetype;
+          angular.forEach(response.data.items, function (value, key) {
+            var temp = { naming_series: value.naming_series,  fullname: value.naming_series.concat(' ',value.name), name: value.name, id: value.id, sizerange: value.sizerange };
+            this.push(temp);
+          }, $scope.itemlist);
+        }, function errorCallback(response) {
+          console.log(response);
+        });
+
+    }
+
+
+  let callListAPI = function (limit,filterString) {
+  // let filterString = '';
+  // if(department !=null) filterString = '&department='+department;
+  //   console.log("api");
+  $http({
+    method: 'GET',
+    url: '/api/pdc?limit='+limit+filterString
   }).then(function successCallback(response) {
     $scope.rowCollection = [].concat(response.data);
     console.log(response);
@@ -1496,7 +1603,7 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
       console.log(response);
     });
   }
-  callListAPI($scope.itemsByPage);
+  callListAPI($scope.itemsByPage,'');
 
   single_pdc_loading = false;
   $scope.open = function (item) {
@@ -1842,7 +1949,7 @@ app.controller('addsimplemasterCtrl', ['$scope', '$http', 'ngToast', '$uibModalI
 
 }]);
 
-app.controller('supplierlistCtrl', ['$scope', '$uibModal', '$http', function supplierlistCtrl($scope, $uibModal, $http) {
+app.controller('supplierlistCtrl', ['$scope', '$uibModal', '$uibModalInstance', '$http', function supplierlistCtrl($scope, $uibModal, $uibModalInstance, $http) {
 
 
   $http({
