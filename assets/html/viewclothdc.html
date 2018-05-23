@@ -40,7 +40,7 @@
 	</tr>
 	</tbody>
 	<tfoot>
-	<tr ng-if="loadAll == false">
+	<tr ng-if="loadAll == false && rowCollection.length > itemsByPage">
 		<td colspan="8" class="text-center">
 			<div class="btn btn-danger"  ng-click="loadAllItems()">Load All</div>
 		</td>
