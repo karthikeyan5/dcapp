@@ -1327,6 +1327,11 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
   $scope.hidelist = false;
   $scope.isCollapsed = true;
   $scope.filterString = '';
+
+  $scope.refresh = function(){
+    $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
+  }
   
   $scope.addFilters = function(){
     
@@ -1343,8 +1348,8 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
       if($scope.filter[key] != null)
         $scope.filterString+='&'+key+'='+$scope.filter[key];
     });
-    callListAPI($scope.itemsByPage,$scope.filterString)
     $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
   
 }
   $scope.clearFilters = function () {
@@ -1355,8 +1360,8 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
     $scope.filter_supplier = null;
     $scope.after_dc_date = null;
     $scope.before_dc_date = null;
-    callListAPI($scope.itemsByPage,$scope.filterString)
     $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
 
 }
 
@@ -1378,12 +1383,12 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
   }
 
   $scope.setafterdate = function () {
-    $scope.filter.after_dc_date = $scope.after_dc_date.toISOString().slice(0,10).replace(/-/g,"");
+    $scope.filter.after_dc_date = $scope.after_dc_date.yyyymmdd();
   
   }
 
   $scope.setbeforedate = function () {
-    $scope.filter.before_dc_date = $scope.before_dc_date.toISOString().slice(0,10).replace(/-/g,"");
+    $scope.filter.before_dc_date = $scope.before_dc_date.yyyymmdd();
   
   }
 
@@ -1659,6 +1664,11 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
   $scope.isCollapsed = true;
   $scope.filterString = '';
 
+  $scope.refresh = function(){
+    $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
+  }
+
   $scope.addFilters = function () {
 
     if($scope.addFilter == false){
@@ -1674,8 +1684,8 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
       if($scope.filter[key] != null)
         $scope.filterString+='&'+key+'='+$scope.filter[key];
     });
-    callListAPI($scope.itemsByPage,$scope.filterString)
     $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
   
 }
   $scope.clearFilters = function () {
@@ -1687,8 +1697,8 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
     $scope.filter_item = null;
     $scope.after_dc_date = null;
     $scope.before_dc_date = null;
+    $scope.initialState();    
     callListAPI($scope.itemsByPage,$scope.filterString)
-    $scope.initialState();
 
 }
 
@@ -1718,12 +1728,12 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
   }
 
   $scope.setafterdate = function () {
-    $scope.filter.after_dc_date = $scope.after_dc_date.toISOString().slice(0,10).replace(/-/g,"");
+    $scope.filter.after_dc_date = $scope.after_dc_date.yyyymmdd();
   
   }
 
   $scope.setbeforedate = function () {
-    $scope.filter.before_dc_date = $scope.before_dc_date.toISOString().slice(0,10).replace(/-/g,"");
+    $scope.filter.before_dc_date = $scope.before_dc_date.yyyymmdd();
   
   }
 
@@ -2726,3 +2736,12 @@ app.filter('minLength', function () {
   // {{ 1234567 | minLength:4 }} //Returns "1234567"
 });
 
+Date.prototype.yyyymmdd = function() {
+  var mm = this.getMonth() + 1; // getMonth() is zero-based
+  var dd = this.getDate();
+
+  return [this.getFullYear(),
+          (mm>9 ? '' : '0') + mm,
+          (dd>9 ? '' : '0') + dd
+         ].join('');
+};

@@ -1,6 +1,7 @@
 <div style="padding-top:10px;" ng-class="{'hidden-print':hidelist}">
 	<legend>
 		Cloth DC List
+		<div class="btn btn-success pull-right" style="font-size: 0.6em;" ng-click="refresh()">Refresh</div>	
 		<div class="btn btn-info pull-right" style="font-size: 0.6em;" ng-click="addFilters()">{{(isCollapsed)?(filterString == ''?"Add Filters":"Show Filters"):"Hide Filters"}}</div>	
 		
 	</legend>

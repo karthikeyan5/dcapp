@@ -285,7 +285,7 @@ module.exports = {
         // ---- param are - items(available automaticaly if only one dc is returned) ,id, dc_number, naming_series, idsupplier, lot_number, vehicle_number, 
         // ----             comment, department, after_dc_date (yyyymmdd), before_dc_date , limit, offset    
         // ---- 
-        q = "SELECT \
+        let q = "SELECT \
         cdc.id idcdc, \
         cdc.naming_series, \
         series.length dc_no_length, \
@@ -314,15 +314,14 @@ module.exports = {
       FROM cdc LEFT JOIN supplier ON cdc.idsupplier = supplier.id \
         LEFT JOIN department ON cdc.department = department.id \
         LEFT JOIN series ON cdc.naming_series = series.name WHERE 1 = 1 ";
-        d = []
-        q_where = ""
-        limit = Number.MAX_SAFE_INTEGER;
-        offset = 0;
+        let d = []
+        let limit = Number.MAX_SAFE_INTEGER;
+        let offset = 0;
 
         if (req.param('limit') && !isNaN(parseInt(req.param('limit')))) limit = parseInt(req.param('limit'));
         if (req.param('offset') && !isNaN(parseInt(req.param('offset')))) offset = parseInt(req.param('offset'));
 
-        param_equal_list = ["id", "dc_number", "naming_series", "idsupplier", "lot_number", "department"];
+        let param_equal_list = ["id", "dc_number", "naming_series", "idsupplier", "lot_number", "department"];
         param_equal_list.forEach(function (param) {
             if (req.param(param) != undefined) {
                 q = q.concat(" AND cdc.", param, " = ? ");
@@ -330,7 +329,7 @@ module.exports = {
             }
         });
 
-        param_like_list = ["vehicle_number", "comment"];
+        let param_like_list = ["vehicle_number", "comment"];
         param_like_list.forEach(function (param) {
             if (req.param(param) != undefined) {
                 q = q.concat(" AND cdc.", param, " LIKE ? ");
