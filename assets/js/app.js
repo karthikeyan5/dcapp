@@ -1314,15 +1314,57 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
   $scope.grand_total_weight = arr => arr.reduce((a, b) => a + $scope.total(b.dialist, 'weight', 3), 0);
   $scope.displayedCollection = [];
   $scope.rowCollection = [];
+  $scope.filter = {};
+  $scope.addFilter = false;  
+  
+  $scope.initialState = function(){
   $scope.loadAll = false;
   $scope.itemsByPage = 75;
-  $scope.showpagination = true;
+  $scope.showpagination = false;
+  }
+  $scope.initialState();
+  
   $scope.hidelist = false;
+  $scope.isCollapsed = true;
+  $scope.filterString = '';
+  
+  $scope.addFilters = function(){
+    
+    if($scope.addFilter == false){
+      $scope.addFilter = true;
+      downloadFilterList();
+    }
+    $scope.isCollapsed = !$scope.isCollapsed;
+  }
+
+  $scope.applyFilters = function () {
+    $scope.filterString = '';
+    Object.keys($scope.filter).map(function(key){
+      if($scope.filter[key] != null)
+        $scope.filterString+='&'+key+'='+$scope.filter[key];
+    });
+    callListAPI($scope.itemsByPage,$scope.filterString)
+    $scope.initialState();
+  
+}
+  $scope.clearFilters = function () {
+    $scope.filterString = '';
+    Object.keys($scope.filter).map(function(key){
+        $scope.filter[key] = null;
+    });
+    $scope.filter_supplier = null;
+    $scope.after_dc_date = null;
+    $scope.before_dc_date = null;
+    callListAPI($scope.itemsByPage,$scope.filterString)
+    $scope.initialState();
+
+}
+
   $scope.loadAllItems = function () {
     
       $scope.loadAll = true;
-      callListAPI(Number.MAX_SAFE_INTEGER)
-    
+      callListAPI(Number.MAX_SAFE_INTEGER,$scope.filterString)
+      $scope.showpagination = true;    
   }
   $scope.updateItemsByPage = function () {
     if ($scope.showpagination == true)  {
@@ -1330,6 +1372,21 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
       $scope.itemsByPage = $scope.rowCollection.length;
     }
   }
+
+  $scope.setsupplierFilter = function () {
+    $scope.filter.idsupplier = $scope.filter_supplier.id;
+  }
+
+  $scope.setafterdate = function () {
+    $scope.filter.after_dc_date = $scope.after_dc_date.toISOString().slice(0,10).replace(/-/g,"");
+  
+  }
+
+  $scope.setbeforedate = function () {
+    $scope.filter.before_dc_date = $scope.before_dc_date.toISOString().slice(0,10).replace(/-/g,"");
+  
+  }
+
   $scope.ds = function (a) {
     var b = new Date(a);
     return b.toString('dd.MM.yyyy');
@@ -1344,10 +1401,56 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
     }
   }
 
-  let callListAPI = function (limit) {
+  let downloadFilterList = function(){
   $http({
     method: 'GET',
-    url: '/api/cdc?limit='+limit
+    url: '/api/department?dept_type=1'
+  }).then(function successCallback(response) {
+    $scope.departmentlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'Department list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+    $http({
+      method: 'GET',
+      url: '/api/lot?status=active'
+    }).then(function successCallback(response) {
+      $scope.lotlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'LOT list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+      $http({
+        method: 'GET',
+        url: '/api/supplier?allfeilds=0'
+      }).then(function successCallback(response) {
+        $scope.supplierlist = response.data;
+        console.log(response);
+      },
+        function errorCallback(response) {
+          console.log(response);
+        });  
+  }
+
+
+  let callListAPI = function (limit, filterString) {
+  $http({
+    method: 'GET',
+    url: '/api/cdc?limit='+limit+filterString
   }).then(function successCallback(response) {
     $scope.rowCollection = [].concat(response.data);
     console.log(response);
@@ -1357,7 +1460,7 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
       console.log(response);
     });
   }
-  callListAPI($scope.itemsByPage);
+  callListAPI($scope.itemsByPage, '');
 
   single_cdc_loading = false;
   $scope.open = function (item) {
@@ -1446,6 +1549,95 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
   }
 
 
+
+  // datepicker stuff - to be decoded later
+
+  $scope.clear = function () {
+    $scope.filter.dc_date = null;
+  };
+
+  $scope.inlineOptions = {
+    customClass: getDayClass,
+    minDate: new Date(),
+    showWeeks: true
+  };
+
+  $scope.dateOptions = {
+    dateDisabled: disabled,
+    formatYear: 'yy',
+    maxDate: new Date(2020, 5, 22),
+    minDate: new Date(),
+    startingDay: 1
+  };
+
+  // Disable weekend selection
+  function disabled(data) {
+    var date = data.date,
+      mode = data.mode;
+    //return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    return false;
+  }
+
+  $scope.toggleMin = function () {
+    $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+    $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+  };
+
+  $scope.toggleMin();
+
+  $scope.open1 = function () {
+    $scope.popup1.opened = true;
+  };
+
+  $scope.open2 = function () {
+    $scope.popup2.opened = true;
+  };
+
+  $scope.setDate = function (year, month, day) {
+    $scope.pdc.dc_date = new Date(year, month, day);
+  };
+
+  $scope.altInputFormats = ['d!.M!.yyyy', 'd!.M!.yy', 'd!/M!/yyyy', 'd!/M!/yy'];//,'d!.M!','d!.M!.yy'];
+
+  $scope.popup1 = {
+    opened: false
+  };
+  $scope.popup2 = {
+    opened: false
+  };
+
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  var afterTomorrow = new Date();
+  afterTomorrow.setDate(tomorrow.getDate() + 1);
+  $scope.events = [
+    {
+      date: tomorrow,
+      status: 'full'
+    },
+    {
+      date: afterTomorrow,
+      status: 'partially'
+    }
+  ];
+
+  function getDayClass(data) {
+    var date = data.date,
+      mode = data.mode;
+    if (mode === 'day') {
+      var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
+      for (var i = 0; i < $scope.events.length; i++) {
+        var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
+
+        if (dayToCheck === currentDay) {
+          return $scope.events[i].status;
+        }
+      }
+    }
+
+    return '';
+  }
+
 }]);
 
 
@@ -1455,9 +1647,14 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
   $scope.rowCollection = [];
   $scope.filter = {};
   $scope.addFilter = false;
+
+  $scope.initialState = function(){
   $scope.loadAll = false;
   $scope.itemsByPage = 75;
-  $scope.showpagination = true;
+  $scope.showpagination = false;
+  }
+  $scope.initialState();
+
   $scope.hidelist = false;
   $scope.isCollapsed = true;
   $scope.filterString = '';
@@ -1469,7 +1666,6 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
       downloadFilterList();
     }
     $scope.isCollapsed = !$scope.isCollapsed;
-    console.log($scope.isCollapsed)
 }
 
   $scope.applyFilters = function () {
@@ -1479,8 +1675,7 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
         $scope.filterString+='&'+key+'='+$scope.filter[key];
     });
     callListAPI($scope.itemsByPage,$scope.filterString)
-    $scope.showpagination = true;
-    $scope.loadAll = false;
+    $scope.initialState();
   
 }
   $scope.clearFilters = function () {
@@ -1490,20 +1685,17 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
     });
     $scope.filter_supplier = null;
     $scope.filter_item = null;
+    $scope.after_dc_date = null;
+    $scope.before_dc_date = null;
     callListAPI($scope.itemsByPage,$scope.filterString)
-    $scope.showpagination = true;
-    $scope.loadAll = false;
-
-}
-$scope.setnameid = function () {
-  $scope.filter.iditem = $scope.filter_item.id;
+    $scope.initialState();
 
 }
 
   $scope.loadAllItems = function () {
     $scope.loadAll = true;
     callListAPI(Number.MAX_SAFE_INTEGER,$scope.filterString)
-  
+    $scope.showpagination = true;
 }
   $scope.updateItemsByPage = function () {
     if ($scope.showpagination == true) {
@@ -1518,6 +1710,21 @@ $scope.setnameid = function () {
 
   $scope.setsupplierFilter = function () {
     $scope.filter.idsupplier = $scope.filter_supplier.id;
+  }
+
+  $scope.setnameid = function () {
+    $scope.filter.iditem = $scope.filter_item.id;
+  
+  }
+
+  $scope.setafterdate = function () {
+    $scope.filter.after_dc_date = $scope.after_dc_date.toISOString().slice(0,10).replace(/-/g,"");
+  
+  }
+
+  $scope.setbeforedate = function () {
+    $scope.filter.before_dc_date = $scope.before_dc_date.toISOString().slice(0,10).replace(/-/g,"");
+  
   }
 
   $scope.getters = {
@@ -1699,6 +1906,99 @@ $scope.setnameid = function () {
     });
     return parseFloat(total.toFixed(precision));
   }
+
+
+
+  // datepicker stuff - to be decoded later
+
+  $scope.clear = function () {
+    $scope.filter.dc_date = null;
+  };
+
+  $scope.inlineOptions = {
+    customClass: getDayClass,
+    minDate: new Date(),
+    showWeeks: true
+  };
+
+  $scope.dateOptions = {
+    dateDisabled: disabled,
+    formatYear: 'yy',
+    maxDate: new Date(2020, 5, 22),
+    minDate: new Date(),
+    startingDay: 1
+  };
+
+  // Disable weekend selection
+  function disabled(data) {
+    var date = data.date,
+      mode = data.mode;
+    //return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    return false;
+  }
+
+  $scope.toggleMin = function () {
+    $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+    $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+  };
+
+  $scope.toggleMin();
+
+  $scope.open1 = function () {
+    $scope.popup1.opened = true;
+  };
+
+  $scope.open2 = function () {
+    $scope.popup2.opened = true;
+  };
+
+  $scope.setDate = function (year, month, day) {
+    $scope.pdc.dc_date = new Date(year, month, day);
+  };
+
+  $scope.altInputFormats = ['d!.M!.yyyy', 'd!.M!.yy', 'd!/M!/yyyy', 'd!/M!/yy'];//,'d!.M!','d!.M!.yy'];
+
+  $scope.popup1 = {
+    opened: false
+  };
+
+  $scope.popup2 = {
+    opened: false
+  };
+
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  var afterTomorrow = new Date();
+  afterTomorrow.setDate(tomorrow.getDate() + 1);
+  $scope.events = [
+    {
+      date: tomorrow,
+      status: 'full'
+    },
+    {
+      date: afterTomorrow,
+      status: 'partially'
+    }
+  ];
+
+  function getDayClass(data) {
+    var date = data.date,
+      mode = data.mode;
+    if (mode === 'day') {
+      var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
+
+      for (var i = 0; i < $scope.events.length; i++) {
+        var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
+
+        if (dayToCheck === currentDay) {
+          return $scope.events[i].status;
+        }
+      }
+    }
+
+    return '';
+  }
+
 
 
 
