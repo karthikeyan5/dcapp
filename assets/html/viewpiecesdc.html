@@ -1,7 +1,9 @@
 <div style="padding-top:10px;" ng-class="{'hidden-print':hidelist}">
-	<legend>Pieces DC List</legend>
+	<legend>
+		Pieces DC List
+		<div class="btn btn-info pull-right" style="font-size: 0.6em;" ng-click="addFilters()">{{(isCollapsed)?(filterString == ''?"Add Filters":"Show Filters"):"Hide Filters"}}</div>	
+	</legend>
 	<div class="row container">
-		<div class="btn btn-info"  ng-click="addFilters()">{{(isCollapsed)?(filterString==''?"Add Filter":"Show Filter"):"Hide Filters"}}</div>
 		
 		<div uib-collapse="isCollapsed">
 			<div class="row container">
@@ -30,16 +32,46 @@
 					</script>
 					
 					<input class="form-control input-sm" id="itembox" type="text" ng-model="filter_item" uib-typeahead="item as item.fullname for item in itemlist | filter:$viewValue | limitTo:25"
-						placeholder="Enter item name / id" typeahead-on-select="setnameid()" autocomplete="off"
-						typeahead-editable="false" typeahead-focus-on-select="false" typeahead-template-url="itemCustomTemplate.html">
-						<script type="text/ng-template" id="itemCustomTemplate.html">
-							<a style="cursor: pointer;">
-									<!-- <span ng-bind-html="match.model.naming_series | uibTypeaheadHighlight:query"></span>  -->
-								<span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
-							</a>
-						</script>
+					placeholder="Enter item name / id" typeahead-on-select="setnameid()" autocomplete="off"
+					typeahead-editable="false" typeahead-focus-on-select="false" typeahead-template-url="itemCustomTemplate.html">
+					<script type="text/ng-template" id="itemCustomTemplate.html">
+						<a style="cursor: pointer;">
+								<!-- <span ng-bind-html="match.model.naming_series | uibTypeaheadHighlight:query"></span>  -->
+							<span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
+						</a>
+					</script>
+
+					<div class="row">
+							<label for="datebox" class="col-md-2 control-label">From Date:</label>
+							<div class="col-md-2">
+								<p class="input-group">
+									<input autocomplete="off" id="datebox" type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="after_dc_date"
+										is-open="popup1.opened" ng-change="setafterdate()" datepicker-options="dateOptions" close-text="Close" alt-input-formats="altInputFormats"
+										autofocus />
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-default" ng-click="open1()" tabindex="-1">
+											<i class="glyphicon glyphicon-calendar"></i>
+										</button>
+									</span>
+								</p>
+							</div>
+							<label for="datebox2" class="col-md-1 col-md-offset-3 control-label">To Date:</label>
+							<div class="col-md-2">
+								<p class="input-group">
+									<input autocomplete="off" id="datebox2" type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="before_dc_date"
+										is-open="popup2.opened" ng-change="setbeforedate()" datepicker-options="dateOptions" close-text="Close" alt-input-formats="altInputFormats"
+										autofocus />
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-default" ng-click="open2()" tabindex="-1">
+											<i class="glyphicon glyphicon-calendar"></i>
+										</button>
+									</span>
+								</p>
+							</div>
+					</div>
 
 					<div class="btn btn-primary pull-right"  ng-click="applyFilters()">Apply</div>
+
 					<div class="btn btn-danger"  ng-click="clearFilters()">Clear</div>
 			</div>
 		</div>
@@ -95,7 +127,7 @@
 		<td colspan="5" class="text-center">
 			<div st-items-by-page="itemsByPage" st-pagination="" st-template="html/pagination.custom.html"></div>
 		</td>
-		<td colspan="3" ng-if="rowCollection.length > itemsByPage">
+		<td colspan="3">
 			<div class="btn btn-primary"  ng-click="updateItemsByPage()">Show All</div>
 		</td>
 	</tr>
