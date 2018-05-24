@@ -1327,6 +1327,11 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
   $scope.hidelist = false;
   $scope.isCollapsed = true;
   $scope.filterString = '';
+
+  $scope.refresh = function(){
+    $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
+  }
   
   $scope.addFilters = function(){
     
@@ -1343,8 +1348,8 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
       if($scope.filter[key] != null)
         $scope.filterString+='&'+key+'='+$scope.filter[key];
     });
-    callListAPI($scope.itemsByPage,$scope.filterString)
     $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
   
 }
   $scope.clearFilters = function () {
@@ -1355,8 +1360,8 @@ app.controller('viewclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
     $scope.filter_supplier = null;
     $scope.after_dc_date = null;
     $scope.before_dc_date = null;
-    callListAPI($scope.itemsByPage,$scope.filterString)
     $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
 
 }
 
@@ -1659,6 +1664,11 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
   $scope.isCollapsed = true;
   $scope.filterString = '';
 
+  $scope.refresh = function(){
+    $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
+  }
+
   $scope.addFilters = function () {
 
     if($scope.addFilter == false){
@@ -1674,8 +1684,8 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
       if($scope.filter[key] != null)
         $scope.filterString+='&'+key+'='+$scope.filter[key];
     });
-    callListAPI($scope.itemsByPage,$scope.filterString)
     $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
   
 }
   $scope.clearFilters = function () {
@@ -1687,8 +1697,8 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
     $scope.filter_item = null;
     $scope.after_dc_date = null;
     $scope.before_dc_date = null;
+    $scope.initialState();    
     callListAPI($scope.itemsByPage,$scope.filterString)
-    $scope.initialState();
 
 }
 
