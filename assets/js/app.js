@@ -47,7 +47,7 @@ app.config(function (hotkeysProvider) {
 app.controller('titleCtrl', function ($scope, $http) {
   $http({
     method: 'GET',
-    url: 'api/getbrand'
+    url: 'api/getdbinfo?id=1'
   }).then(function successCallback(response) {
     console.log(response);
     $scope.brand = response.data[0].info;
@@ -158,10 +158,21 @@ app.controller('newclothdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'ho
   $scope.tabselect1();
   $scope.cdc = {};
   $scope.cdc.items = [];
-  $scope.cdc.naming_series = "DC-1718-";
+  $scope.cdc.naming_series = "DC-";
   $scope.cdc.supplier_id = null;
   $scope.dynamicPopover = [];
   $scope.dynamicPopover.templateUrl = "supplierpopup.html";
+
+  $http({
+    method: 'GET',
+    url: 'api/getdbinfo?infoname=dcseries'
+  }).then(function successCallback(response) {
+    console.log(response);
+    $scope.cdc.naming_series = response.data[0].info;
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
 
   $scope.$on('$viewContentLoaded', function () {
     setTimeout(function () {
@@ -758,11 +769,22 @@ app.controller('newpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
   $scope.currentSize = { size1: 'size 1', size2: 'size 2', size3: 'size 3', size4: 'size 4', size5: 'size 5', size6: 'size 6', size7: 'size 7', size8: 'size 8', size9: 'size 9', size10: 'size 10' };
   $scope.sizestate = [true, true, true, true, true, true, true, true, true, true];
   $scope.pdc.items = [];
-  $scope.pdc.naming_series = "DC-1718-";
+  $scope.pdc.naming_series = "DC-";
   $scope.pdc.supplier_id = null;
   $scope.dynamicPopover = [];
   $scope.dynamicPopover.templateUrl = "supplierpopup.html";
   $scope.newitem = {};
+
+  $http({
+    method: 'GET',
+    url: 'api/getdbinfo?infoname=dcseries'
+  }).then(function successCallback(response) {
+    console.log(response);
+    $scope.pdc.naming_series = response.data[0].info;
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
 
   $scope.$on('$viewContentLoaded', function () {
     setTimeout(function () {
