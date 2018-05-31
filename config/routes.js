@@ -37,7 +37,7 @@ module.exports.routes = {
   },
   //    //'GET /api/:getmethod': {controller: "DcController", action:"all"},
   'GET /api/test': 'DcController.test',
-  'GET /api/getbrand': 'DcController.getbrand',
+  'GET /api/getdbinfo': 'DcController.getdbinfo',
   'GET /api/department': 'DcController.department',
   'GET /api/supplier': 'DcController.supplier',
   'GET /api/stateslist': 'DcController.stateslist',    

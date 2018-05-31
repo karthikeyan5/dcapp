@@ -17,9 +17,22 @@ sails.on('lifted', function () {
 
 module.exports = {
 
-
-    getbrand: function (req, res) {
-        Dc.query('SELECT info FROM dbinfo where infoid = 1;', function (err, results) {
+    getdbinfo: function (req, res) {
+        //console.log(req.allParams());
+        q = 'SELECT * FROM dbinfo where 1 = 1'
+        d = []
+        if (req.param("infoname") != undefined) {
+            q = q.concat(' and infoname = ?;')
+            d.push(req.param("infoname"))
+        }
+        else if (req.param("id") != undefined && !isNaN(parseInt(req.param("id")))) {
+            q = q.concat(' and infoid = ?;')
+            d.push(parseInt(req.param("id")))
+        }
+        else {
+            q = 'SELECT * FROM dbinfo;'
+        }
+        Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
             return res.ok(results);
         });
