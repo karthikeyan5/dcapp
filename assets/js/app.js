@@ -69,7 +69,7 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[5].className = "inactive";
     document.getElementById("tabnav").childNodes[7].className = "inactive";
     document.getElementById("tabnav").childNodes[9].className = "inactive";
-    // document.getElementById("tabnav").childNodes[11].className = "inactive";
+    document.getElementById("tabnav").childNodes[11].className = "inactive";
     // document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
@@ -79,7 +79,7 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[5].className = "inactive";
     document.getElementById("tabnav").childNodes[7].className = "inactive";
     document.getElementById("tabnav").childNodes[9].className = "inactive";
-    // document.getElementById("tabnav").childNodes[11].className = "inactive";
+    document.getElementById("tabnav").childNodes[11].className = "inactive";
     // document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
@@ -89,7 +89,7 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[5].className = "active";
     document.getElementById("tabnav").childNodes[7].className = "inactive";
     document.getElementById("tabnav").childNodes[9].className = "inactive";
-    // document.getElementById("tabnav").childNodes[11].className = "inactive";
+    document.getElementById("tabnav").childNodes[11].className = "inactive";
     // document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
@@ -99,7 +99,7 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[5].className = "inactive";
     document.getElementById("tabnav").childNodes[7].className = "active";
     document.getElementById("tabnav").childNodes[9].className = "inactive";
-    // document.getElementById("tabnav").childNodes[11].className = "inactive";
+    document.getElementById("tabnav").childNodes[11].className = "inactive";
     // document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
@@ -110,21 +110,21 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[5].className = "inactive";
     document.getElementById("tabnav").childNodes[7].className = "inactive";
     document.getElementById("tabnav").childNodes[9].className = "active";
-    // document.getElementById("tabnav").childNodes[11].className = "inactive";
+    document.getElementById("tabnav").childNodes[11].className = "inactive";
     // document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
 
-  // $scope.tabselect6 = function () {
-  //   document.getElementById("tabnav").childNodes[1].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[3].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[5].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[7].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[9].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[11].className = "active";
-  //   document.getElementById("tabnav").childNodes[13].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[15].className = "inactive";
-  // };
+  $scope.tabselect6 = function () {
+    document.getElementById("tabnav").childNodes[1].className = "inactive";
+    document.getElementById("tabnav").childNodes[3].className = "inactive";
+    document.getElementById("tabnav").childNodes[5].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "inactive";
+    document.getElementById("tabnav").childNodes[9].className = "inactive";
+    document.getElementById("tabnav").childNodes[11].className = "active";
+    // document.getElementById("tabnav").childNodes[13].className = "inactive";
+    // document.getElementById("tabnav").childNodes[15].className = "inactive";
+  };
 
   // $scope.tabselect7 = function () {
   //   document.getElementById("tabnav").childNodes[1].className = "inactive";
@@ -1246,6 +1246,639 @@ app.controller('newpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'h
 
 
 }]);
+
+
+app.controller('dcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibModal, dc, sizerange, sizetype, ngToast, $rootScope) {
+  $scope.dc = dc;
+  $scope.sizerange = sizerange;
+  $scope.sizetype = sizetype;
+  if ($scope.dc.dc_number) $scope.disablesave = true;
+  else $scope.disablesave = false;
+
+
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += item[key];
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+
+
+  $scope.save = () => {
+    $scope.disablesave = true;
+    $http({
+      method: 'POST',
+      url: '/api/dc',
+      data: $scope.dc
+    }).then(function successCallback(response) {
+      console.log(response);
+      ngToast.create('DC Details Saved.');
+      $scope.dc.dc_number = response.data.dc.dc_number;
+      $scope.dc.dc_no_length = response.data.dc.length;
+      $scope.dc.server_time = response.data.dc.server_time;
+      $scope.dc.current_user = response.data.dc.current_user;
+      setTimeout(function () { $scope.print(); }, 800);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        $scope.disablesave = false;
+        var er = 'ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+  }
+
+
+  $scope.$on("modal.closing", function () {
+    $rootScope.$broadcast("modalClosing", $scope.dc.dc_number ? $scope.dc.dc_number : undefined);
+  });
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  }
+
+  $scope.print = function () {
+    window.print();
+  }
+
+  $scope.canceldc = () => {
+    // TBD:add the canceldcmodal then a reason the update all the way down when model is closed
+    var answer = confirm("Cancel DC? WARNING!!! This cannot be undone.")
+    send_data = { status: 2 }
+    if (answer) {
+      $http({
+        method: 'PUT',
+        url: '/api/dc/' + $scope.dc.iddc,
+        data: send_data
+      }).then(function successCallback(response) {
+        console.log(response);
+        ngToast.create('DC Cancelled....');
+        $scope.dc.status = 'inactive'
+      },
+        function errorCallback(response) {
+          console.log(response);
+          var er = 'DC Cancel ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+          ngToast.create({
+            className: 'danger',
+            content: er
+          });
+        });
+    }
+  }
+
+});
+
+
+app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', '$route', function newdcCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource, $route) {
+  $scope.tabselect6();
+  $scope.dc = {};
+  $scope.currentSize = { size1: 'size 1', size2: 'size 2', size3: 'size 3', size4: 'size 4', size5: 'size 5', size6: 'size 6', size7: 'size 7', size8: 'size 8', size9: 'size 9', size10: 'size 10' };
+  $scope.sizestate = [true, true, true, true, true, true, true, true, true, true];
+  $scope.dc.items = [];
+  $scope.dc.naming_series = "DC-1819-";
+  $scope.dc.supplier_id = null;
+  $scope.dynamicPopover = [];
+  $scope.dynamicPopover.templateUrl = "supplierpopup.html";
+  $scope.newitem = {};
+  $scope.temp_storage = {};
+
+  $scope.$on('$viewContentLoaded', function () {
+    setTimeout(function () {
+      console.log("yeah!!!");
+      document.getElementById("department").focus();
+    }, 100);
+  });
+
+  window.onbeforeunload = function () {
+    return $scope.dc.items.length > 0 && !$scope.dc.dc_number ? "If you leave this page you will lose your unsaved changes." : null;
+  }
+  $scope.$on('$locationChangeStart', function (event) {
+
+    if ($scope.dc.items.length > 0 && !$scope.dc.dc_number) {
+      var answer = confirm("If you leave this page you will lose your unsaved changes.")
+      if (!answer) {
+        event.preventDefault();
+      }
+    }
+    // return $scope.dc.items.length > 0 ? "If you leave this page you will lose your unsaved changes." : null;
+  });
+
+  $scope.setsupplier = function () {
+    $scope.dc.supplier_id = $scope.dynamicPopover.supplier_details.id;
+    $scope.dc.supplier_name = $scope.dynamicPopover.supplier_details.name;
+    $scope.dc.supplier_address1 = $scope.dynamicPopover.supplier_details.address1;
+    $scope.dc.supplier_address2 = $scope.dynamicPopover.supplier_details.address2;
+    $scope.dc.supplier_city = $scope.dynamicPopover.supplier_details.city;
+    $scope.dc.supplier_state = $scope.dynamicPopover.supplier_details.state;
+    $scope.dc.supplier_pincode = $scope.dynamicPopover.supplier_details.pincode;
+    $scope.dc.supplier_gstin = $scope.dynamicPopover.supplier_details.gstin;
+    $scope.dc.supplier_phone1 = $scope.dynamicPopover.supplier_details.phone1;
+    $scope.dc.supplier_phone2 = $scope.dynamicPopover.supplier_details.phone2;
+    $scope.dc.supplier_email = $scope.dynamicPopover.supplier_details.email;
+    $scope.popoverIsOpen = false;
+    if($scope.dc.dept_type == 'cloth'){
+    a = findPos(document.getElementById("c1olour"));
+    $('html, body').animate({ scrollTop: a - 400 }, 'slow');
+    document.getElementById("c1olour").focus();
+    }
+  };
+
+  $scope.focussuppliername = function (event1) {
+    if (event1 != null) {
+      event1.preventDefault()
+    }
+    if($scope.dc.supplier_id != null ){
+      return;
+    }
+    //console.log("in focuspartyname()");
+    // $scope.popoverIsOpen = !$scope.popoverIsOpen;
+    $scope.popoverIsOpen = true;
+    //document.getElementById("date").focus();
+    //  setTimeout(function(){ document.getElementById("supplierbox").focus();},100);//10ms find a permant solution
+    $scope.focussupplierbox();
+  };
+
+  $scope.focussupplierbox = function () {
+    setTimeout(function () { document.getElementById("supplierbox").focus(); document.getElementById("supplierbox").select(); }, 100);
+  };
+
+  $scope.showaddress = function () {
+    if ($scope.dc.supplier_id === null)
+      return false;
+    else
+      return true;
+  };
+
+  // $scope.grand_total_weight = arr => arr.reduce((a, b) => a + $scope.total(b.dialist, 'weight', 3), 0)
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += item[key];
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+
+  $http({
+    method: 'GET',
+    url: '/api/department'
+  }).then(function successCallback(response) {
+    $scope.departmentlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'Department list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+  $http({
+    method: 'GET',
+    url: '/api/lot?status=active'
+  }).then(function successCallback(response) {
+    $scope.lotlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'LOT list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+  $http({
+    method: 'GET',
+    url: '/api/colour?status=active'
+  }).then(function successCallback(response) {
+    $scope.colourlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'Colour list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+  $scope.getsuppliers = function (state) {
+    let dc_department = JSON.parse($scope.selected_department)
+    if($scope.previousSelectedDepartment && dc_department.dept_type != $scope.dc.dept_type && $scope.dc.items.length > 0){
+      var answer = confirm("Deparment Type Mismatch....  Do you want to DELETE ALL item entries?")
+      if (!answer) {
+        event.preventDefault();
+        $scope.selected_department = $scope.previousSelectedDepartment;
+        return;
+      }
+      else {
+        $scope.dc.items = [];
+        $scope.temp_storage.newitemdetails = undefined;
+        $scope.dc.iditem = undefined;
+        $scope.dc.itemname = undefined;
+      }
+    }
+    $scope.dc.department = dc_department.id
+    $scope.dc.dept_type = dc_department.dept_type
+    $scope.dc.department_name = dc_department.name;
+    $scope.previousSelectedDepartment = $scope.selected_department;
+    $scope.dc.supplier_id = null;
+    $scope.supplierlist = [];
+    $http({
+      method: 'GET',
+      url: '/api/supplier?allfeilds=1&department=' + $scope.dc.department
+    }).then(function successCallback(response) {
+      $scope.supplierlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+      });
+
+  }
+
+  $scope.cleardc = () => {
+    $route.reload();
+  }
+
+  $http({
+    method: 'GET',
+    url: '/api/item?itemstatus=active'
+  }).then(function successCallback(response) {
+    console.log(response);
+    $scope.itemlist = [];
+    $scope.sizerangelist = response.data.sizerange;
+    $scope.sizetypelist = response.data.sizetype;
+    angular.forEach(response.data.items, function (value, key) {
+      var temp = { naming_series: value.naming_series,  fullname: value.naming_series.concat(' ',value.name), name: value.name, id: value.id, sizerange: value.sizerange };
+      this.push(temp);
+    }, $scope.itemlist);
+  }, function errorCallback(response) {
+    console.log(response);
+  });
+
+
+  $scope.setnameid = function () {
+    $scope.newitem = {};
+    $scope.dc.itemname = $scope.temp_storage.newitemdetails ? $scope.temp_storage.newitemdetails.name : undefined;
+    $scope.dc.iditem = $scope.temp_storage.newitemdetails ? $scope.temp_storage.newitemdetails.id : undefined;
+    $scope.dc.item_naming_series = $scope.temp_storage.newitemdetails ? $scope.temp_storage.newitemdetails.naming_series : undefined;
+    if (!$scope.temp_storage.newitemdetails) {
+      return;
+    }
+
+
+    if ($scope.idsizerange && $scope.idsizerange != $scope.temp_storage.newitemdetails.sizerange && $scope.dc.items.length > 0) {
+      var answer = confirm("Size Mismatch....  Do you want to DELETE ALL item entries?")
+      if (!answer) {
+        event.preventDefault();
+        $scope.temp_storage.newitemdetails = undefined;
+        $scope.dc.iditem = undefined;
+        $scope.dc.itemname = undefined;
+        return;
+      }
+      else {
+        $scope.dc.items = [];
+      }
+    }
+
+    angular.forEach($scope.sizerangelist, function (value, key) {
+      if ($scope.temp_storage.newitemdetails.sizerange == value.idsize) {
+        $scope.idsizetype = value.idsizetype;
+        $scope.sizerange = value;
+        var temp = [];
+        temp.push(value.size1 === 0 ? true : false);
+        temp.push(value.size2 === 0 ? true : false);
+        temp.push(value.size3 === 0 ? true : false);
+        temp.push(value.size4 === 0 ? true : false);
+        temp.push(value.size5 === 0 ? true : false);
+        temp.push(value.size6 === 0 ? true : false);
+        temp.push(value.size7 === 0 ? true : false);
+        temp.push(value.size8 === 0 ? true : false);
+        temp.push(value.size9 === 0 ? true : false);
+        temp.push(value.size10 === 0 ? true : false);
+        $scope.sizestate = temp;
+      }
+    }, $scope.sizestate);
+
+    angular.forEach($scope.sizetypelist, function (value, key) {
+      if ($scope.idsizetype == value.id) {
+        $scope.currentSize = value;
+        $scope.sizetype = value;
+      }
+    }, $scope.currentSize);
+
+
+    if (!$scope.idsizerange || $scope.dc.items.length == 0) {
+      setTimeout(function () { $scope.focuspart() }, 100);
+    }
+    $scope.idsizerange = $scope.temp_storage.newitemdetails.sizerange;
+
+
+  };
+
+
+  $scope.focuspart = function () {
+    // console.log("heloooooinside", document.getElementById("partbox"));
+    a = findPos(document.getElementById("partbox"));
+    $('html, body').animate({ scrollTop: a - 400 }, 'slow');
+    document.getElementById("partbox").focus();
+  }
+
+  var open = function (colour, dialist, index) {
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: './html/colourdetails.html',
+      controller: 'colourdetailsCtrl',
+      size: 'md',
+      backdrop: 'static',
+      keyboard: false,
+      // animation:false,
+      resolve: {
+        colour: function () {
+          return colour;
+        },
+        dialist: function () {
+          return dialist;
+        },
+        index: function () {
+          return index;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (ret) {
+      console.log('received dialist: ', ret.dialist, 'received colour:  ', ret.colour);
+
+      if (ret.index == -1) {
+        delete ret.index;
+        $scope.dc.items.push(ret);
+        modalInstance.closed.then(function () {
+          a = findPos(document.getElementById("c1olour"));
+          $('html, body').animate({ scrollTop: a - 400 }, 'slow');
+          document.getElementById("c1olour").focus();
+        });
+
+      }
+      else {
+        $scope.dc.items[ret.index].colour = ret.colour;
+        // $scope.cdc.items[ret.index].dialist = ret.dialist;
+      }
+      $scope.temp_storage.newcolour = null;
+
+
+    }, function (ret) {
+      console.log('Modal dismissed at: ' + new Date(), ret);
+    });
+  }
+
+  $scope.addColor = function (colour) {
+    open(colour, [], -1);
+
+  }
+
+  $scope.add = function (item) {
+    if ((($scope.newitem.size1 + $scope.newitem.size2 + $scope.newitem.size3 + $scope.newitem.size4 + $scope.newitem.size5 + $scope.newitem.size6 + $scope.newitem.size7 + $scope.newitem.size8 + $scope.newitem.size9 + $scope.newitem.size10) == 0)
+      && (($scope.newitem.wsize1 + $scope.newitem.wsize2 + $scope.newitem.wsize3 + $scope.newitem.wsize4 + $scope.newitem.wsize5 + $scope.newitem.wsize6 + $scope.newitem.wsize7 + $scope.newitem.wsize8 + $scope.newitem.wsize9 + $scope.newitem.wsize10) == 0)) {
+      ngToast.create({
+        className: 'danger',
+        content: 'Empty !!! Item not added...<br>Please try again...'
+      });
+      return;
+    }
+
+    if (item.index == undefined) {
+      $scope.dc.items.push(item);
+      ngToast.create({
+        className: 'success',
+        content: 'Item added...'
+      });
+    }
+    else {
+      index_temp = item.index;
+      $scope.dc.items[index_temp] = item;
+      ngToast.create({
+        className: 'success',
+        content: 'Item Updated...'
+      });
+    }
+
+    $scope.clearnewitem();
+  }
+
+  $scope.clearnewitem = function () {
+    $scope.newitem = { "size1": 0, "wsize1": 0, "size2": 0, "wsize2": 0, "size3": 0, "wsize3": 0, "size4": 0, "wsize4": 0, "size5": 0, "wsize5": 0, "size6": 0, "wsize6": 0, "size7": 0, "wsize7": 0, "size8": 0, "wsize8": 0, "size9": 0, "wsize9": 0, "size10": 0, "wsize10": 0, "part": undefined, "colour": undefined, "comment": undefined };
+    setTimeout(function () { $scope.focuspart() }, 100);
+  }
+
+  $scope.remove = function (collection, index) {
+    collection.splice(index, 1);
+    ngToast.create({
+      className: 'danger',
+      content: 'Deleted... '//undo
+    });
+  }
+
+  $scope.edit = function (collection, index) {
+    angular.copy(collection[index], $scope.newitem);
+    $scope.newitem.index = index;
+  }
+
+
+  var opendcmodal = function (dc) {
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: './html/dcmodal.html',
+      controller: 'dcmodalCtrl',
+      size: 'xl',
+      windowTopClass: 'hidden-print',
+      resolve: {
+        dc: function () {
+          return dc;
+        },
+        sizetype: function () {
+          return $scope.sizetype;
+        },
+        sizerange: function () {
+          return $scope.sizerange;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (ret) {
+      console.log(ret);
+
+
+    }, function (ret) {
+      console.log('Modal dismissed at: ' + new Date(), ret);
+    });
+
+    $scope.$on("modalClosing", function (event, ret) {
+      console.log('inside modalClosing event', ret);
+
+      if (ret) {
+        $scope.cleardc();
+      }
+
+
+    });
+
+
+  }
+
+
+  $scope.savedc = () => {
+
+    if (!$scope.dc.department) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select Department and Supplier... '
+      });
+      return;
+    }
+
+    if ($scope.dc.supplier_id === null) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select Supplier... '
+      });
+      return;
+    }
+
+    if ($scope.dc.dc_date === undefined) {
+      ngToast.create({
+        className: 'warning',
+        content: 'invalid DC Date... '
+      });
+      return;
+    }
+
+    if ($scope.dc.items.length < 1) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Nothing to Deliver?... '
+      });
+      return;
+    }
+
+    
+
+    opendcmodal($scope.dc);
+
+
+  }
+
+
+
+
+
+
+  // datepicker stuff - to be decoded later
+  $scope.today = function () {
+    $scope.dc.dc_date = new Date();
+  };
+  $scope.today();
+
+  $scope.clear = function () {
+    $scope.dc.dc_date = null;
+  };
+
+  $scope.inlineOptions = {
+    customClass: getDayClass,
+    minDate: new Date(),
+    showWeeks: true
+  };
+
+  $scope.dateOptions = {
+    dateDisabled: disabled,
+    formatYear: 'yy',
+    maxDate: new Date(2020, 5, 22),
+    minDate: new Date(),
+    startingDay: 1
+  };
+
+  // Disable weekend selection
+  function disabled(data) {
+    var date = data.date,
+      mode = data.mode;
+    //return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    return false;
+  }
+
+  $scope.toggleMin = function () {
+    $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+    $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+  };
+
+  $scope.toggleMin();
+
+  $scope.open1 = function () {
+    $scope.popup1.opened = true;
+  };
+
+  $scope.open2 = function () {
+    $scope.popup2.opened = true;
+  };
+
+  $scope.setDate = function (year, month, day) {
+    $scope.dc.dc_date = new Date(year, month, day);
+  };
+
+  $scope.altInputFormats = ['d!.M!.yyyy', 'd!.M!.yy', 'd!/M!/yyyy', 'd!/M!/yy'];//,'d!.M!','d!.M!.yy'];
+
+  $scope.popup1 = {
+    opened: false
+  };
+
+  $scope.popup2 = {
+    opened: false
+  };
+
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  var afterTomorrow = new Date();
+  afterTomorrow.setDate(tomorrow.getDate() + 1);
+  $scope.events = [
+    {
+      date: tomorrow,
+      status: 'full'
+    },
+    {
+      date: afterTomorrow,
+      status: 'partially'
+    }
+  ];
+
+  function getDayClass(data) {
+    var date = data.date,
+      mode = data.mode;
+    if (mode === 'day') {
+      var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
+
+      for (var i = 0; i < $scope.events.length; i++) {
+        var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
+
+        if (dayToCheck === currentDay) {
+          return $scope.events[i].status;
+        }
+      }
+    }
+
+    return '';
+  }
+
+
+}]);
+
+
+
 
 app.controller('pdcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibModal, pdc, sizerange, sizetype, ngToast, $rootScope) {
   $scope.pdc = pdc;
@@ -2556,6 +3189,10 @@ app.config(function ($routeProvider) {
     when('/managemaster', {
       templateUrl: './html/managemaster.html',
       controller: 'managemasterCtrl'
+    }).
+    when('/newdc', {
+      templateUrl: './html/newdc.html',
+      controller: 'newdcCtrl'
     }).
     otherwise({
       redirectTo: '/newclothdc'

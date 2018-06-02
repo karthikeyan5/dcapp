@@ -223,7 +223,7 @@ module.exports = {
         });
     },
     department: function (req, res) {
-        q = 'SELECT id,name FROM department ';
+        q = 'SELECT id,name,dept_type FROM department ';
         d = [];
 
         if (req.param("dept_type") != undefined) {
