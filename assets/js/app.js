@@ -70,7 +70,7 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[7].className = "inactive";
     document.getElementById("tabnav").childNodes[9].className = "inactive";
     document.getElementById("tabnav").childNodes[11].className = "inactive";
-    // document.getElementById("tabnav").childNodes[13].className = "inactive";
+    document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
   $scope.tabselect2 = function () {
@@ -80,7 +80,7 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[7].className = "inactive";
     document.getElementById("tabnav").childNodes[9].className = "inactive";
     document.getElementById("tabnav").childNodes[11].className = "inactive";
-    // document.getElementById("tabnav").childNodes[13].className = "inactive";
+    document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
   $scope.tabselect3 = function () {
@@ -90,7 +90,7 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[7].className = "inactive";
     document.getElementById("tabnav").childNodes[9].className = "inactive";
     document.getElementById("tabnav").childNodes[11].className = "inactive";
-    // document.getElementById("tabnav").childNodes[13].className = "inactive";
+    document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
   $scope.tabselect4 = function () {
@@ -111,7 +111,7 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[7].className = "inactive";
     document.getElementById("tabnav").childNodes[9].className = "active";
     document.getElementById("tabnav").childNodes[11].className = "inactive";
-    // document.getElementById("tabnav").childNodes[13].className = "inactive";
+    document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
 
@@ -122,20 +122,20 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[7].className = "inactive";
     document.getElementById("tabnav").childNodes[9].className = "inactive";
     document.getElementById("tabnav").childNodes[11].className = "active";
-    // document.getElementById("tabnav").childNodes[13].className = "inactive";
+    document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
 
-  // $scope.tabselect7 = function () {
-  //   document.getElementById("tabnav").childNodes[1].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[3].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[5].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[7].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[9].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[11].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[13].className = "active";
-  //   document.getElementById("tabnav").childNodes[15].className = "inactive";
-  // };
+  $scope.tabselect7 = function () {
+    document.getElementById("tabnav").childNodes[1].className = "inactive";
+    document.getElementById("tabnav").childNodes[3].className = "inactive";
+    document.getElementById("tabnav").childNodes[5].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "inactive";
+    document.getElementById("tabnav").childNodes[9].className = "inactive";
+    document.getElementById("tabnav").childNodes[11].className = "inactive";
+    document.getElementById("tabnav").childNodes[13].className = "active";
+    // document.getElementById("tabnav").childNodes[15].className = "inactive";
+  };
 
   // $scope.tabselect8 = function () {
   //   document.getElementById("tabnav").childNodes[1].className = "inactive";
@@ -2670,7 +2670,374 @@ app.controller('viewpiecesdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '
 }]);
 
 
+app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', function viewdcCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource) {
+  $scope.tabselect7();
+  $scope.displayedCollection = [];
+  $scope.rowCollection = [];
+  $scope.filter = {};
+  $scope.addFilter = false;
 
+  $scope.initialState = function(){
+  $scope.loadAll = false;
+  $scope.itemsByPage = 75;
+  $scope.showpagination = false;
+  }
+  $scope.initialState();
+
+  $scope.hidelist = false;
+  $scope.isCollapsed = true;
+  $scope.filterString = '';
+
+  $scope.refresh = function(){
+    $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
+  }
+
+  $scope.addFilters = function () {
+
+    if($scope.addFilter == false){
+      $scope.addFilter = true;
+      downloadFilterList();
+    }
+    $scope.isCollapsed = !$scope.isCollapsed;
+}
+
+  $scope.applyFilters = function () {
+    $scope.filterString = '';
+    Object.keys($scope.filter).map(function(key){
+      if($scope.filter[key] != null)
+        $scope.filterString+='&'+key+'='+$scope.filter[key];
+    });
+    $scope.initialState();
+    callListAPI($scope.itemsByPage,$scope.filterString)
+  
+}
+  $scope.clearFilters = function () {
+    $scope.filterString = '';
+    Object.keys($scope.filter).map(function(key){
+        $scope.filter[key] = null;
+    });
+    $scope.filter_supplier = null;
+    $scope.filter_item = null;
+    $scope.after_dc_date = null;
+    $scope.before_dc_date = null;
+    $scope.initialState();    
+    callListAPI($scope.itemsByPage,$scope.filterString)
+
+}
+
+  $scope.loadAllItems = function () {
+    $scope.loadAll = true;
+    callListAPI(Number.MAX_SAFE_INTEGER,$scope.filterString)
+    $scope.showpagination = true;
+}
+  $scope.updateItemsByPage = function () {
+    if ($scope.showpagination == true) {
+      $scope.showpagination = false;
+      $scope.itemsByPage = $scope.rowCollection.length;
+    }
+  }
+  $scope.ds = function (a) {
+    var b = new Date(a);
+    return b.toString('dd.MM.yyyy');
+  }
+
+  $scope.setsupplierFilter = function () {
+    $scope.filter.idsupplier = $scope.filter_supplier.id;
+  }
+
+  $scope.setnameid = function () {
+    $scope.filter.iditem = $scope.filter_item.id;
+  
+  }
+
+  $scope.setafterdate = function () {
+    $scope.filter.after_dc_date = $scope.after_dc_date.yyyymmdd();
+  
+  }
+
+  $scope.setbeforedate = function () {
+    $scope.filter.before_dc_date = $scope.before_dc_date.yyyymmdd();
+  
+  }
+
+  $scope.getters = {
+    dc_number: function (value) {
+      //this will sort by the length of the first name string
+      return value.naming_series + Array(value.dc_no_length - String(value.dc_number).length + 1).join('0') + value.dc_number;
+    }
+  }
+
+  let downloadFilterList = function(){
+  $http({
+    method: 'GET',
+    url: '/api/department'
+  }).then(function successCallback(response) {
+    $scope.departmentlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+      var er = 'Department list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+      ngToast.create({
+        className: 'danger',
+        content: er
+      });
+    });
+
+    $http({
+      method: 'GET',
+      url: '/api/lot?status=active'
+    }).then(function successCallback(response) {
+      $scope.lotlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'LOT list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+      $http({
+        method: 'GET',
+        url: '/api/supplier?allfeilds=0'
+      }).then(function successCallback(response) {
+        $scope.supplierlist = response.data;
+        console.log(response);
+      },
+        function errorCallback(response) {
+          console.log(response);
+        });
+
+        $http({
+          method: 'GET',
+          url: '/api/item?itemstatus=active'
+        }).then(function successCallback(response) {
+          console.log(response);
+          $scope.itemlist = [];
+          $scope.sizerangelist = response.data.sizerange;
+          $scope.sizetypelist = response.data.sizetype;
+          angular.forEach(response.data.items, function (value, key) {
+            var temp = { naming_series: value.naming_series,  fullname: value.naming_series.concat(' ',value.name), name: value.name, id: value.id, sizerange: value.sizerange };
+            this.push(temp);
+          }, $scope.itemlist);
+        }, function errorCallback(response) {
+          console.log(response);
+        });
+
+    }
+
+
+  let callListAPI = function (limit,filterString) {
+  $http({
+    method: 'GET',
+    url: '/api/dc?limit='+limit+filterString
+  }).then(function successCallback(response) {
+    $scope.rowCollection = [].concat(response.data);
+    console.log(response);
+    $scope.displayedCollection = [].concat($scope.rowCollection);
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
+  }
+  callListAPI($scope.itemsByPage,'');
+
+  single_dc_loading = false;
+  $scope.open = function (item) {
+
+    if (single_dc_loading) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please wait loading... '
+      });
+      return;
+    }
+    single_dc_loading = true;
+    $http({
+      method: 'GET',
+      url: '/api/dc?id=' + item.iddc
+    }).then(function successCallback(response) {
+      console.log(response);
+      $scope.dc = response.data[0];
+      //todo: add if condition with department type
+      // $scope.sizerange = $scope.dc.sizerange[0];
+      // $scope.sizetype = $scope.dc.sizetype[0];
+
+      // temp_items = {}
+      // $scope.dc.items.forEach(element => {
+      //   if (!temp_items[element.dc_colour_index]) {
+      //     temp_items[element.dc_colour_index] = {}
+      //     temp_items[element.dc_colour_index].colour = element.colour;
+      //     temp_items[element.dc_colour_index].dialist = [];
+      //   }
+      //   temp_items[element.dc_colour_index].dialist.push({ dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
+      // });
+      // dc_colour_index_list = Object.keys(temp_items).sort();
+      // $scope.dc.items = [];
+      // dc_colour_index_list.forEach(x => {
+      //   $scope.dc.items.push(temp_items[x]);
+      // });
+      $scope.hidelist = true;
+      var modalInstance = $uibModal.open({
+        animation: true,
+        templateUrl: './html/dcmodal.html',
+        controller: 'dcmodalCtrl',
+        size: 'xl',
+        windowTopClass: 'hidden-print',
+        resolve: {
+          dc: function () {
+            return $scope.dc;
+          },
+          sizerange: function () {
+            return $scope.sizerange;
+          },
+          sizetype: function () {
+            return $scope.sizetype;
+          }
+        }
+      });
+
+      modalInstance.result.then(function (generated) {
+
+      }, function (ret) {
+
+        console.log('Modal dismissed at: ' + new Date(), ret);
+
+      });
+
+      $scope.$on("modalClosing", function (event, ret) {
+        console.log('inside modalClosing event', ret);
+
+        $scope.dc = {};
+        single_dc_loading = false;
+        $scope.hidelist = false;
+
+      });
+
+
+
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'Single dc fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+        single_dc_loading = false;
+      });
+
+
+  }
+
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += item[key];
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+
+
+
+  // datepicker stuff - to be decoded later
+
+  $scope.clear = function () {
+    $scope.filter.dc_date = null;
+  };
+
+  $scope.inlineOptions = {
+    customClass: getDayClass,
+    minDate: new Date(),
+    showWeeks: true
+  };
+
+  $scope.dateOptions = {
+    dateDisabled: disabled,
+    formatYear: 'yy',
+    maxDate: new Date(2020, 5, 22),
+    minDate: new Date(),
+    startingDay: 1
+  };
+
+  // Disable weekend selection
+  function disabled(data) {
+    var date = data.date,
+      mode = data.mode;
+    //return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    return false;
+  }
+
+  $scope.toggleMin = function () {
+    $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+    $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+  };
+
+  $scope.toggleMin();
+
+  $scope.open1 = function () {
+    $scope.popup1.opened = true;
+  };
+
+  $scope.open2 = function () {
+    $scope.popup2.opened = true;
+  };
+
+  $scope.setDate = function (year, month, day) {
+    $scope.dc.dc_date = new Date(year, month, day);
+  };
+
+  $scope.altInputFormats = ['d!.M!.yyyy', 'd!.M!.yy', 'd!/M!/yyyy', 'd!/M!/yy'];//,'d!.M!','d!.M!.yy'];
+
+  $scope.popup1 = {
+    opened: false
+  };
+
+  $scope.popup2 = {
+    opened: false
+  };
+
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  var afterTomorrow = new Date();
+  afterTomorrow.setDate(tomorrow.getDate() + 1);
+  $scope.events = [
+    {
+      date: tomorrow,
+      status: 'full'
+    },
+    {
+      date: afterTomorrow,
+      status: 'partially'
+    }
+  ];
+
+  function getDayClass(data) {
+    var date = data.date,
+      mode = data.mode;
+    if (mode === 'day') {
+      var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
+
+      for (var i = 0; i < $scope.events.length; i++) {
+        var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
+
+        if (dayToCheck === currentDay) {
+          return $scope.events[i].status;
+        }
+      }
+    }
+
+    return '';
+  }
+
+
+
+
+}]);
 
 
 app.controller('managemasterCtrl', ['$scope', '$uibModal', '$http', function managemasterCtrl($scope, $uibModal, $http) {
@@ -3193,6 +3560,10 @@ app.config(function ($routeProvider) {
     when('/newdc', {
       templateUrl: './html/newdc.html',
       controller: 'newdcCtrl'
+    }).
+    when('/viewdc', {
+      templateUrl: './html/viewdc.html',
+      controller: 'viewdcCtrl'
     }).
     otherwise({
       redirectTo: '/newclothdc'
