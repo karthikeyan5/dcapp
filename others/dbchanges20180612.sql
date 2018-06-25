@@ -43,7 +43,7 @@ ADD INDEX `fk_cdcitems_2_idx` (`iddc` ASC);
 ALTER TABLE `pdcitems` 
 ADD COLUMN `iddc` INT NOT NULL AFTER `idpdc`,
 ADD COLUMN `lot_number` VARCHAR(45) NULL AFTER `iddc`,
-ADD COLUMN `iditem` INT NOT NULL AFTER `lotnumber`, 
+ADD COLUMN `iditem` INT NOT NULL AFTER `lot_number`, 
 ADD INDEX `fk_pdcitems_2_idx` (`iddc` ASC),
 ADD INDEX `fk_pdcitems_3_idx` (`iditem` ASC);
 
@@ -61,7 +61,7 @@ update cdcitems,
 (select dc.id id, cdc.id idcdc, cdc.lot_number
 from dc, cdc
 where dc.naming_series=cdc.naming_series and dc.dc_number=cdc.dc_number) src
-set cdcitems.iddc=src.id, cdcitems.lotnumber=src.lot_number
+set cdcitems.iddc=src.id, cdcitems.lot_number=src.lot_number
 where cdcitems.idcdc=src.idcdc;
 
 update pdcitems,
