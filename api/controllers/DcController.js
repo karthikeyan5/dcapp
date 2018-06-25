@@ -523,7 +523,9 @@ module.exports = {
         //-----             idsupplier, iditem(available only for pdc), lot_number, vehicle_number, dept_type
         // ----             comment, department, after_dc_date (yyyymmdd), before_dc_date , limit, offset    
         // ---- 
-        q = "SELECT  \
+        q = "SELECT  m.* \
+        FROM( \
+            SELECT  \
         dc.id iddc,  \
         dc.naming_series,  \
         items_agg.itemlist,  \
@@ -652,7 +654,11 @@ module.exports = {
             d.push(req.param('before_dc_date'));
         }
 
-        q = q.concat(' order by dc.id desc LIMIT ?,?;');
+        q = q.concat(' LIMIT ?,? ) q \
+        JOIN    dc m \
+        ON      m.id = q.iddc \
+        ORDER BY \
+                m.id');
         d.push(offset, limit);
 
         Dc.query(q, d, function (err, results) {
