@@ -32,7 +32,7 @@
         <div class="form-group">
             <label for="department" class="col-md-2 control-label">D.C. Type (Department):</label>
             <div class="col-md-3">
-                <select id="department" class="form-control" ng-model="selected_department" ng-change="getsuppliers()" ng-model-options="{ debounce : 800 }"
+                <select id="department" class="form-control" ng-model="selected_department" ng-change="getsuppliers()" ng-model-options="{ debounce : 500 }"
                     autofocus required>
                     <option ng-repeat="department in departmentlist" value={{department}}>{{department.name}}</option>
                 </select>
@@ -53,13 +53,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="lotbox" class="col-md-2 control-label">Lot Number:</label>
-            <div class="col-md-3">
-                    <input required class="form-control input-sm" id="lotbox" type="text" ng-model="dc.lot_number" uib-typeahead="item.name for item in lotlist | filter:$viewValue | limitTo:25"
-                            placeholder="Enter Lot Number" typeahead-on-select="focussuppliername(null)" autocomplete="off" typeahead-editable="false"
-                            typeahead-focus-on-select="false">
-            </div>
-            <label for="p1in" class="col-md-2 col-md-offset-1 control-label">DC Series:</label>
+            <label for="p1in" class="col-md-2 control-label">DC Series:</label>
             <div class="col-md-2">
                 <input autocomplete="false" type="text" class="form-control" id="p1in" placeholder="" readonly tabindex="-1" ng-model="dc.naming_series">
             </div>
@@ -90,13 +84,6 @@
                     </div>
                 </div>
             </div>
-
-            <label for="p1in" class="col-md-2 control-label" ng-if="dc.dept_type== 'piece'">Item:</label>
-            <div class="col-md-4" ng-if="dc.dept_type == 'piece'">
-                <input class="form-control input-sm" name="itembox" id="itembox" type="text" ng-model="temp_storage.newitemdetails" uib-typeahead="item as item.fullname for item in itemlist | filter:$viewValue | limitTo:25"
-                    placeholder="Enter item name / id" typeahead-on-select="setnameid()" ng-change="setnameid()" required autocomplete="off"
-                    typeahead-editable="false" typeahead-focus-on-select="false" typeahead-template-url="itemCustomTemplate.html">
-            </div>
         </div>
 
 
@@ -104,193 +91,203 @@
 
         <div ng-show="dc.items.length > 0">
             <table class="table table-bordered table-striped" ng-if="dc.dept_type == 'piece'">
-                <thead>
-                    <tr>
-                        <th class="text-center">S.No</th>
-                        <th class="text-center">Part</th>
-                        <th class="text-center">Colour</th>
-                        <th class="text-center">Comment</th>
-                        <td class="text-center" style="white-space: nowrap;" ng-show="sizerange.size1===0?false:true">{{sizetype.size1}}</td>
-                        <td class="text-center" style="white-space: nowrap;" ng-show="sizerange.size2===0?false:true">{{sizetype.size2}}</td>
-                        <td class="text-center" style="white-space: nowrap;" ng-show="sizerange.size3===0?false:true">{{sizetype.size3}}</td>
-                        <td class="text-center" style="white-space: nowrap;" ng-show="sizerange.size4===0?false:true">{{sizetype.size4}}</td>
-                        <td class="text-center" style="white-space: nowrap;" ng-show="sizerange.size5===0?false:true">{{sizetype.size5}}</td>
-                        <td class="text-center" style="white-space: nowrap;" ng-show="sizerange.size6===0?false:true">{{sizetype.size6}}</td>
-                        <td class="text-center" style="white-space: nowrap;" ng-show="sizerange.size7===0?false:true">{{sizetype.size7}}</td>
-                        <td class="text-center" style="white-space: nowrap;" ng-show="sizerange.size8===0?false:true">{{sizetype.size8}}</td>
-                        <td class="text-center" style="white-space: nowrap;" ng-show="sizerange.size9===0?false:true">{{sizetype.size9}}</td>
-                        <td class="text-center" style="white-space: nowrap;" ng-show="sizerange.size10===0?false:true">{{sizetype.size10}}</td>
-                        <th class="text-center">
-                            <strong>Total</strong>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="row in dc.items track by $index" class="repeated-item">
-                        <td>{{$index + 1}}</td>
-                        <td class="text-capitalize">{{row.part}}</td>
-                        <td class="text-capitalize">{{row.colour}}</td>
-                        <td class="text-capitalize">{{row.comment}}</td>
-                        <td class="text-center" ng-show="sizerange.size1===0?false:true">
-                            <span ng-show="row.size1 != 0">{{row.size1}} Pcs
-                            </span>
-                            <br>
-                            <small ng-show="row.wsize1 != 0" class="pull-right">({{row.wsize1 | number:3}} KG)</small>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size2===0?false:true">
-                            <span ng-show="row.size2 != 0">{{row.size2}} Pcs
-                            </span>
-                            <br>
-                            <small ng-show="row.wsize2 != 0" class="pull-right">({{row.wsize2 | number:3}} KG)</small>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size3===0?false:true">
-                            <span ng-show="row.size3 != 0">{{row.size3}} Pcs
-                            </span>
-                            <br>
-                            <small ng-show="row.wsize3 != 0" class="pull-right">({{row.wsize3 | number:3}} KG)</small>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size4===0?false:true">
-                            <span ng-show="row.size4 != 0">{{row.size4}} Pcs
-                            </span>
-                            <br>
-                            <small ng-show="row.wsize4 != 0" class="pull-right">({{row.wsize4 | number:3}} KG)</small>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size5===0?false:true">
-                            <span ng-show="row.size5 != 0">{{row.size5}} Pcs
-                            </span>
-                            <br>
-                            <small ng-show="row.wsize5 != 0" class="pull-right">({{row.wsize5 | number:3}} KG)</small>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size6===0?false:true">
-                            <span ng-show="row.size6 != 0">{{row.size6}} Pcs
-                            </span>
-                            <br>
-                            <small ng-show="row.wsize6 != 0" class="pull-right">({{row.wsize6 | number:3}} KG)</small>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size7===0?false:true">
-                            <span ng-show="row.size7 != 0">{{row.size7}} Pcs
-                            </span>
-                            <br>
-                            <small ng-show="row.wsize7 != 0" class="pull-right">({{row.wsize7 | number:3}} KG)</small>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size8===0?false:true">
-                            <span ng-show="row.size8 != 0">{{row.size8}} Pcs
-                            </span>
-                            <br>
-                            <small ng-show="row.wsize8 != 0" class="pull-right">({{row.wsize8 | number:3}} KG)</small>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size9===0?false:true">
-                            <span ng-show="row.size9 != 0">{{row.size9}} Pcs
-                            </span>
-                            <br>
-                            <small ng-show="row.wsize9 != 0" class="pull-right">({{row.wsize9 | number:3}} KG)</small>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size10===0?false:true">
-                            <span ng-show="row.size10 != 0">{{row.size10}} Pcs
-                            </span>
-                            <br>
-                            <small ng-show="row.wsize10 != 0" class="pull-right">({{row.wsize10 | number:3}} KG)</small>
-                        </td>
-                        <td class="text-center">
-                            <strong> {{row.size1+row.size2+row.size3+row.size4+row.size5+row.size6+row.size7+row.size8+row.size9+row.size10}}
-                                Pcs
-                                <br>
-                                <small class="pull-right">({{(row.wsize1+row.wsize2+row.wsize3+row.wsize4+row.wsize5+row.wsize6+row.wsize7+row.wsize8+row.wsize9+row.wsize10)
-                                    | number:3}} KG)</small>
-                            </strong>
-                        </td>
-                        <td class="hidden-print">
-                            <span ng-click="edit(dc.items,$index,newitem)" type="button" class="close" aria-label="Close">
-                                <span aria-hidden="true">Edit</span>
-                            </span>
-                        </td>
-                        <td class="hidden-print">
-                            <span ng-click="remove(dc.items,$index)" type="button" class="close" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </span>
-                        </td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="4">
-                            <strong class="pull-right">Total</strong>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size1===0?false:true">
-                            <strong>{{total(dc.items,'size1',0)}} Pcs
-                                <br>
-                                <small class="pull-right">({{total(dc.items,'wsize1',3)}} KG)</small>
-                            </strong>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size2===0?false:true">
-                            <strong>{{total(dc.items,'size2',0)}} Pcs
-                                <br>
-                                <small class="pull-right">({{total(dc.items,'wsize2',3)}} KG)</small>
-                            </strong>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size3===0?false:true">
-                            <strong>{{total(dc.items,'size3',0)}} Pcs
-                                <br>
-                                <small class="pull-right">({{total(dc.items,'wsize3',3)}} KG)</small>
-                            </strong>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size4===0?false:true">
-                            <strong>{{total(dc.items,'size4',0)}} Pcs
-                                <br>
-                                <small class="pull-right">({{total(dc.items,'wsize4',3)}} KG)</small>
-                            </strong>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size5===0?false:true">
-                            <strong>{{total(dc.items,'size5',0)}} Pcs
-                                <br>
-                                <small class="pull-right">({{total(dc.items,'wsize5',3)}} KG)</small>
-                            </strong>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size6===0?false:true">
-                            <strong>{{total(dc.items,'size6',0)}} Pcs
-                                <br>
-                                <small class="pull-right">({{total(dc.items,'wsize6',3)}} KG)</small>
-                            </strong>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size7===0?false:true">
-                            <strong>{{total(dc.items,'size7',0)}} Pcs
-                                <br>
-                                <small class="pull-right">({{total(dc.items,'wsize7',3)}} KG)</small>
-                            </strong>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size8===0?false:true">
-                            <strong>{{total(dc.items,'size8',0)}} Pcs
-                                <br>
-                                <small class="pull-right">({{total(dc.items,'wsize8',3)}} KG)</small>
-                            </strong>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size9===0?false:true">
-                            <strong>{{total(dc.items,'size9',0)}} Pcs
-                                <br>
-                                <small class="pull-right">({{total(dc.items,'wsize9',3)}} KG)</small>
-                            </strong>
-                        </td>
-                        <td class="text-center" ng-show="sizerange.size10===0?false:true">
-                            <strong>{{total(dc.items,'size10',0)}} Pcs
-                                <br>
-                                <small class="pull-right">({{total(dc.items,'wsize10',3)}} KG)</small>
-                            </strong>
-                        </td>
-                        <td class="text-center">
-                            <strong> {{total(dc.items,'size1',0)+total(dc.items,'size2',0)+total(dc.items,'size3',0)+total(dc.items,'size4',0)+total(dc.items,'size5',0)+total(dc.items,'size6',0)+total(dc.items,'size7',0)+total(dc.items,'size8',0)+total(dc.items,'size9',0)+total(dc.items,'size10',0)}}
-                                Pcs
-                                <br>
-                                <small class="pull-right">({{(total(dc.items,'wsize1',3)+total(dc.items,'wsize2',3)+total(dc.items,'wsize3',3)+total(dc.items,'wsize4',3)+total(dc.items,'wsize5',3)+total(dc.items,'wsize6',3)+total(dc.items,'wsize7',3)+total(dc.items,'wsize8',3)+total(dc.items,'wsize9',3)+total(dc.items,'wsize10',0))
-                                    | number:3}} KG)</small>
-                            </strong>
-                        </td>
-                    </tr>
-                </tfoot>
+                <tr ng-repeat="item in dc.items track by $index">
+                    <td>Item: {{item.item.name}}
+                        <span class="pull-right"> Lot Number: {{item.lot_number}}</span><br>
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">S.No</th>
+                                    <th class="text-center">Part</th>
+                                    <th class="text-center">Colour</th>
+                                    <th class="text-center">Comment</th>
+                                    <td class="text-center" style="white-space: nowrap;" ng-show="item.sizerange.size1===0?false:true">{{item.sizetype.size1}}</td>
+                                    <td class="text-center" style="white-space: nowrap;" ng-show="item.sizerange.size2===0?false:true">{{item.sizetype.size2}}</td>
+                                    <td class="text-center" style="white-space: nowrap;" ng-show="item.sizerange.size3===0?false:true">{{item.sizetype.size3}}</td>
+                                    <td class="text-center" style="white-space: nowrap;" ng-show="item.sizerange.size4===0?false:true">{{item.sizetype.size4}}</td>
+                                    <td class="text-center" style="white-space: nowrap;" ng-show="item.sizerange.size5===0?false:true">{{item.sizetype.size5}}</td>
+                                    <td class="text-center" style="white-space: nowrap;" ng-show="item.sizerange.size6===0?false:true">{{item.sizetype.size6}}</td>
+                                    <td class="text-center" style="white-space: nowrap;" ng-show="item.sizerange.size7===0?false:true">{{item.sizetype.size7}}</td>
+                                    <td class="text-center" style="white-space: nowrap;" ng-show="item.sizerange.size8===0?false:true">{{item.sizetype.size8}}</td>
+                                    <td class="text-center" style="white-space: nowrap;" ng-show="item.sizerange.size9===0?false:true">{{item.sizetype.size9}}</td>
+                                    <td class="text-center" style="white-space: nowrap;" ng-show="item.sizerange.size10===0?false:true">{{item.sizetype.size10}}</td>
+                                    <th class="text-center">
+                                        <strong>Total</strong>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="row in item.partlist track by $index" class="repeated-item">
+                                    <td>{{$index + 1}}</td>
+                                    <td class="text-capitalize">{{row.part}}</td>
+                                    <td class="text-capitalize">{{row.colour}}</td>
+                                    <td class="text-capitalize">{{row.comment}}</td>
+                                    <td class="text-center" ng-show="item.sizerange.size1===0?false:true">
+                                        <span ng-show="row.size1 != 0">{{row.size1}} Pcs
+                                        </span>
+                                        <br>
+                                        <small ng-show="row.wsize1 != 0" class="pull-right">({{row.wsize1 | number:3}} KG)</small>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size2===0?false:true">
+                                        <span ng-show="row.size2 != 0">{{row.size2}} Pcs
+                                        </span>
+                                        <br>
+                                        <small ng-show="row.wsize2 != 0" class="pull-right">({{row.wsize2 | number:3}} KG)</small>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size3===0?false:true">
+                                        <span ng-show="row.size3 != 0">{{row.size3}} Pcs
+                                        </span>
+                                        <br>
+                                        <small ng-show="row.wsize3 != 0" class="pull-right">({{row.wsize3 | number:3}} KG)</small>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size4===0?false:true">
+                                        <span ng-show="row.size4 != 0">{{row.size4}} Pcs
+                                        </span>
+                                        <br>
+                                        <small ng-show="row.wsize4 != 0" class="pull-right">({{row.wsize4 | number:3}} KG)</small>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size5===0?false:true">
+                                        <span ng-show="row.size5 != 0">{{row.size5}} Pcs
+                                        </span>
+                                        <br>
+                                        <small ng-show="row.wsize5 != 0" class="pull-right">({{row.wsize5 | number:3}} KG)</small>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size6===0?false:true">
+                                        <span ng-show="row.size6 != 0">{{row.size6}} Pcs
+                                        </span>
+                                        <br>
+                                        <small ng-show="row.wsize6 != 0" class="pull-right">({{row.wsize6 | number:3}} KG)</small>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size7===0?false:true">
+                                        <span ng-show="row.size7 != 0">{{row.size7}} Pcs
+                                        </span>
+                                        <br>
+                                        <small ng-show="row.wsize7 != 0" class="pull-right">({{row.wsize7 | number:3}} KG)</small>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size8===0?false:true">
+                                        <span ng-show="row.size8 != 0">{{row.size8}} Pcs
+                                        </span>
+                                        <br>
+                                        <small ng-show="row.wsize8 != 0" class="pull-right">({{row.wsize8 | number:3}} KG)</small>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size9===0?false:true">
+                                        <span ng-show="row.size9 != 0">{{row.size9}} Pcs
+                                        </span>
+                                        <br>
+                                        <small ng-show="row.wsize9 != 0" class="pull-right">({{row.wsize9 | number:3}} KG)</small>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size10===0?false:true">
+                                        <span ng-show="row.size10 != 0">{{row.size10}} Pcs
+                                        </span>
+                                        <br>
+                                        <small ng-show="row.wsize10 != 0" class="pull-right">({{row.wsize10 | number:3}} KG)</small>
+                                    </td>
+                                    <td class="text-center">
+                                        <strong> {{row.size1+row.size2+row.size3+row.size4+row.size5+row.size6+row.size7+row.size8+row.size9+row.size10}}
+                                            Pcs
+                                            <br>
+                                            <small class="pull-right">({{(row.wsize1+row.wsize2+row.wsize3+row.wsize4+row.wsize5+row.wsize6+row.wsize7+row.wsize8+row.wsize9+row.wsize10)
+                                                | number:3}} KG)</small>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4">
+                                        <strong class="pull-right">Total</strong>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size1===0?false:true">
+                                        <strong>{{total(item.partlist,'size1',0)}} Pcs
+                                            <br>
+                                            <small class="pull-right">({{total(item.partlist,'wsize1',3)}} KG)</small>
+                                        </strong>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size2===0?false:true">
+                                        <strong>{{total(item.partlist,'size2',0)}} Pcs
+                                            <br>
+                                            <small class="pull-right">({{total(item.partlist,'wsize2',3)}} KG)</small>
+                                        </strong>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size3===0?false:true">
+                                        <strong>{{total(item.partlist,'size3',0)}} Pcs
+                                            <br>
+                                            <small class="pull-right">({{total(item.partlist,'wsize3',3)}} KG)</small>
+                                        </strong>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size4===0?false:true">
+                                        <strong>{{total(item.partlist,'size4',0)}} Pcs
+                                            <br>
+                                            <small class="pull-right">({{total(item.partlist,'wsize4',3)}} KG)</small>
+                                        </strong>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size5===0?false:true">
+                                        <strong>{{total(item.partlist,'size5',0)}} Pcs
+                                            <br>
+                                            <small class="pull-right">({{total(item.partlist,'wsize5',3)}} KG)</small>
+                                        </strong>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size6===0?false:true">
+                                        <strong>{{total(item.partlist,'size6',0)}} Pcs
+                                            <br>
+                                            <small class="pull-right">({{total(item.partlist,'wsize6',3)}} KG)</small>
+                                        </strong>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size7===0?false:true">
+                                        <strong>{{total(item.partlist,'size7',0)}} Pcs
+                                            <br>
+                                            <small class="pull-right">({{total(item.partlist,'wsize7',3)}} KG)</small>
+                                        </strong>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size8===0?false:true">
+                                        <strong>{{total(item.partlist,'size8',0)}} Pcs
+                                            <br>
+                                            <small class="pull-right">({{total(item.partlist,'wsize8',3)}} KG)</small>
+                                        </strong>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size9===0?false:true">
+                                        <strong>{{total(item.partlist,'size9',0)}} Pcs
+                                            <br>
+                                            <small class="pull-right">({{total(item.partlist,'wsize9',3)}} KG)</small>
+                                        </strong>
+                                    </td>
+                                    <td class="text-center" ng-show="item.sizerange.size10===0?false:true">
+                                        <strong>{{total(item.partlist,'size10',0)}} Pcs
+                                            <br>
+                                            <small class="pull-right">({{total(item.partlist,'wsize10',3)}} KG)</small>
+                                        </strong>
+                                    </td>
+                                    <td class="text-center">
+                                        <strong> {{total(item.partlist,'size1',0)+total(item.partlist,'size2',0)+total(item.partlist,'size3',0)+total(item.partlist,'size4',0)+total(item.partlist,'size5',0)+total(item.partlist,'size6',0)+total(item.partlist,'size7',0)+total(item.partlist,'size8',0)+total(item.partlist,'size9',0)+total(item.partlist,'size10',0)}}
+                                            Pcs
+                                            <br>
+                                            <small class="pull-right">({{(total(item.partlist,'wsize1',3)+total(item.partlist,'wsize2',3)+total(item.partlist,'wsize3',3)+total(item.partlist,'wsize4',3)+total(item.partlist,'wsize5',3)+total(item.partlist,'wsize6',3)+total(item.partlist,'wsize7',3)+total(item.partlist,'wsize8',3)+total(item.partlist,'wsize9',3)+total(item.partlist,'wsize10',0))
+                                                | number:3}} KG)</small>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </td>
+                    <td class="hidden-print">
+                        <span ng-click="edititem($index)" type="button" class="close" aria-label="Close">
+                            <span aria-hidden="true">Edit</span>
+                        </span>
+                    </td>
+                    <td class="hidden-print">
+                        <span ng-click="removeitem($index)" type="button" class="close" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </span>
+                    </td>
+
+                </tr>
             </table>
 
             <table class="table table-bordered table-striped" ng-if="dc.dept_type == 'cloth'">
                 <tr ng-repeat="item in dc.items track by $index">
-                    <td>Colour: {{item.colour}}</td>
+                    <td>Colour: {{item.colour}}
+                        <br> Lot Number: {{item.lot_number}}
+                    </td>
                     <td>
                         <table class="table table-bordered table-striped">
                             <thead>
@@ -342,7 +339,8 @@
             <div class="form-group">
                 <label class="col-md-3 control-label">Estimated value of Goods:</label>
                 <div class="col-md-2">
-                    <p readonly class="form-control">{{((total(dc.items,'wsize1',3)+total(dc.items,'wsize2',3)+total(dc.items,'wsize3',3)+total(dc.items,'wsize4',3)+total(dc.items,'wsize5',3)+total(dc.items,'wsize6',3)+total(dc.items,'wsize7',3)+total(dc.items,'wsize8',3)+total(dc.items,'wsize9',3)+total(dc.items,'wsize10',0))*dc.rateperkg)+dc.additionalvalue|INR}}</p>
+                    <p readonly class="form-control" ng-if="dc.dept_type == 'cloth'">{{grand_total_weight(dc.items)*dc.rateperkg+dc.additionalvalue|INR}}</p>
+                    <p readonly class="form-control" ng-if="dc.dept_type == 'piece'">{{grand_total_weight_partlist(dc.items)*dc.rateperkg+dc.additionalvalue|INR}}</p>
                 </div>
             </div>
             <div class="form-group">
@@ -379,161 +377,46 @@
     </form>
 
 
+
+
+
     <div class="hidden-print" style="padding-top: 8px;">
 
-        <form name="formq" ng-if="dc.dept_type == 'piece' && dc.iditem != undefined" class="grid-form panel panel-default " ng-submit="add(newitem)">
-            <!-- -->
-            <fieldset>
-                <legend class="panel-heading">Add Item:
-                </legend>
-                <div data-row-span="12">
-                    <div data-field-span="6" class="form-group">
-                        <label>Part</label>
-                        <input class="form-control input-sm" id="partbox" type="text" ng-model="newitem.part" placeholder="Enter Part (Optional)"
-                            typeahead-on-select="setnameid99()" autocomplete="off" typeahead-editable="true" typeahead-focus-on-select="false">
-                    </div>
-                    <div data-field-span="6" class="form-group">
-                        <label>Colour</label>
-                        <input class="form-control input-sm" id="colourbox" type="text" ng-model="newitem.colour" uib-typeahead="item.name for item in colourlist | filter:$viewValue | limitTo:25"
-                            placeholder="Enter Colour (Optional)" autocomplete="off" typeahead-editable="false"
-                            typeahead-focus-on-select="false">
-                    </div>
-                </div>
-                <div data-row-span="10">
-                    <div data-field-span="1" ng-hide="sizestate[0]">
-                        <label>{{currentSize.size1}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size1" ng-init="newitem.size1 = 0" ng-disabled="sizestate[0]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize1" ng-init="newitem.wsize1 = 0"
-                            ng-disabled="sizestate[0]">
-                    </div>
-                    <div data-field-span="1" ng-hide="sizestate[1]">
-                        <label>{{currentSize.size2}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size2" ng-init="newitem.size2 = 0" ng-disabled="sizestate[1]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize2" ng-init="newitem.wsize2 = 0"
-                            ng-disabled="sizestate[1]">
-                    </div>
-                    <div data-field-span="1" ng-hide="sizestate[2]">
-                        <label>{{currentSize.size3}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size3" ng-init="newitem.size3 = 0" ng-disabled="sizestate[2]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize3" ng-init="newitem.wsize3 = 0"
-                            ng-disabled="sizestate[2]">
-                    </div>
-                    <div data-field-span="1" ng-hide="sizestate[3]">
-                        <label>{{currentSize.size4}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size4" ng-init="newitem.size4 = 0" ng-disabled="sizestate[3]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize4" ng-init="newitem.wsize4 = 0"
-                            ng-disabled="sizestate[3]">
-                    </div>
-                    <div data-field-span="1" ng-hide="sizestate[4]">
-                        <label>{{currentSize.size5}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size5" ng-init="newitem.size5 = 0" ng-disabled="sizestate[4]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize5" ng-init="newitem.wsize5 = 0"
-                            ng-disabled="sizestate[4]">
-                    </div>
-                    <div data-field-span="1" ng-hide="sizestate[5]">
-                        <label>{{currentSize.size6}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size6" ng-init="newitem.size6 = 0" ng-disabled="sizestate[5]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize6" ng-init="newitem.wsize6 = 0"
-                            ng-disabled="sizestate[5]">
-                    </div>
-                    <div data-field-span="1" ng-hide="sizestate[6]">
-                        <label>{{currentSize.size7}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size7" ng-init="newitem.size7 = 0" ng-disabled="sizestate[6]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize7" ng-init="newitem.wsize7 = 0"
-                            ng-disabled="sizestate[6]">
-                    </div>
-                    <div data-field-span="1" ng-hide="sizestate[7]">
-                        <label>{{currentSize.size8}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size8" ng-init="newitem.size8 = 0" ng-disabled="sizestate[7]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize8" ng-init="newitem.wsize8 = 0"
-                            ng-disabled="sizestate[7]">
-                    </div>
-                    <div data-field-span="1" ng-hide="sizestate[8]">
-                        <label>{{currentSize.size9}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size9" ng-init="newitem.size9 = 0" ng-disabled="sizestate[8]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize9" ng-init="newitem.wsize9 = 0"
-                            ng-disabled="sizestate[8]">
-                    </div>
-                    <div data-field-span="1" ng-hide="sizestate[9]">
-                        <label>{{currentSize.size10}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size10" ng-init="newitem.size10 = 0" ng-disabled="sizestate[9]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize10" ng-init="newitem.wsize10 = 0"
-                            ng-disabled="sizestate[9]">
-                    </div>
+        <form name="formp" class="form-horizontal" ng-if="dc.dept_type == 'piece'" autocomplete="off" ng-submit="addItem(temp_storage.newitemdetails, dc.lot_number, sizerange, sizetype)">
+            <div class="form-group">
 
+                <label for="lotbox" class="col-md-2 control-label">Lot Number:</label>
+                <div class="col-md-3" style="padding-top: 10px;padding-bottom: 10px;">
+                    <input required class="form-control input-sm" id="lotbox" type="text" ng-model="dc.lot_number" uib-typeahead="item.name for item in lotlist | filter:$viewValue | limitTo:25"
+                        placeholder="Enter Lot Number" typeahead-on-select="" autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false">
                 </div>
 
-                <div class="row container">
-                    <div class="col-md-8">
-                        <label>Item Comment</label>
-                        <input autocomplete="on" type="text" maxlength="120" placeholder="Enter Item Comment (optional)" class="form-control input-sm"
-                            ng-model="newitem.comment">
-                    </div>
-                    <div class="col-md-2">
-                        <label>Total Pieces</label>
-                        <br>{{(newitem.size1+newitem.size2+newitem.size3+newitem.size4+newitem.size5+newitem.size6+newitem.size7+newitem.size8+newitem.size9+newitem.size10)}}
-                    </div>
-                    <div class="col-md-2">
-                        <label>Total Weight</label>
-                        <br>{{(newitem.wsize1+newitem.wsize2+newitem.wsize3+newitem.wsize4+newitem.wsize5+newitem.wsize6+newitem.wsize7+newitem.wsize8+newitem.wsize9+newitem.wsize10).toFixed(3)}}
-                    </div>
+                <label for="p1in" class="col-md-2 control-label">Item:</label>
+                <div class="col-md-4" style="padding-top: 10px;padding-bottom: 10px;">
+                    <input class="form-control input-sm" name="itembox" id="itembox" type="text" ng-model="temp_storage.newitemdetails" uib-typeahead="item as item.fullname for item in itemlist | filter:$viewValue | limitTo:25"
+                        placeholder="Enter item name / id" typeahead-on-select="setnameid()" ng-change="setnameid()" required
+                        autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false" typeahead-template-url="itemCustomTemplate.html">
+                </div>
+                <div ng-show='' class="col-md-2">
+                    <button type="submit" class="btn btn-success">Add Item</button>
                 </div>
 
-
-            </fieldset>
-            <br>
-            <input ng-if="newitem.index == undefined" id="addbutton" class="btn btn-primary pull-right" type="submit" value="Add Item">
-            <input ng-if="newitem.index != undefined" id="addbutton" class="btn btn-success pull-right" type="submit" value="Update Item">
-            <input ng-if="newitem.index != undefined" class="btn btn-info pull-right" ng-click="clearnewitem()" tabindex="-1" value="Cancel">
+            </div>
         </form>
 
-        <form name="formc" class="form-horizontal" ng-if="dc.dept_type == 'cloth'" autocomplete="off" ng-submit="addColor(temp_storage.newcolour)">
+        <form name="formc" class="form-horizontal" ng-if="dc.dept_type == 'cloth'" autocomplete="off" ng-submit="addColor(temp_storage.newcolour, dc.lot_number)">
             <div class="form-group">
-                <label for="c1olour" class="col-md-2 control-label">New Colour:</label>
+
+                <label for="lotbox" class="col-md-2 control-label">Lot Number:</label>
+                <div class="col-md-3" style="padding-top: 10px;padding-bottom: 10px;">
+                    <input required class="form-control input-sm" id="lotbox" type="text" ng-model="dc.lot_number" uib-typeahead="item.name for item in lotlist | filter:$viewValue | limitTo:25"
+                        placeholder="Enter Lot Number" typeahead-on-select="" autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false">
+                </div>
+
+                <label for="c1olour" class="col-md-2 col-md-offset-1 control-label">New Colour:</label>
                 <div class="col-md-4" style="padding-top: 10px;padding-bottom: 10px;">
                     <input required class="form-control input-sm" id="c1olour" type="text" ng-model="temp_storage.newcolour" uib-typeahead="item.name for item in colourlist | filter:$viewValue | limitTo:25"
-                            placeholder="Enter New Colour" autocomplete="off" typeahead-editable="false"
-                            typeahead-focus-on-select="false">
+                        placeholder="Enter New Colour" autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false">
                 </div>
                 <div ng-show='' class="col-md-2">
                     <button type="submit" class="btn btn-success">Add Colour</button>
@@ -543,6 +426,6 @@
 
     </div>
 
-    
+
 </div>
-<ng-include src="'./html/print/pdcprint.html'" class="visible-print-block" ng-if="dc.dc_number && dc.items && dc.items.length > 0"></ng-include>
+<ng-include src="'./html/print/dcprint.html'" class="visible-print-block" ng-if="dc.dc_number && dc.items && dc.items.length > 0"></ng-include>

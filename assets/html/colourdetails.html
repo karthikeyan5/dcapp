@@ -3,8 +3,14 @@
     <div style="padding: 10px;" class="row">
         <label for="c1olour" class="col-sm-2 control-label"> Colour:</label>
         <div class="col-sm-4">
-            <input autocomplete="off" required type="text" class="form-control" id="c1olour" placeholder="Enter New Colour" ng-model="colour">
+            <input readonly autocomplete="off" required type="text" class="form-control" id="c1olour" placeholder="Enter New Colour" ng-model="colour">
         </div>
+
+        <label for="lotbox" class="col-sm-2 control-label"> Lot Number:</label>
+        <div class="col-sm-4">
+            <input readonly autocomplete="off" required type="text" class="form-control" id="lotbox" placeholder="Lot Number" ng-model="lot_number">
+        </div>
+
     </div>
 
     <div style="padding: 10px;" ng-show="dialist.length > 0">
