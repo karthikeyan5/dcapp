@@ -523,9 +523,9 @@ module.exports = {
         //-----             idsupplier, iditem(available only for pdc), lot_number, vehicle_number, dept_type
         // ----             comment, department, after_dc_date (yyyymmdd), before_dc_date , limit, offset    
         // ---- 
-        q = "SELECT  m.* \
-        FROM( \
-            SELECT  \
+
+        // ---- Warning: the order by in this query acts differently in higher versions of MySQL. watchout during Upgrade.
+        q = "SELECT  \
         dc.id iddc,  \
         dc.naming_series,  \
         items_agg.itemlist,  \
@@ -557,7 +557,7 @@ module.exports = {
         supplier.phone2 supplier_phone2,  \
         supplier.gstin supplier_gstin,  \
         supplier.email supplier_email  \
-      FROM dc LEFT JOIN supplier ON dc.idsupplier = supplier.id  \
+      FROM (SELECT * FROM dc ORDER BY id DESC) as dc LEFT JOIN supplier ON dc.idsupplier = supplier.id  \
         LEFT JOIN department ON dc.department = department.id  \
         LEFT JOIN series ON dc.naming_series = series.name  \
         LEFT JOIN (SELECT iddc,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, group_concat(distinct iteminfo.name SEPARATOR ', ') itemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, group_concat(distinct part SEPARATOR ', ') partlist, null dialist FROM pdcitems, iteminfo where iteminfo.id = pdcitems.iditem group by iddc \
@@ -565,7 +565,7 @@ module.exports = {
 		SELECT iddc,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, null itemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, null partlist, group_concat(distinct dia separator ', ') dialist FROM cdcitems group by iddc order by iddc \
         ) items_agg ON dc.id = items_agg.iddc  \
         LEFT JOIN ( \
-        Select iddc, group_concat(distinct sizelist.size_text separator ', ') sizelist from  \
+        Select iddc, group_concat(distinct sizelist.size_text ORDER BY sizelist.id,sizelist.size separator ', ') sizelist from  \
         (SELECT sizerange.idsizetype, 1 size, iddc FROM pdcitems, iteminfo, sizerange where pdcitems.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (pdcitems.size1 > 0 or pdcitems.wsize1 > 0) \
         union all \
         SELECT sizerange.idsizetype, 2 size, iddc FROM pdcitems, iteminfo, sizerange where pdcitems.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (pdcitems.size2 > 0 or pdcitems.wsize2 > 0) \
@@ -654,11 +654,7 @@ module.exports = {
             d.push(req.param('before_dc_date'));
         }
 
-        q = q.concat(' LIMIT ?,? ) q \
-        JOIN    dc m \
-        ON      m.id = q.iddc \
-        ORDER BY \
-                m.id');
+        q = q.concat(' LIMIT ?,?;');
         d.push(offset, limit);
 
         Dc.query(q, d, function (err, results) {
