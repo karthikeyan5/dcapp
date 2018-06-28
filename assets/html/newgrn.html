@@ -1,0 +1,50 @@
+<script type="text/ng-template" id="supplierpopup.html">
+    <div>
+        <form>
+            <input class="form-control" id="supplierbox" type="text" ng-model="dynamicPopover.supplier_details" uib-typeahead="item as item.name for item in supplierlist | filter:$viewValue | limitTo:25" typeahead-template-url="customTemplate.html" placeholder="Enter Supplier Name / id" autofocus typeahead-on-select="setsupplier()" required autocomplete="off" typeahead-editable="false" typeahead-focus-on-select = "false" typeahead-min-length="0" ng-blur="popoverIsOpen = false">
+        </form>        
+        <script type="text/ng-template" id="customTemplate.html">
+            <a style="cursor: pointer;">
+                <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
+                , <span ng-bind-html="match.model.city | uibTypeaheadHighlight:query"></span>
+                , <span ng-bind-html="match.model.state | uibTypeaheadHighlight:query"></span>
+            </a>
+        </script>
+    </div>
+</script>
+
+
+<div style="padding-top: 10px;padding-bottom: 10px;" class="hidden-print">
+    <legend>Goods Received Note</legend>
+
+    <form id="form1" class="form-horizontal" autocomplete="off" ng-submit="savedc()">
+        <div class="form-group">
+            <label for="n1ame" class="col-md-2 control-label">Supplier name:</label>
+            <div class="col-md-4 col-md-offset-0">
+                <div class="panel panel-default" uib-popover-template="dynamicPopover.templateUrl" popover-title="Supplier Name" popover-trigger="outsideClick"
+                    popover-is-open="popoverIsOpen" ng-click="focussupplierbox()">
+                    <div class="panel-body">
+                        <address class="text-justified" ng-show="showaddress()">
+                            <strong class="text-capitalize">{{grn.supplier_name.toLowerCase()}}</strong>,
+                            <small style="white-space: nowrap;">(id = {{grn.supplier_id}})</small>
+                            <span ng-show="grn.supplier_address1">
+                                <br>{{grn.supplier_address1}},</span>
+                            <span ng-show="grn.supplier_address2">
+                                <br>{{grn.supplier_address2}},</span>
+                            <br> {{grn.supplier_city + ", "}} {{grn.supplier_state}}{{grn.supplier_pincode?" - "+grn.supplier_pincode+".":".";}}
+                            <br> {{grn.supplier_gstin? "GSTIN: "+grn.supplier_gstin:"";}}
+                        </address>
+                        <div ng-show="!showaddress()">
+                            <br>
+                            <address class="text-justified badge">
+                                Select supplier
+                            </address>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>  

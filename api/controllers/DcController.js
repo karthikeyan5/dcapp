@@ -223,14 +223,20 @@ module.exports = {
         });
     },
     department: function (req, res) {
-        q = 'SELECT id,name,dept_type FROM department ';
+        q = 'SELECT id,name,dept_type,grn_dept_type FROM department WHERE 1 = 1';
         d = [];
 
         if (req.param("dept_type") != undefined) {
-            q = q.concat(" WHERE dept_type = ? ");
+            q = q.concat(" AND dept_type = ? ");
             dept_type = isNaN(parseInt(req.param("dept_type"))) ? req.param("dept_type") : parseInt(req.param("dept_type"));
             d.push(dept_type);
         }
+        if (req.param("grn_dept_type") != undefined) {
+            q = q.concat(" AND grn_dept_type = ? ");
+            grn_dept_type = isNaN(parseInt(req.param("grn_dept_type"))) ? req.param("grn_dept_type") : parseInt(req.param("grn_dept_type"));
+            d.push(grn_dept_type);
+        }
+
         q = q.concat(";");
 
         Dc.query(q, d, function (err, results) {
@@ -520,7 +526,7 @@ module.exports = {
     dc: function (req, res) {
         // ---- 
         // ---- param are - items(available automaticaly if only one dc is returned) ,id, dc_number, naming_series, 
-        //-----             idsupplier, iditem(available only for pdc), lot_number, vehicle_number, dept_type
+        //-----             idsupplier, iditem(available only for pdc), lot_number, vehicle_number, dept_type, status
         // ----             comment, department, after_dc_date (yyyymmdd), before_dc_date , limit, offset    
         // ---- 
 
@@ -537,6 +543,7 @@ module.exports = {
         dc.department,  \
         department.name department_name,  \
         department.dept_type,  \
+        department.grn_dept_type,  \
         dc.dc_date,  \
         items_agg.lotlist,  \
         dc.rateperkg,  \
@@ -614,7 +621,7 @@ module.exports = {
         if (req.param('limit') && !isNaN(parseInt(req.param('limit')))) limit = parseInt(req.param('limit'));
         if (req.param('offset') && !isNaN(parseInt(req.param('offset')))) offset = parseInt(req.param('offset'));
 
-        param_equal_list = ["id", "dc_number", "naming_series", "idsupplier", "department"];
+        param_equal_list = ["id", "dc_number", "naming_series", "idsupplier", "department", "status"];
         param_equal_list.forEach(function (param) {
             if (req.param(param) != undefined) {
                 q = q.concat(" AND dc.", param, " = ? ");

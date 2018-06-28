@@ -12,7 +12,7 @@ var app = angular.module('app', ['ngRoute',
   'angular-barcode',
   'cleave.js',
   'ngTagsInput']);
-  
+
 app.factory('redirectInterceptor', function ($q, $location, $window) {
   return {
     'responseError': function (response) {
@@ -60,8 +60,8 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[1].className = "active";
     document.getElementById("tabnav").childNodes[3].className = "inactive";
     document.getElementById("tabnav").childNodes[5].className = "inactive";
-    // document.getElementById("tabnav").childNodes[7].className = "inactive";
-    // document.getElementById("tabnav").childNodes[9].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "inactive";
+    document.getElementById("tabnav").childNodes[9].className = "inactive";
     // document.getElementById("tabnav").childNodes[11].className = "inactive";
     // document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
@@ -70,8 +70,8 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[1].className = "inactive";
     document.getElementById("tabnav").childNodes[3].className = "active";
     document.getElementById("tabnav").childNodes[5].className = "inactive";
-    // document.getElementById("tabnav").childNodes[7].className = "inactive";
-    // document.getElementById("tabnav").childNodes[9].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "inactive";
+    document.getElementById("tabnav").childNodes[9].className = "inactive";
     // document.getElementById("tabnav").childNodes[11].className = "inactive";
     // document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
@@ -80,33 +80,33 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[1].className = "inactive";
     document.getElementById("tabnav").childNodes[3].className = "inactive";
     document.getElementById("tabnav").childNodes[5].className = "active";
-    // document.getElementById("tabnav").childNodes[7].className = "inactive";
-    // document.getElementById("tabnav").childNodes[9].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "inactive";
+    document.getElementById("tabnav").childNodes[9].className = "inactive";
     // document.getElementById("tabnav").childNodes[11].className = "inactive";
     // document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
-  // $scope.tabselect4 = function () {
-  //   document.getElementById("tabnav").childNodes[1].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[3].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[5].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[7].className = "active";
-  //   document.getElementById("tabnav").childNodes[9].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[11].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[13].className = "inactive";
-  //   // document.getElementById("tabnav").childNodes[15].className = "inactive";
-  // };
+  $scope.tabselect4 = function () {
+    document.getElementById("tabnav").childNodes[1].className = "inactive";
+    document.getElementById("tabnav").childNodes[3].className = "inactive";
+    document.getElementById("tabnav").childNodes[5].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "active";
+    document.getElementById("tabnav").childNodes[9].className = "inactive";
+    // document.getElementById("tabnav").childNodes[11].className = "inactive";
+    // document.getElementById("tabnav").childNodes[13].className = "inactive";
+    // document.getElementById("tabnav").childNodes[15].className = "inactive";
+  };
 
-  // $scope.tabselect5 = function () {
-  //   document.getElementById("tabnav").childNodes[1].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[3].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[5].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[7].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[9].className = "active";
-  //   document.getElementById("tabnav").childNodes[11].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[13].className = "inactive";
-  //   // document.getElementById("tabnav").childNodes[15].className = "inactive";
-  // };
+  $scope.tabselect5 = function () {
+    document.getElementById("tabnav").childNodes[1].className = "inactive";
+    document.getElementById("tabnav").childNodes[3].className = "inactive";
+    document.getElementById("tabnav").childNodes[5].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "inactive";
+    document.getElementById("tabnav").childNodes[9].className = "active";
+    // document.getElementById("tabnav").childNodes[11].className = "inactive";
+    // document.getElementById("tabnav").childNodes[13].className = "inactive";
+    // document.getElementById("tabnav").childNodes[15].className = "inactive";
+  };
 
   // $scope.tabselect6 = function () {
   //   document.getElementById("tabnav").childNodes[1].className = "inactive";
@@ -1217,45 +1217,46 @@ app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
           if (!temp_items[element.pdc_part_index]) {
             temp_items[element.pdc_part_index] = {}
             temp_items[element.pdc_part_index].lot_number = element.lot_number;
-            temp_items[element.pdc_part_index].item = {name:element.itemname,id:element.iditem,naming_series:element.item_naming_series};
+            temp_items[element.pdc_part_index].item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series,  };
             angular.forEach($scope.dc.sizerange, function (value, key) {
               if (element.sizerange == value.idsize) {
                 $scope.idsizetype = value.idsizetype;
                 temp_items[element.pdc_part_index].sizerange = value;
               }
             });
-        
+
             angular.forEach($scope.dc.sizetype, function (value, key) {
               if ($scope.idsizetype == value.id) {
                 temp_items[element.pdc_part_index].sizetype = value;
               }
             });
-        
+
             temp_items[element.pdc_part_index].lot_number = element.lot_number;
             temp_items[element.pdc_part_index].partlist = [];
           }
-          temp_items[element.pdc_part_index].partlist.push({ part: element.part, colour: element.colour, comment: element.comment,
-                                                                                                              size1: element.size1,
-                                                                                                              size2: element.size2,
-                                                                                                              size3: element.size3,
-                                                                                                              size4: element.size4,
-                                                                                                              size5: element.size5,
-                                                                                                              size6: element.size6,
-                                                                                                              size7: element.size7,
-                                                                                                              size8: element.size8,
-                                                                                                              size9: element.size9,
-                                                                                                              size10: element.size10,
-                                                                                                              wsize1: element.wsize1,
-                                                                                                              wsize2: element.wsize2,
-                                                                                                              wsize3: element.wsize3,
-                                                                                                              wsize4: element.wsize4,
-                                                                                                              wsize5: element.wsize5,
-                                                                                                              wsize6: element.wsize6,
-                                                                                                              wsize7: element.wsize7,
-                                                                                                              wsize8: element.wsize8,
-                                                                                                              wsize9: element.wsize9,
-                                                                                                              wsize10: element.wsize10
-                                                                                                            });
+          temp_items[element.pdc_part_index].partlist.push({
+            part: element.part, colour: element.colour, comment: element.comment,
+            size1: element.size1,
+            size2: element.size2,
+            size3: element.size3,
+            size4: element.size4,
+            size5: element.size5,
+            size6: element.size6,
+            size7: element.size7,
+            size8: element.size8,
+            size9: element.size9,
+            size10: element.size10,
+            wsize1: element.wsize1,
+            wsize2: element.wsize2,
+            wsize3: element.wsize3,
+            wsize4: element.wsize4,
+            wsize5: element.wsize5,
+            wsize6: element.wsize6,
+            wsize7: element.wsize7,
+            wsize8: element.wsize8,
+            wsize9: element.wsize9,
+            wsize10: element.wsize10
+          });
 
         });
         dc_colour_index_list = Object.keys(temp_items).sort();
@@ -1263,7 +1264,7 @@ app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
         dc_colour_index_list.forEach(x => {
           $scope.dc.items.push(temp_items[x]);
         });
-        console.log('dc.items: ',$scope.dc.items)
+        console.log('dc.items: ', $scope.dc.items)
       }
       else if ($scope.dc.dept_type == 'cloth') {
         temp_items = {}
@@ -1445,8 +1446,102 @@ app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
 }]);
 
-app.controller('managemasterCtrl', ['$scope', '$uibModal', '$http', function managemasterCtrl($scope, $uibModal, $http) {
+app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', function newgrnCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource) {
   $scope.tabselect3();
+  $scope.grn = {};
+  $scope.current_dept_type = null;      
+  $scope.grn.supplier_id = null;
+  $scope.dynamicPopover = [];
+  $scope.dynamicPopover.templateUrl = "supplierpopup.html";
+
+  $scope.setsupplier = function () {
+    $scope.grn.supplier_id = $scope.dynamicPopover.supplier_details.id;
+    $scope.grn.supplier_name = $scope.dynamicPopover.supplier_details.name;
+    $scope.grn.supplier_address1 = $scope.dynamicPopover.supplier_details.address1;
+    $scope.grn.supplier_address2 = $scope.dynamicPopover.supplier_details.address2;
+    $scope.grn.supplier_city = $scope.dynamicPopover.supplier_details.city;
+    $scope.grn.supplier_state = $scope.dynamicPopover.supplier_details.state;
+    $scope.grn.supplier_pincode = $scope.dynamicPopover.supplier_details.pincode;
+    $scope.grn.supplier_gstin = $scope.dynamicPopover.supplier_details.gstin;
+    $scope.grn.supplier_phone1 = $scope.dynamicPopover.supplier_details.phone1;
+    $scope.grn.supplier_phone2 = $scope.dynamicPopover.supplier_details.phone2;
+    $scope.grn.supplier_email = $scope.dynamicPopover.supplier_details.email;
+    $scope.popoverIsOpen = false;
+    callDCListAPI(Number.MAX_SAFE_INTEGER,'&status=active&idsupplier='+$scope.grn.supplier_id)
+  };
+
+  $scope.focussuppliername = function (event1) {
+    if (event1 != null) {
+      event1.preventDefault()
+    }
+    if ($scope.grn.supplier_id != null) {
+      return;
+    }
+    $scope.popoverIsOpen = true;
+    $scope.focussupplierbox();
+  };
+
+  $scope.focussupplierbox = function () {
+    setTimeout(function () { document.getElementById("supplierbox").focus(); document.getElementById("supplierbox").select(); }, 100);
+  };
+
+  $scope.showaddress = function () {
+    if ($scope.grn.supplier_id === null)
+      return false;
+    else
+      return true;
+  };
+
+
+
+
+  $http({
+    method: 'GET',
+    url: '/api/supplier?allfeilds=0'
+  }).then(function successCallback(response) {
+    $scope.supplierlist = response.data;
+    console.log(response);
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
+
+  let callDCListAPI = function (limit, filterString) {
+    $http({
+      method: 'GET',
+      url: '/api/dc?limit=' + limit + filterString
+    }).then(function successCallback(response) {
+      console.log(response);
+      $scope.DCrowCollection = [].concat(response.data);
+      $scope.DCdisplayedCollection = [].concat($scope.DCrowCollection);
+    },
+      function errorCallback(response) {
+        console.log(response);
+      });
+  }
+
+ 
+
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += key.split(',').reduce((a,b)=> a[b],item)
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+
+
+
+
+}]);
+
+app.controller('viewgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', function viewgrnCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource) {
+  $scope.tabselect4();
+
+}]);
+
+app.controller('managemasterCtrl', ['$scope', '$uibModal', '$http', function managemasterCtrl($scope, $uibModal, $http) {
+  $scope.tabselect5();
 
 
   $scope.openaddsupplier = function () {
@@ -1945,6 +2040,14 @@ app.config(function ($routeProvider) {
     when('/viewdc', {
       templateUrl: './html/viewdc.html',
       controller: 'viewdcCtrl'
+    }).
+    when('/newgrn', {
+      templateUrl: './html/newgrn.html',
+      controller: 'newgrnCtrl'
+    }).
+    when('/viewgrn', {
+      templateUrl: './html/viewgrn.html',
+      controller: 'viewgrnCtrl'
     }).
     otherwise({
       redirectTo: '/newdc'
