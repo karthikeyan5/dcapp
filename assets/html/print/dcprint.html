@@ -100,18 +100,18 @@
         <div class="col-xs-12 text-center">Particulars</div>
     </div>
     <div class="row">
-        <div class="col-xs-12" style="border-bottom:1px solid #666; padding-top: 1px;">
+        <div class="col-xs-12" style="border-bottom:1px solid #666; padding: 1px;">
             <table ng-if="dc.dept_type == 'piece'" class="table table-bordered table-striped" style="margin-bottom:5px;">
                 <tr ng-repeat="item in dc.items track by $index">
-                    <td>
+                    <td style="padding: 1px;">
                         <div class="row" style="padding:6px;">
-                                <div class="col-xs-7">Item Name:
-                                        <strong>{{item.item.name.toLowerCase().indexOf(item.item.naming_series.toLowerCase()) == 0? item.item.name : item.item.naming_series
-                                            + " " + item.item.name;}}</strong>
-                                    </div>                                
-                                    <div class="col-xs-5">Lot Number:
-                                            <strong>{{item.lot_number}}</strong>
-                                        </div>
+                            <div class="col-xs-7">Item Name:
+                                <strong>{{item.item.name.toLowerCase().indexOf(item.item.naming_series.toLowerCase()) == 0? item.item.name
+                                    : item.item.naming_series + " " + item.item.name;}}</strong>
+                            </div>
+                            <div class="col-xs-5">Lot Number:
+                                <strong>{{item.lot_number}}</strong>
+                            </div>
                         </div>
                         <table class="table table-bordered table-striped">
                             <thead>
@@ -292,49 +292,53 @@
             </table>
 
             <table ng-if="dc.dept_type == 'cloth'" class="table table-bordered table-striped" style="margin-bottom:5px;">
-                    <tr ng-repeat="item in dc.items track by $index">
-                        <td style="font-size:1.25em;">Colour:
+                <tr ng-repeat="item in dc.items track by $index">
+                    <td style="font-size:1.25em;">Colour:
+                        <strong>
                             <span class="text-capitalize">{{item.colour.toLowerCase()}}</span>
-                            <br>Lot Number:
+                        </strong>
+                        <br>Lot Number:
+                        <strong>
                             <span>{{item.lot_number}}</span>
-                        </td>
-                        <td>
-                            <table class="table table-bordered table-striped" style="margin-bottom:0px;">
-                                <thead>
-                                    <tr>
-                                        <!-- <th class="text-center">S.No</th> -->
-                                        <th class="text-center pshead">Dia</th>
-                                        <th class="text-center pshead">Roll</th>
-                                        <th class="text-center pshead">Weight (kg)</th>
-                                        <th class="text-center pshead">Comment</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="dia in item.dialist track by $index" class="repeated-item">
-                                        <!-- <td>{{$index + 1}}</td> -->
-                                        <td class="text-center psrow">{{dia.dia}}</td>
-                                        <td class="text-center psrow">{{dia.roll}}</td>
-                                        <td class="text-center psrow">{{dia.weight| number:3}}</td>
-                                        <td class="text-center psrow">{{dia.comment}}</td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td class="text-center psrow">
-                                            <strong>Total</strong>
-                                        </td>
-                                        <td class="text-center psrow">
-                                            <strong>{{total(item.dialist,'roll',0)}}</strong>
-                                        </td>
-                                        <td class="text-center psrow">
-                                            <strong>{{total(item.dialist,'weight',3)| number:3}}</strong>
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
+                        </strong>
+                    </td>
+                    <td>
+                        <table class="table table-bordered table-striped" style="margin-bottom:0px;">
+                            <thead>
+                                <tr>
+                                    <!-- <th class="text-center">S.No</th> -->
+                                    <th class="text-center pshead">Dia</th>
+                                    <th class="text-center pshead">Roll</th>
+                                    <th class="text-center pshead">Weight (kg)</th>
+                                    <th class="text-center pshead">Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="dia in item.dialist track by $index" class="repeated-item">
+                                    <!-- <td>{{$index + 1}}</td> -->
+                                    <td class="text-center psrow">{{dia.dia}}</td>
+                                    <td class="text-center psrow">{{dia.roll}}</td>
+                                    <td class="text-center psrow">{{dia.weight| number:3}}</td>
+                                    <td class="text-center psrow">{{dia.comment}}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td class="text-center psrow">
+                                        <strong>Total</strong>
+                                    </td>
+                                    <td class="text-center psrow">
+                                        <strong>{{total(item.dialist,'roll',0)}}</strong>
+                                    </td>
+                                    <td class="text-center psrow">
+                                        <strong>{{total(item.dialist,'weight',3)| number:3}}</strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
     <div class="row" ng-show="dc.comment" style="border-bottom:1px solid #666;">

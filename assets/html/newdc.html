@@ -89,11 +89,12 @@
 
 
 
-        <div ng-show="dc.items.length > 0">
+        <div ng-if="dc.items.length > 0">
             <table class="table table-bordered table-striped" ng-if="dc.dept_type == 'piece'">
                 <tr ng-repeat="item in dc.items track by $index">
                     <td>Item: {{item.item.name}}
-                        <span class="pull-right"> Lot Number: {{item.lot_number}}</span><br>
+                        <span class="pull-right"> Lot Number: {{item.lot_number}}</span>
+                        <br>
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>

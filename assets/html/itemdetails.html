@@ -220,8 +220,13 @@
                     </div>
                     <div data-field-span="6" class="form-group">
                         <label>Colour</label>
-                        <input class="form-control input-sm" id="colourbox" type="text" ng-model="newitem.colour" uib-typeahead="item.name for item in colourlist | filter:$viewValue | limitTo:25"
-                            placeholder="Enter Colour (Optional)" autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false">
+                        <div class="input-group">
+                            <input class="form-control input-sm" id="colourbox" type="text" ng-model="newitem.colour" uib-typeahead="item.name for item in colourlist | filter:$viewValue | limitTo:25"
+                                placeholder="Enter Colour (Optional)" autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" tabindex="-1" ng-click="loadallcolour()">Load all</button>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div data-row-span="10">
@@ -238,7 +243,7 @@
                     <div data-field-span="1" ng-hide="sizerange.size2===0?true:false">
                         <label>{{sizetype.size2}}
                             <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size2" ng-init="newitem.size2 = 0" ng-disabled="sizerange.size2===0?true:false]">
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size2" ng-init="newitem.size2 = 0" ng-disabled="sizerange.size2===0?true:false">
                         <label>
                             <small>WEIGHT</small>
                         </label>
@@ -253,12 +258,12 @@
                             <small>WEIGHT</small>
                         </label>
                         <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize3" ng-init="newitem.wsize3 = 0"
-                            ng-disabled="sizerange.size3===0?true:false]">
+                            ng-disabled="sizerange.size3===0?true:false">
                     </div>
                     <div data-field-span="1" ng-hide="sizerange.size4===0?true:false">
                         <label>{{sizetype.size4}}
                             <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size4" ng-init="newitem.size4 = 0" ng-disabled="sizerange.size4===0?true:false]">
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size4" ng-init="newitem.size4 = 0" ng-disabled="sizerange.size4===0?true:false">
                         <label>
                             <small>WEIGHT</small>
                         </label>
@@ -278,12 +283,12 @@
                     <div data-field-span="1" ng-hide="sizerange.size6===0?true:false">
                         <label>{{sizetype.size6}}
                             <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size6" ng-init="newitem.size6 = 0" ng-disabled="sizerange.size6===0?true:false]">
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size6" ng-init="newitem.size6 = 0" ng-disabled="sizerange.size6===0?true:false">
                         <label>
                             <small>WEIGHT</small>
                         </label>
                         <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize6" ng-init="newitem.wsize6 = 0"
-                            ng-disabled="sizerange.size6===0?true:false]">
+                            ng-disabled="sizerange.size6===0?true:false">
                     </div>
                     <div data-field-span="1" ng-hide="sizerange.size7===0?true:false">
                         <label>{{sizetype.size7}}
@@ -313,7 +318,7 @@
                             <small>WEIGHT</small>
                         </label>
                         <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize9" ng-init="newitem.wsize9 = 0"
-                            ng-disabled="sizerange.size9===0?true:false]">
+                            ng-disabled="sizerange.size9===0?true:false">
                     </div>
                     <div data-field-span="1" ng-hide="sizerange.size10===0?true:false">
                         <label>{{sizetype.size10}}

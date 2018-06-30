@@ -261,16 +261,24 @@ module.exports = {
         });
     },
     item: function (req, res) {
-        // params: id,naming_series, uid, status('active','inactive')
+        // params: id(comma seperated multiple ids) ,naming_series, uid, status('active','inactive')
         q = 'SELECT * from iteminfo WHERE 1=1 ';
         d = [];
         q_where = '';
 
-        param_equal_list = ["id", "naming_series", "uid"];
+        param_equal_list = ["naming_series", "uid"];
         param_equal_list.forEach(function (param) {
             if (req.param(param) != undefined) {
                 q_where = q_where.concat(" AND iteminfo.", param, " = ? ");
                 d.push(req.param(param));
+            }
+        });
+
+        comma_seperated_in_list = ["id"];
+        comma_seperated_in_list.forEach(function (param) {
+            if (req.param(param) != undefined) {
+                q_where = q_where.concat(" AND iteminfo.", param, " in (?) ");
+                d.push(req.param(param).split(','));
             }
         });
 
@@ -279,7 +287,6 @@ module.exports = {
             d.push(req.param('itemstatus'));
         }
         q = q.concat(q_where);
-
         Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
             else {
@@ -535,6 +542,7 @@ module.exports = {
         dc.id iddc,  \
         dc.naming_series,  \
         items_agg.itemlist,  \
+        items_agg.iditemlist,  \
         items_agg.colourlist, \
         sizelist.sizelist, \
         items_agg.dialist, \
@@ -567,9 +575,9 @@ module.exports = {
       FROM (SELECT * FROM dc ORDER BY id DESC) as dc LEFT JOIN supplier ON dc.idsupplier = supplier.id  \
         LEFT JOIN department ON dc.department = department.id  \
         LEFT JOIN series ON dc.naming_series = series.name  \
-        LEFT JOIN (SELECT iddc,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, group_concat(distinct iteminfo.name SEPARATOR ', ') itemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, group_concat(distinct part SEPARATOR ', ') partlist, null dialist FROM pdcitems, iteminfo where iteminfo.id = pdcitems.iditem group by iddc \
+        LEFT JOIN (SELECT iddc,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, group_concat(distinct iteminfo.name SEPARATOR ', ') itemlist,  group_concat(distinct iteminfo.id SEPARATOR ', ') iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, group_concat(distinct part SEPARATOR ', ') partlist, null dialist FROM pdcitems, iteminfo where iteminfo.id = pdcitems.iditem group by iddc \
 		union all \
-		SELECT iddc,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, null itemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, null partlist, group_concat(distinct dia separator ', ') dialist FROM cdcitems group by iddc order by iddc \
+		SELECT iddc,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, null itemlist, null iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, null partlist, group_concat(distinct dia separator ', ') dialist FROM cdcitems group by iddc order by iddc \
         ) items_agg ON dc.id = items_agg.iddc  \
         LEFT JOIN ( \
         Select iddc, group_concat(distinct sizelist.size_text ORDER BY sizelist.id,sizelist.size separator ', ') sizelist from  \
