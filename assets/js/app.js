@@ -383,7 +383,13 @@ app.controller('itemdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$
   }
 
   $scope.clearnewitem = function () {
-    $scope.newitem = { "size1": 0, "wsize1": 0, "size2": 0, "wsize2": 0, "size3": 0, "wsize3": 0, "size4": 0, "wsize4": 0, "size5": 0, "wsize5": 0, "size6": 0, "wsize6": 0, "size7": 0, "wsize7": 0, "size8": 0, "wsize8": 0, "size9": 0, "wsize9": 0, "size10": 0, "wsize10": 0, "part": undefined, "colour": undefined, "comment": undefined };
+    if($scope.cur_dept_type == 'piece'){
+      $scope.newitem = { "size1": 0, "wsize1": 0, "size2": 0, "wsize2": 0, "size3": 0, "wsize3": 0, "size4": 0, "wsize4": 0, "size5": 0, "wsize5": 0, "size6": 0, "wsize6": 0, "size7": 0, "wsize7": 0, "size8": 0, "wsize8": 0, "size9": 0, "wsize9": 0, "size10": 0, "wsize10": 0, "part": undefined, "colour": undefined, "comment": undefined };
+    }
+    else if($scope.cur_dept_type == 'packed'){
+      $scope.newitem = { "size1": 0, "size2": 0, "size3": 0, "size4": 0, "size5": 0, "size6": 0, "size7": 0,  "size8": 0, "size9": 0, "size10": 0, "part": undefined, "colour": undefined, "comment": undefined };
+
+    }
     setTimeout(function () { $scope.focuspart() }, 100);
   }
 
