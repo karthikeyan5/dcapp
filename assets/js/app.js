@@ -383,11 +383,11 @@ app.controller('itemdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$
   }
 
   $scope.clearnewitem = function () {
-    if($scope.cur_dept_type == 'piece'){
+    if ($scope.cur_dept_type == 'piece') {
       $scope.newitem = { "size1": 0, "wsize1": 0, "size2": 0, "wsize2": 0, "size3": 0, "wsize3": 0, "size4": 0, "wsize4": 0, "size5": 0, "wsize5": 0, "size6": 0, "wsize6": 0, "size7": 0, "wsize7": 0, "size8": 0, "wsize8": 0, "size9": 0, "wsize9": 0, "size10": 0, "wsize10": 0, "part": undefined, "colour": undefined, "comment": undefined };
     }
-    else if($scope.cur_dept_type == 'packed'){
-      $scope.newitem = { "size1": 0, "size2": 0, "size3": 0, "size4": 0, "size5": 0, "size6": 0, "size7": 0,  "size8": 0, "size9": 0, "size10": 0, "part": undefined, "colour": undefined, "comment": undefined };
+    else if ($scope.cur_dept_type == 'packed') {
+      $scope.newitem = { "size1": 0, "size2": 0, "size3": 0, "size4": 0, "size5": 0, "size6": 0, "size7": 0, "size8": 0, "size9": 0, "size10": 0, "part": undefined, "colour": undefined, "comment": undefined };
 
     }
     setTimeout(function () { $scope.focuspart() }, 100);
@@ -1840,21 +1840,23 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
 
 
-  $scope.addClothItem = function (colour, lot_number, cur_dept_type) {
+  $scope.addClothItem = function (colour, lot_number) {
     open(colour, lot_number, [], -1);
   }
 
-  $scope.removecolour = function (index) {
-    $scope.dc.items.splice(index, 1);
+  $scope.removeClothItem = function (index) {
+    $scope.grn.items.cloth.splice(index, 1);
+    if ($scope.grn.items.cloth.length == 0){
+      delete $scope.grn.items.cloth;
+    }
     ngToast.create({
       className: 'danger',
       content: 'Colour deleted... '//undo
     });
   }
 
-  $scope.editcolour = function (index) {
-
-    open($scope.dc.items[index].colour, $scope.dc.items[index].lot_number, $scope.dc.items[index].dialist, index);
+  $scope.editClothItem = function (item, index) {
+    open(item.colour, item.lot_number, item.dialist, index);
   }
 
 
@@ -1862,17 +1864,19 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     openitemdetails(item, lot_number, [], -1, sizerange, sizetype, cur_item_type);
   }
 
-  $scope.removeitem = function (index) {
-    $scope.dc.items.splice(index, 1);
+  $scope.removeItem = function (index, cur_item_type) {
+    $scope.grn.items[cur_item_type].splice(index, 1);
+    if ($scope.grn.items[cur_item_type].length == 0) {
+      delete $scope.grn.items[cur_item_type];
+    }
     ngToast.create({
       className: 'danger',
       content: 'Item deleted... '//undo
     });
   }
 
-  $scope.edititem = function (index) {
-
-    openitemdetails($scope.dc.items[index].item, $scope.dc.items[index].lot_number, $scope.dc.items[index].partlist, index, $scope.dc.items[index].sizerange, $scope.dc.items[index].sizetype);
+  $scope.editItem = function (item, index, cur_item_type) {
+    openitemdetails(item.item, item.lot_number, item.partlist, index, item.sizerange, item.sizetype, cur_item_type);
   }
 
 
