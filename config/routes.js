@@ -46,15 +46,18 @@ module.exports.routes = {
   'GET /api/colour': 'DcController.colour',
   'GET /api/lot': 'DcController.lot',
   'GET /api/dc': 'DcController.dc',
+  'GET /api/grn': 'DcController.grn',
 
   'POST /api/supplier': 'DcController.savesupplier',
   'POST /api/dc': 'DcController.savedc',
+  'POST /api/grn': 'DcController.savegrn',
   'POST /api/colour': 'DcController.savecolour',
   'POST /api/lot': 'DcController.savelot',
 
 
   'PUT /api/supplier/:id': 'DcController.updatesupplier',
   'PUT /api/dc/:id': 'DcController.updatedc',
+  'PUT /api/grn/:id': 'DcController.updategrn',
   'PUT /api/colour/:id': 'DcController.updatecolour',
   'PUT /api/lot/:id': 'DcController.updatelot',
 
