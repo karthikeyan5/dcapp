@@ -43,7 +43,7 @@
 <div style="padding-top: 10px;padding-bottom: 10px;" class="hidden-print">
     <legend>Goods Received Note</legend>
 
-    <form id="form1" class="form-horizontal" autocomplete="off" ng-submit="savedc()">
+    <form id="form1" class="form-horizontal" autocomplete="off" ng-submit="savegrn()">
         <div class="form-group">
             <label for="n1ame" class="col-md-2 control-label">Supplier name:</label>
             <div id='n1ame' class="col-md-4 col-md-offset-0">
@@ -73,14 +73,15 @@
 
             <label for="against" class="col-md-2 control-label">GRN Against:</label>
             <div id="against" class="btn-group col-md-4 col-md-offset-0">
-                <label class="btn btn-primary" ng-model="against" uib-btn-radio="'dc'" ng-click="grn.po_numbers = null">DC</label>
-                <label class="btn btn-primary" ng-model="against" uib-btn-radio="'po'" ng-click="temp_storage.dcnumbers = null">P.O.</label>
+                <label class="btn btn-primary" ng-model="grn.against" uib-btn-radio="'dc'" ng-click="grn.against_other = null">DC</label>
+                <!-- <label class="btn btn-primary" ng-model="against" uib-btn-radio="'po'" ng-click="temp_storage.dcnumbers = null">P.O.</label> -->
+                <label class="btn btn-primary" ng-model="grn.against" uib-btn-radio="'other'" ng-click="temp_storage.dcnumbers = null">Other</label>
             </div>
 
         </div>
         <div class="form-group">
-            <label for="dcnumber" class="col-sm-2 control-label" ng-if="against == 'dc'">DC Numbers:</label>
-            <div class="col-sm-10" ng-if="against == 'dc'">
+            <label for="dcnumber" class="col-sm-2 control-label" ng-if="grn.against == 'dc'">DC Numbers:</label>
+            <div class="col-sm-10" ng-if="grn.against == 'dc'">
                 <tags-input id="dcnumber" ng-model="temp_storage.dcnumbers" placeholder="Add DC Number" display-property="dc_no" key-property="dc_no"
                     addOnBlur="false" add-from-autocomplete-only="true" min-length="1" on-tag-added="updateMaster($tag, 'add')"
                     on-tag-removed="updateMaster($tag ,'remove')">
@@ -88,9 +89,13 @@
                         load-on-focus="true" select-first-match="true" template="dc_list_template"></auto-complete>
                 </tags-input>
             </div>
-            <label for="po_numbers" class="col-sm-2 control-label" ng-if="against == 'po'">PO Numbers:</label>
-            <div class="col-sm-10" ng-if="against == 'po'">
+            <!-- <label for="po_numbers" class="col-sm-2 control-label" ng-if="grn.against == 'po'">PO Numbers:</label>
+            <div class="col-sm-10" ng-if="grn.against == 'po'">
                 <input id="po_numbers" type="text" ng-model="grn.po_numbers" maxlength="45" class="form-control" placeholder="Enter PO Numbers">
+            </div> -->
+            <label for="others" class="col-sm-2 control-label" ng-if="grn.against == 'other'">Against Details:</label>
+            <div class="col-sm-10" ng-if="grn.against == 'other'">
+                <input id="others" type="text" ng-model="grn.against_other" maxlength="45" class="form-control" placeholder="Other Details">
             </div>
         </div>
         <div class="form-group" ng-if="grn.items.piece || grn.items.cloth || grn.items.packed">
@@ -464,6 +469,14 @@
                     </td>
                 </tr>
             </table>
+            
+            <div class="form-control">
+                <label for="vehicle_number" class="col-md-2 col-md-offset-2 control-label">Vehicle Number:</label>
+                <div class="col-md-2">
+                    <input autocomplete="false" required type="text" maxlength="12" class="form-control" id="vehicle_number" placeholder="Vehicle Number"
+                        ng-model="grn.vehicle_number">
+                </div>
+            </div>
 
             <div class="form-group">
                 <label for="comment" class="col-md-3 control-label">GRN Comments:</label>
@@ -472,9 +485,9 @@
                 </div>
             </div>
         </div>
-        <input class="btn btn-success pull-right" type="submit" value="Save DC" style="Display:inline-block;">
+        <input class="btn btn-success pull-right" type="submit" value="Save GRN" style="Display:inline-block;">
         <!-- data-toggle="tooltip" title="Ctrl + S"> -->
-        <input class="btn btn-danger " type="button" ng-click="cleardc()" value="Clear DC" tabindex="-1" style="Display:inline-block;">
+        <input class="btn btn-danger " type="button" ng-click="cleargrn()" value="Clear GRN" tabindex="-1" style="Display:inline-block;">
     </form>
 </div>
 

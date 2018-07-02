@@ -38,7 +38,11 @@
                 </select>
             </div>
 
-            <label for="datebox" class="col-md-2 col-md-offset-1 control-label">DC Date:</label>
+            <label for="p1in" class="col-md-2 control-label">DC Series:</label>
+            <div class="col-md-2">
+                <input autocomplete="false" type="text" class="form-control" id="p1in" placeholder="" readonly tabindex="-1" ng-model="dc.naming_series">
+            </div>
+            <!-- <label for="datebox" class="col-md-2 col-md-offset-1 control-label">DC Date:</label>
             <div class="col-md-2">
                 <p class="input-group">
                     <input autocomplete="off" id="datebox" type="text" class="form-control" uib-datepicker-popup="dd.MM.yyyy" ng-model="dc.dc_date"
@@ -50,13 +54,7 @@
                         </button>
                     </span>
                 </p>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="p1in" class="col-md-2 control-label">DC Series:</label>
-            <div class="col-md-2">
-                <input autocomplete="false" type="text" class="form-control" id="p1in" placeholder="" readonly tabindex="-1" ng-model="dc.naming_series">
-            </div>
+            </div> -->
         </div>
         <div class="form-group" ng-show="dc.department">
             <label for="n1ame" class="col-md-2 control-label">Supplier name:</label>

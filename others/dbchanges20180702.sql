@@ -284,3 +284,22 @@ as row_diff)
       as diff;
 END $$
 DELIMITER ;
+
+
+
+
+ALTER TABLE `grn` 
+DROP FOREIGN KEY `fk_grn_3`,
+DROP FOREIGN KEY `fk_grn_2`;
+ALTER TABLE `grn` 
+DROP COLUMN `department`,
+ADD COLUMN `against` ENUM('dc', 'po', 'other') NOT NULL AFTER `grn_date`,
+ADD COLUMN `against_other` VARCHAR(45) NULL AFTER `against`,
+DROP INDEX `fk_grn_2_idx` ;
+ALTER TABLE `grn` 
+ADD CONSTRAINT `fk_grn_2`
+  FOREIGN KEY (`naming_series`)
+  REFERENCES `series` (`name`)
+  ON UPDATE CASCADE;
+
+INSERT INTO `dbinfo` (`infoname`,`info`) VALUES ( 'grnseries','GRN-1819-');
