@@ -1,148 +1,161 @@
 <div style="padding-top:10px;" ng-class="{'hidden-print':hidelist}">
-        <legend>
-            GRN List
-            <div class="btn btn-success pull-right" style="font-size: 0.6em;" ng-click="refresh()">Refresh</div>	
-            <div class="btn btn-info pull-right" style="font-size: 0.6em;" ng-click="addFilters()">{{(isCollapsed)?(filterString == ''?"Add Filters":"Show Filters"):"Hide Filters"}}</div>	
-        </legend>
-        <div class="row container">
-            <div uib-collapse="isCollapsed">
-                <div class="row container">
-                        <select id="dept_type" class="form-control" ng-model="filter.dept_type" ng-change="getsuppliers()" ng-model-options="{ updateOn: 'blur' }"
-                            autofocus >
-                            <option value="" disabled selected>Select a Department Type</option>
-                            <option value="piece">Piece</option>
-                            <option value="cloth">Cloth</option>
-                        </select>
-    
-                        <select id="department" class="form-control" ng-model="filter.department" ng-change="getsuppliers()" ng-model-options="{ updateOn: 'blur' }"
-                            autofocus >
-                            <option value="" disabled selected>Select a Department</option>
-                            <option ng-repeat="departmentx in departmentlist" value="{{departmentx.id}}">{{departmentx.name}}</option>
-                        </select>
-    
-                        <input class="form-control input-sm" id="lotbox" type="text" ng-model="filter.lot_number" uib-typeahead="item.name for item in lotlist | filter:$viewValue | limitTo:25"
-                                    placeholder="Enter Lot Number" typeahead-on-select="focussuppliername(null)" autocomplete="off" typeahead-editable="false"
-                                    typeahead-focus-on-select="false">
-    
-                        <input autocomplete="false" type="text" maxlength="12" class="form-control" id="vehicle_number" placeholder="Vehicle Number"
-                        ng-model="filter.vehicle_number">
-    
-                        <input autocomplete="false" type="text" maxlength="120" class="form-control" id="comment" placeholder="Comments" ng-model="filter.comment">
-    
-                        <input class="form-control" id="idsupplier" type="text" ng-model="filter_supplier" uib-typeahead="item as item.name for item in supplierlist | filter:$viewValue | limitTo:25" typeahead-template-url="customTemplate.html" placeholder="Enter Supplier Name / id" typeahead-on-select="setsupplierFilter()"  autocomplete="off" typeahead-editable="false" typeahead-focus-on-select = "false" typeahead-min-length="0" >       
-                        <script type="text/ng-template" id="customTemplate.html">
+    <legend>
+        GRN List
+        <div class="btn btn-success pull-right" style="font-size: 0.6em;" ng-click="refresh()">Refresh</div>
+        <div class="btn btn-info pull-right" style="font-size: 0.6em;" ng-click="addFilters()">{{(isCollapsed)?(filterString == ''?"Add Filters":"Show Filters"):"Hide Filters"}}</div>
+    </legend>
+    <div class="row container">
+        <div uib-collapse="isCollapsed">
+            <div class="row container">
+                <select id="dept_type" class="form-control" ng-model="filter.dept_type" ng-change="getsuppliers()" ng-model-options="{ updateOn: 'blur' }"
+                    autofocus>
+                    <option value="" disabled selected>Select a Department Type</option>
+                    <option value="piece">Piece</option>
+                    <option value="cloth">Cloth</option>
+                </select>
+
+                <select id="department" class="form-control" ng-model="filter.department" ng-change="getsuppliers()" ng-model-options="{ updateOn: 'blur' }"
+                    autofocus>
+                    <option value="" disabled selected>Select a Department</option>
+                    <option ng-repeat="departmentx in departmentlist" value="{{departmentx.id}}">{{departmentx.name}}</option>
+                </select>
+
+                <input class="form-control input-sm" id="lotbox" type="text" ng-model="filter.lot_number" uib-typeahead="item.name for item in lotlist | filter:$viewValue | limitTo:25"
+                    placeholder="Enter Lot Number" typeahead-on-select="focussuppliername(null)" autocomplete="off" typeahead-editable="false"
+                    typeahead-focus-on-select="false">
+
+                <input autocomplete="false" type="text" maxlength="12" class="form-control" id="vehicle_number" placeholder="Vehicle Number"
+                    ng-model="filter.vehicle_number">
+
+                <input autocomplete="false" type="text" maxlength="120" class="form-control" id="comment" placeholder="Comments" ng-model="filter.comment">
+
+                <input class="form-control" id="idsupplier" type="text" ng-model="filter_supplier" uib-typeahead="item as item.name for item in supplierlist | filter:$viewValue | limitTo:25"
+                    typeahead-template-url="customTemplate.html" placeholder="Enter Supplier Name / id" typeahead-on-select="setsupplierFilter()"
+                    autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false" typeahead-min-length="0">
+                <script type="text/ng-template" id="customTemplate.html">
                             <a style="cursor: pointer;">
                                 <span ng-bind-html="match.model.name | uibTypeaheadHighlight:query"></span>
                                 , <span ng-bind-html="match.model.city | uibTypeaheadHighlight:query"></span>
                                 , <span ng-bind-html="match.model.state | uibTypeaheadHighlight:query"></span>
                             </a>
                         </script>
-                        
-                        <input class="form-control input-sm" id="itembox" type="text" ng-model="filter_item" uib-typeahead="item as item.fullname for item in itemlist | filter:$viewValue | limitTo:25"
-                        placeholder="Enter item name / id" typeahead-on-select="setnameid()" autocomplete="off"
-                        typeahead-editable="false" typeahead-focus-on-select="false" typeahead-template-url="itemCustomTemplate.html">
-                        <script type="text/ng-template" id="itemCustomTemplate.html">
+
+                <input class="form-control input-sm" id="itembox" type="text" ng-model="filter_item" uib-typeahead="item as item.fullname for item in itemlist | filter:$viewValue | limitTo:25"
+                    placeholder="Enter item name / id" typeahead-on-select="setnameid()" autocomplete="off" typeahead-editable="false"
+                    typeahead-focus-on-select="false" typeahead-template-url="itemCustomTemplate.html">
+                <script type="text/ng-template" id="itemCustomTemplate.html">
                             <a style="cursor: pointer;">
                                     <!-- <span ng-bind-html="match.model.naming_series | uibTypeaheadHighlight:query"></span>  -->
                                 <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
                             </a>
                         </script>
-    
-                        <div class="row">
-                                <label for="datebox" class="col-md-2 control-label">From Date:</label>
-                                <div class="col-md-2">
-                                    <p class="input-group">
-                                        <input autocomplete="off" id="datebox" type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="after_grn_date"
-                                            is-open="popup1.opened" ng-change="setafterdate()" datepicker-options="dateOptions" close-text="Close" alt-input-formats="altInputFormats"
-                                            autofocus />
-                                        <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default" ng-click="open1()" tabindex="-1">
-                                                <i class="glyphicon glyphicon-calendar"></i>
-                                            </button>
-                                        </span>
-                                    </p>
-                                </div>
-                                <label for="datebox2" class="col-md-1 col-md-offset-3 control-label">To Date:</label>
-                                <div class="col-md-2">
-                                    <p class="input-group">
-                                        <input autocomplete="off" id="datebox2" type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="before_grn_date"
-                                            is-open="popup2.opened" ng-change="setbeforedate()" datepicker-options="dateOptions" close-text="Close" alt-input-formats="altInputFormats"
-                                            autofocus />
-                                        <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default" ng-click="open2()" tabindex="-1">
-                                                <i class="glyphicon glyphicon-calendar"></i>
-                                            </button>
-                                        </span>
-                                    </p>
-                                </div>
-                        </div>
-    
-                        <div class="btn btn-primary pull-right"  ng-click="applyFilters()">Apply</div>
-    
-                        <div class="btn btn-danger"  ng-click="clearFilters()">Clear</div>
+
+                <div class="row">
+                    <label for="datebox" class="col-md-2 control-label">From Date:</label>
+                    <div class="col-md-2">
+                        <p class="input-group">
+                            <input autocomplete="off" id="datebox" type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="after_grn_date"
+                                is-open="popup1.opened" ng-change="setafterdate()" datepicker-options="dateOptions" close-text="Close"
+                                alt-input-formats="altInputFormats" autofocus />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="open1()" tabindex="-1">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+                            </span>
+                        </p>
+                    </div>
+                    <label for="datebox2" class="col-md-1 col-md-offset-3 control-label">To Date:</label>
+                    <div class="col-md-2">
+                        <p class="input-group">
+                            <input autocomplete="off" id="datebox2" type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="before_grn_date"
+                                is-open="popup2.opened" ng-change="setbeforedate()" datepicker-options="dateOptions" close-text="Close"
+                                alt-input-formats="altInputFormats" autofocus />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="open2()" tabindex="-1">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+                            </span>
+                        </p>
+                    </div>
                 </div>
+
+                <div class="btn btn-primary pull-right" ng-click="applyFilters()">Apply</div>
+
+                <div class="btn btn-danger" ng-click="clearFilters()">Clear</div>
             </div>
         </div>
-        <table st-safe-src="rowCollection" st-table="displayedCollection" class="table table-bordered table-striped table-hover">
+    </div>
+    <table st-safe-src="rowCollection" st-table="displayedCollection" class="table table-bordered table-striped table-hover">
         <thead>
-        <tr >
-            <th class="text-center">S.No</th>
-            <th class="sortable" st-sort="grn_date">GRN Date</th>
-            <th class="sortable" st-sort="getters.grn_number">GRN Number</th>
-            <th class="sortable" st-sort="supplier_name">Supplier Name</th>
-            <th class="sortable" st-sort="supplier_city">City</th>
-            <th class="sortable" st-sort="lot_number">Lot Numbers</th>
-            <th class="sortable" st-sort="itemname">Department</th>
-            <th class="sortable" st-sort="department">Items/Colours</th>
-            <th class="sortable" st-sort="vehicle_number">Sizes/Dia</th>
-    
-            <!--<th class="sortable" st-sort="agentname">No. of Cartons</th>-->
-        </tr>
-        <tr>
-            <!--<th>
+            <tr>
+                <th class="text-center">S.No</th>
+                <th class="sortable" st-sort="grn_date">GRN Date</th>
+                <th class="sortable" st-sort="getters.grn_number">GRN Number</th>
+                <th class="sortable" st-sort="supplier_name">Supplier Name</th>
+                <th class="sortable" st-sort="supplier_city">City</th>
+                <th class="sortable">Lot Numbers</th>
+                <th class="sortable">DC Numbers</th>
+                <th class="sortable">Colours</th>
+                <th class="sortable">Items</th>
+                <th class="sortable">Sizes/Dia</th>
+
+                <!--<th class="sortable" st-sort="agentname">No. of Cartons</th>-->
+            </tr>
+            <tr>
+                <!--<th>
                 <input st-search="firstName" placeholder="search for firstname" class="input-sm form-control" type="search"/>
             </th>-->
-            <th colspan="9">
-                <input st-delay="0" st-search placeholder="Start typing to filter" class="input-sm form-control" type="search" autofocus/>
-            </th>
-            <!--<th>
+                <th colspan="10">
+                    <input st-delay="0" st-search placeholder="Start typing to filter" class="input-sm form-control" type="search" autofocus/>
+                </th>
+                <!--<th>
                 <input st-search="{{selectedPredicate}}" placeholder="bound predicate" class="input-sm form-control" type="search"/>
             </th>-->
-        </tr>
+            </tr>
         </thead>
-        <tbody> 
-        <tr ng-repeat="row in displayedCollection" style="cursor: pointer;">
-            <td ng-click="open(row)">{{$index + 1}}</td>		
-            <td ng-click="open(row)" ng-init="row.date = ds(row.grn_date)">{{row.grn_date | date:'dd.MM.yyyy'}}</td>
-            <td ng-click="open(row)" ng-init="row.grn_no = getters.grn_number(row)" style="white-space: nowrap;" ng-if="row.status != 'inactive'">{{row.naming_series}}{{ row.grn_number | minLength:row.grn_no_length }}</td>
-            <td ng-click="open(row)" ng-init="row.grn_no = getters.grn_number(row)" style="white-space: nowrap; text-decoration: line-through;" ng-if="row.status == 'inactive'">{{row.naming_series}}{{ row.grn_number | minLength:row.grn_no_length }}</td>
-            <td ng-click="open(row)" class="text-capitalize">{{row.supplier_name.toLowerCase()}}</td>
-            <td ng-click="open(row)" class="text-capitalize">{{row.supplier_city.toLowerCase()}}</td>
-            <td ng-click="open(row)">{{row.lotlist}}</td>
-            <td ng-click="open(row)">{{row.department_name}}</td>
-            <td ng-click="open(row)">{{row.dept_type == 'piece'?row.itemlist:row.dept_type == 'cloth'?row.colourlist:'---'}}</td>
-            <td ng-click="open(row)">{{row.dept_type == 'piece'?row.sizelist:row.dept_type == 'cloth'?row.dialist:'---'}}</td>
-        </tr>
+        <tbody>
+            <tr ng-repeat="row in displayedCollection" style="cursor: pointer;">
+                <td ng-click="open(row)">{{$index + 1}}</td>
+                <td ng-click="open(row)" ng-init="row.date = ds(row.grn_date)">{{row.grn_date | date:'dd.MM.yyyy'}}</td>
+                <td ng-click="open(row)" ng-init="row.grn_no = getters.grn_number(row)" style="white-space: nowrap;" ng-if="row.status != 'inactive'">{{row.naming_series}}{{ row.grn_number | minLength:row.grn_no_length }}</td>
+                <td ng-click="open(row)" ng-init="row.grn_no = getters.grn_number(row)" style="white-space: nowrap; text-decoration: line-through;"
+                    ng-if="row.status == 'inactive'">{{row.naming_series}}{{ row.grn_number | minLength:row.grn_no_length }}</td>
+                <td ng-click="open(row)" class="text-capitalize">{{row.supplier_name.toLowerCase()}}</td>
+                <td ng-click="open(row)" class="text-capitalize">{{row.supplier_city.toLowerCase()}}</td>
+                <td ng-click="open(row)">{{row.lotlist}}</td>
+                <td ng-click="open(row)">{{row.dclist}}</td>
+                <td ng-click="open(row)">{{row.colourlist ? row.colourlist:'---'}}</td>
+                <td ng-click="open(row)">{{row.itemlist ? row.itemlist:'---'}}</td>
+                <td ng-click="open(row)">
+                    <span ng-if="row.sizelist">
+                        Size: {{row.sizelist}}
+                        <br>
+                    </span>
+                    <span ng-if="row.dialist">
+                        Dia: {{row.dialist}}
+                    </span>
+                </td>
+            </tr>
         </tbody>
         <tfoot>
-        <tr ng-if="loadAll == false && rowCollection.length >= itemsByPage">
-            <td colspan="8" class="text-center">
-                <div class="btn btn-danger"  ng-click="loadAllItems()">Load All</div>
-            </td>
-        </tr>
-        <tr ng-show="showpagination == true && rowCollection.length > itemsByPage">
-            <td colspan="5" class="text-center">
-                <div st-items-by-page="itemsByPage" st-pagination="" st-template="html/pagination.custom.html"></div>
-            </td>
-            <td colspan="3">
-                <div class="btn btn-primary"  ng-click="updateItemsByPage()">Show All</div>
-            </td>
-        </tr>
+            <tr ng-if="loadAll == false && rowCollection.length >= itemsByPage">
+                <td colspan="8" class="text-center">
+                    <div class="btn btn-danger" ng-click="loadAllItems()">Load All</div>
+                </td>
+            </tr>
+            <tr ng-show="showpagination == true && rowCollection.length > itemsByPage">
+                <td colspan="5" class="text-center">
+                    <div st-items-by-page="itemsByPage" st-pagination="" st-template="html/pagination.custom.html"></div>
+                </td>
+                <td colspan="3">
+                    <div class="btn btn-primary" ng-click="updateItemsByPage()">Show All</div>
+                </td>
+            </tr>
         </tfoot>
     </table>
-        
-    
-        
-        
-    </div>
-    <ng-include src="'./html/print/dcprint.html'" class="visible-print-block" ng-if="dc.dc_number && dc.items && dc.items.length > 0"></ng-include>
+
+
+
+
+</div>
+<ng-include src="'./html/print/dcprint.html'" class="visible-print-block" ng-if="dc.dc_number && dc.items && dc.items.length > 0"></ng-include>
