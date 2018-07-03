@@ -410,19 +410,19 @@
     </div>
 </div>
 
-<div class="modal-footer" ng-if="!dc.dc_number">
+<div class="modal-footer" ng-if="!grn.grn_number">
     <button ng-click="cancel()" class="btn btn-warning">Edit</button>
     <button ng-click="save()" class="btn btn-primary pull-right" ng-disabled="disablesave">Save and Print</button>
 </div>
 
-<div class="modal-footer" ng-if="dc.dc_number">
-    <button ng-click="canceldc()" ng-if="dc.status == 'active'" class="btn btn-danger pull-left" tabindex="-1">Cancel Current DC</button>
+<div class="modal-footer" ng-if="grn.grn_number">
+    <button ng-click="cancelgrn()" ng-if="grn.status == 'active'" class="btn btn-danger pull-left" tabindex="-1">Cancel Current GRN</button>
     <button ng-click="cancel()" class="btn btn-warning">Close</button>
     <button ng-click="print()" class="btn btn-primary pull-right">Print</button>
 </div>
-<div class="modal-footer" ng-if="dc.modified_time">
+<div class="modal-footer" ng-if="grn.modified_time">
     <div class="row">
-        <div class="col-md-6">Last Modified Time: {{dc.modified_time | date:'EEEE, MMMM dd, yyyy HH:mm:ss.sss'}}</div>
-        <div class="col-md-6">Last Modified User: {{dc.blame_user}}</div>
+        <div class="col-md-6">Last Modified Time: {{grn.modified_time | date:'EEEE, MMMM dd, yyyy HH:mm:ss.sss'}}</div>
+        <div class="col-md-6">Last Modified User: {{grn.blame_user}}</div>
     </div>
 </div>

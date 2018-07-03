@@ -2318,30 +2318,30 @@ app.controller('viewgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotke
     }).then(function successCallback(response) {
       console.log(response);
       $scope.grn = response.data[0];
-      if ($scope.dc.dept_type == 'piece') {
+      if ($scope.grn.items.piece && $scope.grn.items.piece.length > 0) {
         temp_items = {}
-        $scope.dc.items.forEach(element => {
-          if (!temp_items[element.pdc_part_index]) {
-            temp_items[element.pdc_part_index] = {}
-            temp_items[element.pdc_part_index].lot_number = element.lot_number;
-            temp_items[element.pdc_part_index].item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series, };
-            angular.forEach($scope.dc.sizerange, function (value, key) {
+        $scope.grn.items.piece.forEach(element => {
+          if (!temp_items[element.part_index]) {
+            temp_items[element.part_index] = {}
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series, };
+            angular.forEach($scope.grn.sizerange, function (value, key) {
               if (element.sizerange == value.idsize) {
                 $scope.idsizetype = value.idsizetype;
-                temp_items[element.pdc_part_index].sizerange = value;
+                temp_items[element.part_index].sizerange = value;
               }
             });
 
-            angular.forEach($scope.dc.sizetype, function (value, key) {
+            angular.forEach($scope.grn.sizetype, function (value, key) {
               if ($scope.idsizetype == value.id) {
-                temp_items[element.pdc_part_index].sizetype = value;
+                temp_items[element.part_index].sizetype = value;
               }
             });
 
-            temp_items[element.pdc_part_index].lot_number = element.lot_number;
-            temp_items[element.pdc_part_index].partlist = [];
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].partlist = [];
           }
-          temp_items[element.pdc_part_index].partlist.push({
+          temp_items[element.part_index].partlist.push({
             part: element.part, colour: element.colour, comment: element.comment,
             size1: element.size1,
             size2: element.size2,
@@ -2366,29 +2366,74 @@ app.controller('viewgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotke
           });
 
         });
-        dc_colour_index_list = Object.keys(temp_items).sort();
-        $scope.dc.items = [];
-        dc_colour_index_list.forEach(x => {
-          $scope.dc.items.push(temp_items[x]);
+        grn_part_index_list = Object.keys(temp_items).sort();
+        $scope.grn.items.piece = [];
+        grn_part_index_list.forEach(x => {
+          $scope.grn.items.piece.push(temp_items[x]);
         });
-        console.log('dc.items: ', $scope.dc.items)
+        console.log('grn.items.piece: ', $scope.grn.items.piece)
       }
-      else if ($scope.dc.dept_type == 'cloth') {
+      if ($scope.grn.items.cloth && $scope.grn.items.cloth.length > 0) {
         temp_items = {}
-        $scope.dc.items.forEach(element => {
-          if (!temp_items[element.cdc_colour_index]) {
-            temp_items[element.cdc_colour_index] = {}
-            temp_items[element.cdc_colour_index].colour = element.colour;
-            temp_items[element.cdc_colour_index].lot_number = element.lot_number;
-            temp_items[element.cdc_colour_index].dialist = [];
+        $scope.grn.items.cloth.forEach(element => {
+          if (!temp_items[element.colour_index]) {
+            temp_items[element.colour_index] = {}
+            temp_items[element.colour_index].colour = element.colour;
+            temp_items[element.colour_index].lot_number = element.lot_number;
+            temp_items[element.colour_index].dialist = [];
           }
-          temp_items[element.cdc_colour_index].dialist.push({ dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
+          temp_items[element.colour_index].dialist.push({ dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
         });
-        dc_colour_index_list = Object.keys(temp_items).sort();
-        $scope.dc.items = [];
-        dc_colour_index_list.forEach(x => {
-          $scope.dc.items.push(temp_items[x]);
+        grn_colour_index_list = Object.keys(temp_items).sort();
+        $scope.grn.items.cloth = [];
+        grn_colour_index_list.forEach(x => {
+          $scope.grn.items.cloth.push(temp_items[x]);
         });
+      }
+      if ($scope.grn.items.packed && $scope.grn.items.packed.length > 0) {
+        temp_items = {}
+        $scope.grn.items.packed.forEach(element => {
+          if (!temp_items[element.part_index]) {
+            temp_items[element.part_index] = {}
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series, };
+            angular.forEach($scope.grn.sizerange, function (value, key) {
+              if (element.sizerange == value.idsize) {
+                $scope.idsizetype = value.idsizetype;
+                temp_items[element.part_index].sizerange = value;
+              }
+            });
+
+            angular.forEach($scope.grn.sizetype, function (value, key) {
+              if ($scope.idsizetype == value.id) {
+                temp_items[element.part_index].sizetype = value;
+              }
+            });
+
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].partlist = [];
+          }
+          temp_items[element.part_index].partlist.push({
+            part: element.part, colour: element.colour, comment: element.comment,
+            size1: element.size1,
+            size2: element.size2,
+            size3: element.size3,
+            size4: element.size4,
+            size5: element.size5,
+            size6: element.size6,
+            size7: element.size7,
+            size8: element.size8,
+            size9: element.size9,
+            size10: element.size10
+          });
+
+        });
+        grn_part_index_list = Object.keys(temp_items).sort();
+        $scope.grn.items.packed = [];
+        grn_part_index_list.forEach(x => {
+          $scope.grn.items.packed.push(temp_items[x]);
+        });
+        console.log('grn.items.packed: ', $scope.grn.items.packed)
       }
       $scope.hidelist = true;
       var modalInstance = $uibModal.open({
