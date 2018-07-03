@@ -2030,6 +2030,9 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     }
 
     $scope.grn.grn_item_type = Object.keys($scope.grn.items).join(', ');
+    if($scope.grn.against != 'dc'){
+      $scope.grn.supplier_dc_no = null;
+    }
 
     opengrnmodal($scope.grn);
   }
