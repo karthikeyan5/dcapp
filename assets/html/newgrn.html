@@ -43,7 +43,7 @@
 <div style="padding-top: 10px;padding-bottom: 10px;" class="hidden-print">
     <legend>Goods Received Note</legend>
 
-    <form id="form1" class="form-horizontal" autocomplete="off" ng-submit="savegrn()">
+    <form id="form1" class="form-horizontal" autocomplete="off" ng-submit="savegrn()" style="padding:10px;">
         <div class="form-group">
             <label for="n1ame" class="col-md-2 control-label">Supplier name:</label>
             <div id='n1ame' class="col-md-4 col-md-offset-0">
@@ -98,7 +98,7 @@
                 <input id="others" type="text" ng-model="grn.against_other" maxlength="45" class="form-control" placeholder="Other Details">
             </div>
         </div>
-        <div class="form-group" ng-if="grn.items.piece || grn.items.cloth || grn.items.packed">
+        <div ng-if="grn.items.piece || grn.items.cloth || grn.items.packed">
             <table class="table table-bordered table-striped">
                 <tr ng-repeat="item in grn.items.piece track by $index" class="repeated-item">
                     <td>
@@ -402,7 +402,7 @@
                                         </span>
                                     </td>
                                     <td class="text-center" ng-show="item.sizerange.size10===0?false:true">
-                                        <span ng-show="row.size10 != 0">{{row.size10}Boxescs
+                                        <span ng-show="row.size10 != 0">{{row.size10}} Boxes
                                         </span>
                                     </td>
                                     <td class="text-center">
@@ -469,9 +469,9 @@
                     </td>
                 </tr>
             </table>
-            
-            <div class="form-control">
-                <label for="vehicle_number" class="col-md-2 col-md-offset-2 control-label">Vehicle Number:</label>
+
+            <div class="form-group">
+                <label for="vehicle_number" class="col-md-2 col-md-offset-0 control-label">Vehicle Number:</label>
                 <div class="col-md-2">
                     <input autocomplete="false" required type="text" maxlength="12" class="form-control" id="vehicle_number" placeholder="Vehicle Number"
                         ng-model="grn.vehicle_number">
@@ -479,7 +479,7 @@
             </div>
 
             <div class="form-group">
-                <label for="comment" class="col-md-3 control-label">GRN Comments:</label>
+                <label for="comment" class="col-md-2 control-label">GRN Comments:</label>
                 <div class="col-md-8">
                     <input autocomplete="false" type="text" maxlength="120" class="form-control" id="comment" placeholder="Comments" ng-model="grn.comment">
                 </div>
@@ -492,7 +492,7 @@
 </div>
 
 
-<div style="padding:30px; border:1px solid black;">
+<div style="padding:30px; border:1px solid black;" class="hidden-print">
     <div class="row" style="padding:10px;">
         <label for="item_type" class="col-md-2 control-label">Add Items:</label>
         <div id="item_type" class="btn-group col-md-4 col-md-offset-0">
@@ -501,71 +501,71 @@
             <label class="btn btn-primary" ng-model="cur_item_type" uib-btn-radio="'packed'">Packed</label>
         </div>
     </div>
+    <div class="row">
+        <form name="formc" class="form-horizontal" ng-if="cur_item_type == 'cloth'" autocomplete="off" ng-submit="addClothItem(temp_storage.newcolour, temp_storage.lot_number, cur_item_type)">
+            <div class="form-group">
 
-    <form name="formc" class="form-horizontal" ng-if="cur_item_type == 'cloth'" autocomplete="off" ng-submit="addClothItem(temp_storage.newcolour, temp_storage.lot_number, cur_item_type)">
-        <div class="form-group">
+                <label for="lotbox" class="col-md-2 control-label">Lot Number:</label>
+                <div class="col-md-3" style="padding-top: 10px;padding-bottom: 10px;">
+                    <div class="input-group">
+                        <input required class="form-control input-sm" id="lotbox" type="text" ng-model="temp_storage.lot_number" uib-typeahead="item.name for item in lotlist | filter:$viewValue | limitTo:25"
+                            placeholder="Enter Lot Number" typeahead-on-select="" autocomplete="off" typeahead-editable="false"
+                            typeahead-focus-on-select="false" typeahead-min-length="0">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" tabindex="-1" ng-click="loadalllot()">Load all</button>
+                        </span>
+                    </div>
+                </div>
 
-            <label for="lotbox" class="col-md-2 control-label">Lot Number:</label>
-            <div class="col-md-3" style="padding-top: 10px;padding-bottom: 10px;">
-                <div class="input-group">
-                    <input required class="form-control input-sm" id="lotbox" type="text" ng-model="temp_storage.lot_number" uib-typeahead="item.name for item in lotlist | filter:$viewValue | limitTo:25"
-                        placeholder="Enter Lot Number" typeahead-on-select="" autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false"
-                        typeahead-min-length="0">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" tabindex="-1" ng-click="loadalllot()">Load all</button>
-                    </span>
+                <label for="c1olour" class="col-md-2 col-md-offset-0 control-label">New Colour:</label>
+                <div class="col-md-4" style="padding-top: 10px;padding-bottom: 10px;">
+                    <div class="input-group">
+                        <input required class="form-control input-sm" id="c1olour" type="text" ng-model="temp_storage.newcolour" uib-typeahead="item.name for item in colourlist | filter:$viewValue | limitTo:25"
+                            placeholder="Enter New Colour" autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false"
+                            typeahead-min-length="0">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" tabindex="-1" ng-click="loadallcolour()">Load all</button>
+                        </span>
+                    </div>
+                </div>
+                <div ng-show='' class="col-md-1">
+                    <button type="submit" class="btn btn-success">Add Colour</button>
                 </div>
             </div>
+        </form>
 
-            <label for="c1olour" class="col-md-2 col-md-offset-0 control-label">New Colour:</label>
-            <div class="col-md-4" style="padding-top: 10px;padding-bottom: 10px;">
-                <div class="input-group">
-                    <input required class="form-control input-sm" id="c1olour" type="text" ng-model="temp_storage.newcolour" uib-typeahead="item.name for item in colourlist | filter:$viewValue | limitTo:25"
-                        placeholder="Enter New Colour" autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false"
-                        typeahead-min-length="0">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" tabindex="-1" ng-click="loadallcolour()">Load all</button>
-                    </span>
+        <form name="formp" class="form-horizontal" ng-if="cur_item_type == 'piece' || cur_item_type == 'packed'" autocomplete="off"
+            ng-submit="addItem(temp_storage.newitemdetails, temp_storage.lot_number, sizerange, sizetype, cur_item_type)">
+            <div class="form-group">
+                <label for="lotbox" class="col-md-2 control-label">Lot Number:</label>
+                <div class="col-md-3" style="padding-top: 10px;padding-bottom: 10px;">
+                    <div class="input-group">
+                        <input required class="form-control input-sm" id="lotbox" type="text" ng-model="temp_storage.lot_number" uib-typeahead="item.name for item in lotlist | filter:$viewValue | limitTo:25"
+                            placeholder="Enter Lot Number" typeahead-on-select="" autocomplete="off" typeahead-editable="false"
+                            typeahead-focus-on-select="false" typeahead-min-length="0">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" tabindex="-1" ng-click="loadalllot()">Load all</button>
+                        </span>
+                    </div>
+                </div>
+
+                <label for="p1in" class="col-md-2 control-label">Item:</label>
+                <div class="col-md-4" style="padding-top: 10px;padding-bottom: 10px;">
+                    <div class="input-group">
+                        <input class="form-control input-sm" name="itembox" id="itembox" type="text" ng-model="temp_storage.newitemdetails" uib-typeahead="item as item.fullname for item in itemlist | filter:$viewValue | limitTo:25"
+                            placeholder="Enter item name / id" typeahead-on-select="setitemsize()" ng-change="setitemsize()"
+                            required autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false" typeahead-template-url="itemCustomTemplate.html"
+                            typeahead-min-length="0">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" tabindex="-1" ng-click="loadallitem()">Load all</button>
+                        </span>
+                    </div>
+                </div>
+                <div ng-show='' class="col-md-2">
+                    <button type="submit" class="btn btn-success">Add Item</button>
                 </div>
             </div>
-            <div ng-show='' class="col-md-1">
-                <button type="submit" class="btn btn-success">Add Colour</button>
-            </div>
-        </div>
-    </form>
+        </form>
 
-    <form name="formp" class="form-horizontal" ng-if="cur_item_type == 'piece' || cur_item_type == 'packed'" autocomplete="off"
-        ng-submit="addItem(temp_storage.newitemdetails, temp_storage.lot_number, sizerange, sizetype, cur_item_type)">
-        <div class="form-group">
-            <label for="lotbox" class="col-md-2 control-label">Lot Number:</label>
-            <div class="col-md-3" style="padding-top: 10px;padding-bottom: 10px;">
-                <div class="input-group">
-                    <input required class="form-control input-sm" id="lotbox" type="text" ng-model="temp_storage.lot_number" uib-typeahead="item.name for item in lotlist | filter:$viewValue | limitTo:25"
-                        placeholder="Enter Lot Number" typeahead-on-select="" autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false"
-                        typeahead-min-length="0">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" tabindex="-1" ng-click="loadalllot()">Load all</button>
-                    </span>
-                </div>
-            </div>
-
-            <label for="p1in" class="col-md-2 control-label">Item:</label>
-            <div class="col-md-4" style="padding-top: 10px;padding-bottom: 10px;">
-                <div class="input-group">
-                    <input class="form-control input-sm" name="itembox" id="itembox" type="text" ng-model="temp_storage.newitemdetails" uib-typeahead="item as item.fullname for item in itemlist | filter:$viewValue | limitTo:25"
-                        placeholder="Enter item name / id" typeahead-on-select="setitemsize()" ng-change="setitemsize()" required
-                        autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false" typeahead-template-url="itemCustomTemplate.html"
-                        typeahead-min-length="0">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" tabindex="-1" ng-click="loadallitem()">Load all</button>
-                    </span>
-                </div>
-            </div>
-            <div ng-show='' class="col-md-2">
-                <button type="submit" class="btn btn-success">Add Item</button>
-            </div>
-        </div>
-    </form>
-
-</div>
+    </div>
 </div>

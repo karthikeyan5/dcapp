@@ -824,6 +824,20 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
 
 
   $scope.addColor = function (colour, lot_number) {
+    if(!colour){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Colour... '
+      });
+      return;
+    }
+    if(!lot_number){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Lot Number... '
+      });
+      return;
+    }
     open(colour, lot_number, [], -1);
   }
 
@@ -842,6 +856,20 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
 
 
   $scope.addItem = function (item, lot_number, sizerange, sizetype) {
+    if(!item){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Item name... '
+      });
+      return;
+    }
+    if(!lot_number){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Lot Number... '
+      });
+      return;
+    }
     openitemdetails(item, lot_number, [], -1, sizerange, sizetype);
   }
 
@@ -1951,6 +1979,20 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
 
   $scope.addClothItem = function (colour, lot_number) {
+    if(!colour){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Colour... '
+      });
+      return;
+    }
+    if(!lot_number){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Lot Number... '
+      });
+      return;
+    }
     open(colour, lot_number, [], -1);
   }
 
@@ -1971,6 +2013,20 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
 
   $scope.addItem = function (item, lot_number, sizerange, sizetype, cur_item_type) {
+    if(!item){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Item name... '
+      });
+      return;
+    }
+    if(!lot_number){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Lot Number... '
+      });
+      return;
+    }
     openitemdetails(item, lot_number, [], -1, sizerange, sizetype, cur_item_type);
   }
 

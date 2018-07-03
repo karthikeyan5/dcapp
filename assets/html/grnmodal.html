@@ -35,20 +35,20 @@
 
             <div class="form-group" ng-if="grn.against == 'dc'">
                     <label for="dcno" class="col-md-2 control-label">DC No:</label>
-                    <div class="col-md-3">
+                    <div class="col-md-8">
                         <input id="dcno" type="text" ng-model="grn.dclist" class="form-control">  
                     </div>
             </div>
 
             <div class="form-group" ng-if="grn.against == 'other'">
                     <label for="agianst" class="col-md-2 control-label">Against Details:</label>
-                    <div class="col-md-3">
+                    <div class="col-md-8">
                         <input id="against" type="text" ng-model="grn.against_other" class="form-control">  
                     </div>
             </div>
 
 
-            <div class="form-group" ng-if="grn.items.piece || grn.items.cloth || grn.items.packed">
+            <div ng-if="grn.items.piece || grn.items.cloth || grn.items.packed">
                     <table class="table table-bordered table-striped">
                         <tr ng-repeat="item in grn.items.piece track by $index" class="repeated-item">
                             <td>
@@ -332,7 +332,7 @@
                                                 </span>
                                             </td>
                                             <td class="text-center" ng-show="item.sizerange.size10===0?false:true">
-                                                <span ng-show="row.size10 != 0">{{row.size10}Boxescs
+                                                <span ng-show="row.size10 != 0">{{row.size10}} Boxes
                                                 </span>
                                             </td>
                                             <td class="text-center">
@@ -390,8 +390,8 @@
                         </tr>
                     </table>
                     
-                    <div class="form-control">
-                        <label for="vehicle_number" class="col-md-2 col-md-offset-2 control-label">Vehicle Number:</label>
+                    <div class="form-group">
+                        <label for="vehicle_number" class="col-md-2 col-md-offset-0 control-label">Vehicle Number:</label>
                         <div class="col-md-2">
                             <input autocomplete="false" required type="text" maxlength="12" class="form-control" id="vehicle_number" placeholder="Vehicle Number"
                                 ng-model="grn.vehicle_number">
@@ -399,7 +399,7 @@
                     </div>
         
                     <div class="form-group">
-                        <label for="comment" class="col-md-3 control-label">GRN Comments:</label>
+                        <label for="comment" class="col-md-2 control-label">GRN Comments:</label>
                         <div class="col-md-8">
                             <input autocomplete="false" type="text" maxlength="120" class="form-control" id="comment" placeholder="Comments" ng-model="grn.comment">
                         </div>
