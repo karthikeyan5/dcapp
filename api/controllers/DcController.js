@@ -901,6 +901,7 @@ module.exports = {
         grn.grn_number, \
         grn.grn_date, \
         items_agg.lotlist, \
+        grn_item_type.grn_item_type, \
         grn.vehicle_number, \
         grn.comment, \
         grn.status, \
@@ -967,6 +968,13 @@ module.exports = {
         ) sizelist on sizelist.idgrn = grn.id \
         LEFT JOIN (select dcgrn.idgrn, group_concat(concat(naming_series,LPAD(dc_number,series.length,'0')) SEPARATOR ', ') as dclist from dc,dcgrn,series where dc.id = dcgrn.iddc and dcgrn.document_type = 'grn' and dc.naming_series = series.name group by dcgrn.idgrn \
         ) as against_dc on against_dc.idgrn = grn.id \
+        LEFT JOIN ( SELECT idgrn, group_concat(item_type SEPARATOR ', ') as grn_item_type FROM \
+        (SELECT idgrn, 'cloth' as item_type from cgrnitems group by idgrn \
+        UNION ALL \
+        SELECT idgrn, 'piece' as item_type from pgrnitems group by idgrn \
+        UNION ALL \
+        SELECT idgrn, 'packed' as item_type from cgrnitems group by idgrn) as grn_type GROUP BY idgrn \
+        ) as grn_item_type on grn_item_type.idgrn = grn.id \
         WHERE 1 = 1";
         d = []
         q_where = ""
@@ -998,9 +1006,14 @@ module.exports = {
             d.push('%' + req.param('lot_number'));
         }
 
+        if (req.param('grn_item_type') != undefined) {
+            q = q.concat(" AND grn_item_type LIKE ?");
+            d.push('%' + req.param('grn_item_type') + '%');
+        }
+
         if (req.param('iditem') != undefined) {
-            q = q.concat(" AND dc.id = any(select iddc from pdcitems where iditem = ?)");
-            d.push(req.param('iditem'));
+            q = q.concat(" AND grn.id = any(select distinct idgrn from (select distinct idgrn from pcgrnitems where pcgrnitems.iditem = ? union all select distinct idgrn from pgrnitems where pgrnitems.iditem = ? ) as a)");
+            d.push(req.param('iditem'),req.param('iditem'));
         }
 
         if (req.param('after_grn_date') != undefined) {

@@ -7,17 +7,11 @@
     <div class="row container">
         <div uib-collapse="isCollapsed">
             <div class="row container">
-                <select id="dept_type" class="form-control" ng-model="filter.dept_type" ng-change="getsuppliers()" ng-model-options="{ updateOn: 'blur' }"
-                    autofocus>
-                    <option value="" disabled selected>Select a Department Type</option>
+                <select id="dept_type" class="form-control" ng-model="filter.grn_item_type" autofocus>
+                    <option value="" disabled selected>Select a GRN Item Type</option>
+                    <option value="packed">Packed</option>
                     <option value="piece">Piece</option>
                     <option value="cloth">Cloth</option>
-                </select>
-
-                <select id="department" class="form-control" ng-model="filter.department" ng-change="getsuppliers()" ng-model-options="{ updateOn: 'blur' }"
-                    autofocus>
-                    <option value="" disabled selected>Select a Department</option>
-                    <option ng-repeat="departmentx in departmentlist" value="{{departmentx.id}}">{{departmentx.name}}</option>
                 </select>
 
                 <input class="form-control input-sm" id="lotbox" type="text" ng-model="filter.lot_number" uib-typeahead="item.name for item in lotlist | filter:$viewValue | limitTo:25"
@@ -95,6 +89,7 @@
                 <th class="sortable" st-sort="supplier_city">City</th>
                 <th class="sortable">Lot Numbers</th>
                 <th class="sortable">DC Numbers</th>
+                <th class="sortable">GRN Item Type</th>
                 <th class="sortable">Colours</th>
                 <th class="sortable">Items</th>
                 <th class="sortable">Sizes/Dia</th>
@@ -105,7 +100,7 @@
                 <!--<th>
                 <input st-search="firstName" placeholder="search for firstname" class="input-sm form-control" type="search"/>
             </th>-->
-                <th colspan="10">
+                <th colspan="11">
                     <input st-delay="0" st-search placeholder="Start typing to filter" class="input-sm form-control" type="search" autofocus/>
                 </th>
                 <!--<th>
@@ -124,6 +119,7 @@
                 <td ng-click="open(row)" class="text-capitalize">{{row.supplier_city.toLowerCase()}}</td>
                 <td ng-click="open(row)">{{row.lotlist}}</td>
                 <td ng-click="open(row)">{{row.dclist}}</td>
+                <td ng-click="open(row)">{{row.grn_item_type}}</td>
                 <td ng-click="open(row)">{{row.colourlist ? row.colourlist:'---'}}</td>
                 <td ng-click="open(row)">{{row.itemlist ? row.itemlist:'---'}}</td>
                 <td ng-click="open(row)">
@@ -139,7 +135,7 @@
         </tbody>
         <tfoot>
             <tr ng-if="loadAll == false && rowCollection.length >= itemsByPage">
-                <td colspan="8" class="text-center">
+                <td colspan="11" class="text-center">
                     <div class="btn btn-danger" ng-click="loadAllItems()">Load All</div>
                 </td>
             </tr>
@@ -154,8 +150,5 @@
         </tfoot>
     </table>
 
-
-
-
 </div>
-<ng-include src="'./html/print/dcprint.html'" class="visible-print-block" ng-if="dc.dc_number && dc.items && dc.items.length > 0"></ng-include>
+<ng-include src="'./html/print/grnprint.html'" class="visible-print-block" ng-if="grn.grn_number && grn.items"></ng-include>

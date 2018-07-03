@@ -282,6 +282,7 @@ app.controller('dcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibMo
       $scope.dc.dc_number = response.data.dc.dc_number;
       $scope.dc.dc_no_length = response.data.dc.length;
       $scope.dc.server_time = response.data.dc.server_time;
+      $scope.dc.dc_date = response.data.dc.server_time;
       $scope.dc.current_user = response.data.dc.current_user;
       setTimeout(function () { $scope.print(); }, 800);
     },
@@ -940,14 +941,6 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
       return;
     }
 
-    if ($scope.dc.dc_date === undefined) {
-      ngToast.create({
-        className: 'warning',
-        content: 'invalid DC Date... '
-      });
-      return;
-    }
-
     if ($scope.dc.items.length < 1) {
       ngToast.create({
         className: 'warning',
@@ -961,105 +954,6 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
     opendcmodal($scope.dc);
 
 
-  }
-
-
-
-
-
-
-  // datepicker stuff - to be decoded later
-  $scope.today = function () {
-    $scope.dc.dc_date = new Date();
-  };
-  $scope.today();
-
-  $scope.clear = function () {
-    $scope.dc.dc_date = null;
-  };
-
-  $scope.inlineOptions = {
-    customClass: getDayClass,
-    minDate: new Date(),
-    showWeeks: true
-  };
-
-  $scope.dateOptions = {
-    dateDisabled: disabled,
-    formatYear: 'yy',
-    maxDate: new Date(2020, 5, 22),
-    minDate: new Date(),
-    startingDay: 1
-  };
-
-  // Disable weekend selection
-  function disabled(data) {
-    var date = data.date,
-      mode = data.mode;
-    //return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
-    return false;
-  }
-
-  $scope.toggleMin = function () {
-    $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
-    $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
-  };
-
-  $scope.toggleMin();
-
-  $scope.open1 = function () {
-    $scope.popup1.opened = true;
-  };
-
-  $scope.open2 = function () {
-    $scope.popup2.opened = true;
-  };
-
-  $scope.setDate = function (year, month, day) {
-    $scope.dc.dc_date = new Date(year, month, day);
-  };
-
-  $scope.altInputFormats = ['d!.M!.yyyy', 'd!.M!.yy', 'd!/M!/yyyy', 'd!/M!/yy'];//,'d!.M!','d!.M!.yy'];
-
-  $scope.popup1 = {
-    opened: false
-  };
-
-  $scope.popup2 = {
-    opened: false
-  };
-
-  var tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  var afterTomorrow = new Date();
-  afterTomorrow.setDate(tomorrow.getDate() + 1);
-  $scope.events = [
-    {
-      date: tomorrow,
-      status: 'full'
-    },
-    {
-      date: afterTomorrow,
-      status: 'partially'
-    }
-  ];
-
-  function getDayClass(data) {
-    var date = data.date,
-      mode = data.mode;
-    if (mode === 'day') {
-      var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
-
-      for (var i = 0; i < $scope.events.length; i++) {
-        var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
-
-        if (dayToCheck === currentDay) {
-          return $scope.events[i].status;
-        }
-      }
-    }
-
-    return '';
   }
 
 
@@ -1531,6 +1425,7 @@ app.controller('grnmodalCtrl', function ($scope, $http, $uibModalInstance, $uibM
       $scope.grn.grn_number = response.data.grn.grn_number;
       $scope.grn.grn_no_length = response.data.grn.length;
       $scope.grn.server_time = response.data.grn.server_time;
+      $scope.grn.grn_date = response.data.grn.server_time;
       $scope.grn.current_user = response.data.grn.current_user;
       setTimeout(function () { $scope.print(); }, 800);
     },
@@ -1596,6 +1491,20 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
   $scope.temp_storage = {};
   let master = {};
   $scope.grn.items = {};
+
+  window.onbeforeunload = function () {
+    return $scope.grn.items && Object.keys($scope.grn.items).length > 0 && !$scope.grn.grn_number ? "If you leave this page you will lose your unsaved changes." : null;
+  }
+  $scope.$on('$locationChangeStart', function (event) {
+
+    if ($scope.grn.items && Object.keys($scope.grn.items).length > 0 && !$scope.grn.grn_number) {
+      var answer = confirm("If you leave this page you will lose your unsaved changes.")
+      if (!answer) {
+        event.preventDefault();
+      }
+    }
+    // return $scope.dc.items.length > 0 ? "If you leave this page you will lose your unsaved changes." : null;
+  });
 
   $http({
     method: 'GET',
@@ -2071,7 +1980,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
       console.log('inside modalClosing event', ret);
 
       if (ret) {
-        $scope.cleardc();
+        $scope.cleargrn();
       }
 
 
@@ -2119,6 +2028,8 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
       });
       return;
     }
+
+    $scope.grn.grn_item_type = Object.keys($scope.grn.items).join(', ');
 
     opengrnmodal($scope.grn);
   }
