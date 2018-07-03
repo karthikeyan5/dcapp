@@ -115,7 +115,7 @@
 	<tr ng-repeat="row in displayedCollection" style="cursor: pointer;">
 		<td ng-click="open(row)">{{$index + 1}}</td>		
 		<td ng-click="open(row)" ng-init="row.date = ds(row.dc_date)">{{row.dc_date | date:'dd.MM.yyyy'}}</td>
-		<td ng-click="open(row)" ng-init="row.dc_no = getters.dc_number(row)" style="white-space: nowrap;" ng-if="row.status == 'active'">{{row.naming_series}}{{ row.dc_number | minLength:row.dc_no_length }}</td>
+		<td ng-click="open(row)" ng-init="row.dc_no = getters.dc_number(row)" style="white-space: nowrap;" ng-if="row.status != 'inactive'">{{row.naming_series}}{{ row.dc_number | minLength:row.dc_no_length }}</td>
 		<td ng-click="open(row)" ng-init="row.dc_no = getters.dc_number(row)" style="white-space: nowrap; text-decoration: line-through;" ng-if="row.status == 'inactive'">{{row.naming_series}}{{ row.dc_number | minLength:row.dc_no_length }}</td>
 		<td ng-click="open(row)" class="text-capitalize">{{row.supplier_name.toLowerCase()}}</td>
 		<td ng-click="open(row)" class="text-capitalize">{{row.supplier_city.toLowerCase()}}</td>

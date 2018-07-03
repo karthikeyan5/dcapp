@@ -12,7 +12,7 @@ var app = angular.module('app', ['ngRoute',
   'angular-barcode',
   'cleave.js',
   'ngTagsInput']);
-  
+
 app.factory('redirectInterceptor', function ($q, $location, $window) {
   return {
     'responseError': function (response) {
@@ -60,8 +60,8 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[1].className = "active";
     document.getElementById("tabnav").childNodes[3].className = "inactive";
     document.getElementById("tabnav").childNodes[5].className = "inactive";
-    // document.getElementById("tabnav").childNodes[7].className = "inactive";
-    // document.getElementById("tabnav").childNodes[9].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "inactive";
+    document.getElementById("tabnav").childNodes[9].className = "inactive";
     // document.getElementById("tabnav").childNodes[11].className = "inactive";
     // document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
@@ -70,8 +70,8 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[1].className = "inactive";
     document.getElementById("tabnav").childNodes[3].className = "active";
     document.getElementById("tabnav").childNodes[5].className = "inactive";
-    // document.getElementById("tabnav").childNodes[7].className = "inactive";
-    // document.getElementById("tabnav").childNodes[9].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "inactive";
+    document.getElementById("tabnav").childNodes[9].className = "inactive";
     // document.getElementById("tabnav").childNodes[11].className = "inactive";
     // document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
@@ -80,33 +80,33 @@ app.controller('mainCtrl', function ($scope) {
     document.getElementById("tabnav").childNodes[1].className = "inactive";
     document.getElementById("tabnav").childNodes[3].className = "inactive";
     document.getElementById("tabnav").childNodes[5].className = "active";
-    // document.getElementById("tabnav").childNodes[7].className = "inactive";
-    // document.getElementById("tabnav").childNodes[9].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "inactive";
+    document.getElementById("tabnav").childNodes[9].className = "inactive";
     // document.getElementById("tabnav").childNodes[11].className = "inactive";
     // document.getElementById("tabnav").childNodes[13].className = "inactive";
     // document.getElementById("tabnav").childNodes[15].className = "inactive";
   };
-  // $scope.tabselect4 = function () {
-  //   document.getElementById("tabnav").childNodes[1].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[3].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[5].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[7].className = "active";
-  //   document.getElementById("tabnav").childNodes[9].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[11].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[13].className = "inactive";
-  //   // document.getElementById("tabnav").childNodes[15].className = "inactive";
-  // };
+  $scope.tabselect4 = function () {
+    document.getElementById("tabnav").childNodes[1].className = "inactive";
+    document.getElementById("tabnav").childNodes[3].className = "inactive";
+    document.getElementById("tabnav").childNodes[5].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "active";
+    document.getElementById("tabnav").childNodes[9].className = "inactive";
+    // document.getElementById("tabnav").childNodes[11].className = "inactive";
+    // document.getElementById("tabnav").childNodes[13].className = "inactive";
+    // document.getElementById("tabnav").childNodes[15].className = "inactive";
+  };
 
-  // $scope.tabselect5 = function () {
-  //   document.getElementById("tabnav").childNodes[1].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[3].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[5].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[7].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[9].className = "active";
-  //   document.getElementById("tabnav").childNodes[11].className = "inactive";
-  //   document.getElementById("tabnav").childNodes[13].className = "inactive";
-  //   // document.getElementById("tabnav").childNodes[15].className = "inactive";
-  // };
+  $scope.tabselect5 = function () {
+    document.getElementById("tabnav").childNodes[1].className = "inactive";
+    document.getElementById("tabnav").childNodes[3].className = "inactive";
+    document.getElementById("tabnav").childNodes[5].className = "inactive";
+    document.getElementById("tabnav").childNodes[7].className = "inactive";
+    document.getElementById("tabnav").childNodes[9].className = "active";
+    // document.getElementById("tabnav").childNodes[11].className = "inactive";
+    // document.getElementById("tabnav").childNodes[13].className = "inactive";
+    // document.getElementById("tabnav").childNodes[15].className = "inactive";
+  };
 
   // $scope.tabselect6 = function () {
   //   document.getElementById("tabnav").childNodes[1].className = "inactive";
@@ -282,6 +282,7 @@ app.controller('dcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibMo
       $scope.dc.dc_number = response.data.dc.dc_number;
       $scope.dc.dc_no_length = response.data.dc.length;
       $scope.dc.server_time = response.data.dc.server_time;
+      $scope.dc.dc_date = response.data.dc.server_time;
       $scope.dc.current_user = response.data.dc.current_user;
       setTimeout(function () { $scope.print(); }, 800);
     },
@@ -336,7 +337,8 @@ app.controller('dcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibMo
 
 });
 
-app.controller('itemdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'item', 'lot_number', 'partlist', 'index', 'sizerange', 'sizetype', 'colourlist', function itemdetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, item, lot_number, partlist, index, sizerange, sizetype, colourlist) {
+app.controller('itemdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'item', 'lot_number', 'partlist', 'index', 'sizerange', 'sizetype', 'colourlist', 'master_colourlist', 'cur_dept_type', function itemdetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, item, lot_number, partlist, index, sizerange, sizetype, colourlist, master_colourlist, cur_dept_type) {
+  $scope.cur_dept_type = cur_dept_type;
   $scope.item = item;
   $scope.lot_number = lot_number;
   $scope.partlist = partlist;
@@ -382,7 +384,13 @@ app.controller('itemdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$
   }
 
   $scope.clearnewitem = function () {
-    $scope.newitem = { "size1": 0, "wsize1": 0, "size2": 0, "wsize2": 0, "size3": 0, "wsize3": 0, "size4": 0, "wsize4": 0, "size5": 0, "wsize5": 0, "size6": 0, "wsize6": 0, "size7": 0, "wsize7": 0, "size8": 0, "wsize8": 0, "size9": 0, "wsize9": 0, "size10": 0, "wsize10": 0, "part": undefined, "colour": undefined, "comment": undefined };
+    if ($scope.cur_dept_type == 'piece') {
+      $scope.newitem = { "size1": 0, "wsize1": 0, "size2": 0, "wsize2": 0, "size3": 0, "wsize3": 0, "size4": 0, "wsize4": 0, "size5": 0, "wsize5": 0, "size6": 0, "wsize6": 0, "size7": 0, "wsize7": 0, "size8": 0, "wsize8": 0, "size9": 0, "wsize9": 0, "size10": 0, "wsize10": 0, "part": undefined, "colour": undefined, "comment": undefined };
+    }
+    else if ($scope.cur_dept_type == 'packed') {
+      $scope.newitem = { "size1": 0, "size2": 0, "size3": 0, "size4": 0, "size5": 0, "size6": 0, "size7": 0, "size8": 0, "size9": 0, "size10": 0, "part": undefined, "colour": undefined, "comment": undefined };
+
+    }
     setTimeout(function () { $scope.focuspart() }, 100);
   }
 
@@ -409,9 +417,13 @@ app.controller('itemdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$
     return parseFloat(total.toFixed(precision));
   }
 
+  $scope.loadallcolour = function () {
+    $scope.colourlist = master_colourlist;
+  }
+
+
   $uibModalInstance.rendered.then(function () {
     console.log('Modal rendered at: ' + new Date())
-    document.getElementById("diabox").focus();
   });
 
   $scope.cancel = function () {
@@ -429,7 +441,7 @@ app.controller('itemdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$
     }
 
 
-    $uibModalInstance.close({ partlist: $scope.partlist, item: $scope.item, lot_number: $scope.lot_number, index: index, sizerange: $scope.sizerange, sizetype: $scope.sizetype });
+    $uibModalInstance.close({ partlist: $scope.partlist, item: $scope.item, lot_number: $scope.lot_number, index: index, sizerange: $scope.sizerange, sizetype: $scope.sizetype, cur_dept_type: $scope.cur_dept_type });
   }
 
 
@@ -454,12 +466,23 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
   $scope.currentSize = { size1: 'size 1', size2: 'size 2', size3: 'size 3', size4: 'size 4', size5: 'size 5', size6: 'size 6', size7: 'size 7', size8: 'size 8', size9: 'size 9', size10: 'size 10' };
   $scope.sizestate = [true, true, true, true, true, true, true, true, true, true];
   $scope.dc.items = [];
-  $scope.dc.naming_series = "DC-1819-";
+  $scope.dc.naming_series = "DC-";
   $scope.dc.supplier_id = null;
   $scope.dynamicPopover = [];
   $scope.dynamicPopover.templateUrl = "supplierpopup.html";
   $scope.newitem = {};
   $scope.temp_storage = {};
+
+  $http({
+    method: 'GET',
+    url: 'api/getdbinfo?infoname=dcseries'
+  }).then(function successCallback(response) {
+    console.log(response);
+    $scope.dc.naming_series = response.data[0].info;
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
 
   $scope.$on('$viewContentLoaded', function () {
     setTimeout(function () {
@@ -657,11 +680,6 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
         $scope.sizetype = value;
       }
     });
-
-
-    if (!$scope.idsizerange || $scope.dc.items.length == 0) {
-      setTimeout(function () { $scope.focuspart() }, 100);
-    }
     $scope.idsizerange = $scope.temp_storage.newitemdetails.sizerange;
 
 
@@ -755,7 +773,9 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
         },
         colourlist: function () {
           return $scope.colourlist;
-        }
+        },
+        master_colourlist: () => $scope.colourlist,
+        cur_dept_type: () => 'piece'
       }
     });
 
@@ -773,7 +793,7 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
 
       }
       else {
-        $scope.dc.items[ret.index].item = ret.item;
+        // $scope.dc.items[ret.index].item = ret.item;
         // $scope.cdc.items[ret.index].dialist = ret.dialist;
       }
       $scope.temp_storage.newitemdetails = null;
@@ -805,6 +825,20 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
 
 
   $scope.addColor = function (colour, lot_number) {
+    if(!colour){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Colour... '
+      });
+      return;
+    }
+    if(!lot_number){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Lot Number... '
+      });
+      return;
+    }
     open(colour, lot_number, [], -1);
   }
 
@@ -823,6 +857,20 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
 
 
   $scope.addItem = function (item, lot_number, sizerange, sizetype) {
+    if(!item){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Item name... '
+      });
+      return;
+    }
+    if(!lot_number){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Lot Number... '
+      });
+      return;
+    }
     openitemdetails(item, lot_number, [], -1, sizerange, sizetype);
   }
 
@@ -893,14 +941,6 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
       return;
     }
 
-    if ($scope.dc.dc_date === undefined) {
-      ngToast.create({
-        className: 'warning',
-        content: 'invalid DC Date... '
-      });
-      return;
-    }
-
     if ($scope.dc.items.length < 1) {
       ngToast.create({
         className: 'warning',
@@ -914,105 +954,6 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
     opendcmodal($scope.dc);
 
 
-  }
-
-
-
-
-
-
-  // datepicker stuff - to be decoded later
-  $scope.today = function () {
-    $scope.dc.dc_date = new Date();
-  };
-  $scope.today();
-
-  $scope.clear = function () {
-    $scope.dc.dc_date = null;
-  };
-
-  $scope.inlineOptions = {
-    customClass: getDayClass,
-    minDate: new Date(),
-    showWeeks: true
-  };
-
-  $scope.dateOptions = {
-    dateDisabled: disabled,
-    formatYear: 'yy',
-    maxDate: new Date(2020, 5, 22),
-    minDate: new Date(),
-    startingDay: 1
-  };
-
-  // Disable weekend selection
-  function disabled(data) {
-    var date = data.date,
-      mode = data.mode;
-    //return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
-    return false;
-  }
-
-  $scope.toggleMin = function () {
-    $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
-    $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
-  };
-
-  $scope.toggleMin();
-
-  $scope.open1 = function () {
-    $scope.popup1.opened = true;
-  };
-
-  $scope.open2 = function () {
-    $scope.popup2.opened = true;
-  };
-
-  $scope.setDate = function (year, month, day) {
-    $scope.dc.dc_date = new Date(year, month, day);
-  };
-
-  $scope.altInputFormats = ['d!.M!.yyyy', 'd!.M!.yy', 'd!/M!/yyyy', 'd!/M!/yy'];//,'d!.M!','d!.M!.yy'];
-
-  $scope.popup1 = {
-    opened: false
-  };
-
-  $scope.popup2 = {
-    opened: false
-  };
-
-  var tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  var afterTomorrow = new Date();
-  afterTomorrow.setDate(tomorrow.getDate() + 1);
-  $scope.events = [
-    {
-      date: tomorrow,
-      status: 'full'
-    },
-    {
-      date: afterTomorrow,
-      status: 'partially'
-    }
-  ];
-
-  function getDayClass(data) {
-    var date = data.date,
-      mode = data.mode;
-    if (mode === 'day') {
-      var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
-
-      for (var i = 0; i < $scope.events.length; i++) {
-        var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
-
-        if (dayToCheck === currentDay) {
-          return $scope.events[i].status;
-        }
-      }
-    }
-
-    return '';
   }
 
 
@@ -1217,45 +1158,46 @@ app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
           if (!temp_items[element.pdc_part_index]) {
             temp_items[element.pdc_part_index] = {}
             temp_items[element.pdc_part_index].lot_number = element.lot_number;
-            temp_items[element.pdc_part_index].item = {name:element.itemname,id:element.iditem,naming_series:element.item_naming_series};
+            temp_items[element.pdc_part_index].item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series, };
             angular.forEach($scope.dc.sizerange, function (value, key) {
               if (element.sizerange == value.idsize) {
                 $scope.idsizetype = value.idsizetype;
                 temp_items[element.pdc_part_index].sizerange = value;
               }
             });
-        
+
             angular.forEach($scope.dc.sizetype, function (value, key) {
               if ($scope.idsizetype == value.id) {
                 temp_items[element.pdc_part_index].sizetype = value;
               }
             });
-        
+
             temp_items[element.pdc_part_index].lot_number = element.lot_number;
             temp_items[element.pdc_part_index].partlist = [];
           }
-          temp_items[element.pdc_part_index].partlist.push({ part: element.part, colour: element.colour, comment: element.comment,
-                                                                                                              size1: element.size1,
-                                                                                                              size2: element.size2,
-                                                                                                              size3: element.size3,
-                                                                                                              size4: element.size4,
-                                                                                                              size5: element.size5,
-                                                                                                              size6: element.size6,
-                                                                                                              size7: element.size7,
-                                                                                                              size8: element.size8,
-                                                                                                              size9: element.size9,
-                                                                                                              size10: element.size10,
-                                                                                                              wsize1: element.wsize1,
-                                                                                                              wsize2: element.wsize2,
-                                                                                                              wsize3: element.wsize3,
-                                                                                                              wsize4: element.wsize4,
-                                                                                                              wsize5: element.wsize5,
-                                                                                                              wsize6: element.wsize6,
-                                                                                                              wsize7: element.wsize7,
-                                                                                                              wsize8: element.wsize8,
-                                                                                                              wsize9: element.wsize9,
-                                                                                                              wsize10: element.wsize10
-                                                                                                            });
+          temp_items[element.pdc_part_index].partlist.push({
+            part: element.part, colour: element.colour, comment: element.comment,
+            size1: element.size1,
+            size2: element.size2,
+            size3: element.size3,
+            size4: element.size4,
+            size5: element.size5,
+            size6: element.size6,
+            size7: element.size7,
+            size8: element.size8,
+            size9: element.size9,
+            size10: element.size10,
+            wsize1: element.wsize1,
+            wsize2: element.wsize2,
+            wsize3: element.wsize3,
+            wsize4: element.wsize4,
+            wsize5: element.wsize5,
+            wsize6: element.wsize6,
+            wsize7: element.wsize7,
+            wsize8: element.wsize8,
+            wsize9: element.wsize9,
+            wsize10: element.wsize10
+          });
 
         });
         dc_colour_index_list = Object.keys(temp_items).sort();
@@ -1263,7 +1205,7 @@ app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
         dc_colour_index_list.forEach(x => {
           $scope.dc.items.push(temp_items[x]);
         });
-        console.log('dc.items: ',$scope.dc.items)
+        console.log('dc.items: ', $scope.dc.items)
       }
       else if ($scope.dc.dept_type == 'cloth') {
         temp_items = {}
@@ -1445,8 +1387,1130 @@ app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
 }]);
 
-app.controller('managemasterCtrl', ['$scope', '$uibModal', '$http', function managemasterCtrl($scope, $uibModal, $http) {
+app.controller('grnmodalCtrl', function ($scope, $http, $uibModalInstance, $uibModal, grn, ngToast, $rootScope) {
+  $scope.grn = grn;
+  if ($scope.grn.grn_number) $scope.disablesave = true;
+  else $scope.disablesave = false;
+
+
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += item[key];
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+  $scope.grand_total_weight = arr => arr.reduce((a, b) => a + $scope.total(b.dialist, 'weight', 3), 0)
+
+  $scope.grand_total_weight_partlist = arr => arr.reduce((a, b) => a + $scope.total(b.partlist, 'wsize1', 3) +
+    $scope.total(b.partlist, 'wsize2', 3) +
+    $scope.total(b.partlist, 'wsize3', 3) +
+    $scope.total(b.partlist, 'wsize4', 3) +
+    $scope.total(b.partlist, 'wsize5', 3) +
+    $scope.total(b.partlist, 'wsize6', 3) +
+    $scope.total(b.partlist, 'wsize7', 3) +
+    $scope.total(b.partlist, 'wsize8', 3) +
+    $scope.total(b.partlist, 'wsize9', 3) +
+    $scope.total(b.partlist, 'wsize10', 3), 0)
+
+  $scope.save = () => {
+    $scope.disablesave = true;
+    $http({
+      method: 'POST',
+      url: '/api/grn',
+      data: $scope.grn
+    }).then(function successCallback(response) {
+      console.log(response);
+      ngToast.create('GRN Details Saved.');
+      $scope.grn.grn_number = response.data.grn.grn_number;
+      $scope.grn.grn_no_length = response.data.grn.length;
+      $scope.grn.server_time = response.data.grn.server_time;
+      $scope.grn.grn_date = response.data.grn.server_time;
+      $scope.grn.current_user = response.data.grn.current_user;
+      setTimeout(function () { $scope.print(); }, 800);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        $scope.disablesave = false;
+        var er = 'ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+  }
+
+
+  $scope.$on("modal.closing", function () {
+    $rootScope.$broadcast("modalClosing", $scope.grn.grn_number ? $scope.grn.grn_number : undefined);
+  });
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  }
+
+  $scope.print = function () {
+    window.print();
+  }
+
+  $scope.cancelgrn = () => {
+    // TBD:add the cancelgrnmodal then a reason the update all the way down when model is closed
+    var answer = confirm("Cancel GRN? WARNING!!! This cannot be undone.")
+    send_data = { status: 2 }
+    if (answer) {
+      $http({
+        method: 'PUT',
+        url: '/api/grn/' + $scope.grn.idgrn,
+        data: send_data
+      }).then(function successCallback(response) {
+        console.log(response);
+        ngToast.create('GRN Cancelled....');
+        $scope.grn.status = 'inactive'
+      },
+        function errorCallback(response) {
+          console.log(response);
+          var er = 'GRN Cancel ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+          ngToast.create({
+            className: 'danger',
+            content: er
+          });
+        });
+    }
+  }
+
+});
+
+app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', '$route', function newgrnCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource, $route) {
   $scope.tabselect3();
+  $scope.grn = {};
+  $scope.grn.supplier_id = null;
+  $scope.grn.naming_series = "GRN-"
+  $scope.dynamicPopover = [];
+  $scope.dynamicPopover.templateUrl = "supplierpopup.html";
+  $scope.grn.against = 'dc';
+  $scope.temp_storage = {};
+  let master = {};
+  $scope.grn.items = {};
+
+  window.onbeforeunload = function () {
+    return $scope.grn.items && Object.keys($scope.grn.items).length > 0 && !$scope.grn.grn_number ? "If you leave this page you will lose your unsaved changes." : null;
+  }
+  $scope.$on('$locationChangeStart', function (event) {
+
+    if ($scope.grn.items && Object.keys($scope.grn.items).length > 0 && !$scope.grn.grn_number) {
+      var answer = confirm("If you leave this page you will lose your unsaved changes.")
+      if (!answer) {
+        event.preventDefault();
+      }
+    }
+    // return $scope.dc.items.length > 0 ? "If you leave this page you will lose your unsaved changes." : null;
+  });
+
+  $http({
+    method: 'GET',
+    url: 'api/getdbinfo?infoname=grnseries'
+  }).then(function successCallback(response) {
+    console.log(response);
+    $scope.grn.naming_series = response.data[0].info;
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
+
+  $scope.setsupplier = function () {
+    if ($scope.grn.supplier_id && $scope.grn.supplier_id != $scope.dynamicPopover.supplier_details.id) {
+      $scope.temp_storage.dcnumbers = null;
+    }
+    $scope.grn.supplier_id = $scope.dynamicPopover.supplier_details.id;
+    $scope.grn.supplier_name = $scope.dynamicPopover.supplier_details.name;
+    $scope.grn.supplier_address1 = $scope.dynamicPopover.supplier_details.address1;
+    $scope.grn.supplier_address2 = $scope.dynamicPopover.supplier_details.address2;
+    $scope.grn.supplier_city = $scope.dynamicPopover.supplier_details.city;
+    $scope.grn.supplier_state = $scope.dynamicPopover.supplier_details.state;
+    $scope.grn.supplier_pincode = $scope.dynamicPopover.supplier_details.pincode;
+    $scope.grn.supplier_gstin = $scope.dynamicPopover.supplier_details.gstin;
+    $scope.grn.supplier_phone1 = $scope.dynamicPopover.supplier_details.phone1;
+    $scope.grn.supplier_phone2 = $scope.dynamicPopover.supplier_details.phone2;
+    $scope.grn.supplier_email = $scope.dynamicPopover.supplier_details.email;
+    $scope.popoverIsOpen = false;
+    callDCListAPI(Number.MAX_SAFE_INTEGER, '&status=active&idsupplier=' + $scope.grn.supplier_id)
+  };
+
+  $scope.focussuppliername = function (event1) {
+    if (event1 != null) {
+      event1.preventDefault()
+    }
+    if ($scope.grn.supplier_id != null) {
+      return;
+    }
+    $scope.popoverIsOpen = true;
+    $scope.focussupplierbox();
+  };
+
+  $scope.focussupplierbox = function () {
+    setTimeout(function () { document.getElementById("supplierbox").focus(); document.getElementById("supplierbox").select(); }, 100);
+  };
+
+  $scope.showaddress = function () {
+    if ($scope.grn.supplier_id === null)
+      return false;
+    else
+      return true;
+  };
+
+
+
+
+  $http({
+    method: 'GET',
+    url: '/api/supplier?allfeilds=0'
+  }).then(function successCallback(response) {
+    $scope.supplierlist = response.data;
+    console.log(response);
+    fetchMaster();
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
+
+  let callDCListAPI = function (limit, filterString) {
+    $http({
+      method: 'GET',
+      url: '/api/dc?limit=' + limit + filterString
+    }).then(function successCallback(response) {
+      console.log(response);
+      $scope.dclist = [].concat(response.data);
+      $scope.dclist.forEach(value => { value.dc_no = value.naming_series + Array(value.dc_no_length - String(value.dc_number).length + 1).join('0') + value.dc_number; })
+      console.log($scope.dclist);
+    },
+      function errorCallback(response) {
+        console.log(response);
+      });
+  }
+
+  let fetchMaster = () => {
+
+    $http({
+      method: 'GET',
+      url: '/api/lot?status=active'
+    }).then(function successCallback(response) {
+      master.lotlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'LOT list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+    $http({
+      method: 'GET',
+      url: '/api/colour?status=active'
+    }).then(function successCallback(response) {
+      master.colourlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'Colour list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+    $http({
+      method: 'GET',
+      url: '/api/item?itemstatus=active'
+    }).then(function successCallback(response) {
+      console.log(response);
+      master.itemlist = [];
+      $scope.sizerangelist = response.data.sizerange;
+      $scope.sizetypelist = response.data.sizetype;
+      angular.forEach(response.data.items, function (value, key) {
+        var temp = { naming_series: value.naming_series, fullname: value.naming_series.concat(' ', value.name), name: value.name, id: value.id, sizerange: value.sizerange };
+        this.push(temp);
+      }, master.itemlist);
+    }, function errorCallback(response) {
+      console.log(response);
+    });
+
+
+  }
+
+  $scope.updateMaster = (tag, action) => {
+    $scope.lotlist = [];
+    $scope.colourlist = [];
+    $scope.itemlist = [];
+    let dcnumberlist = [];
+
+    if (!$scope.temp_storage.dcnumbers) {
+      $scope.cur_item_type = tag.grn_dept_type;
+    }
+    else if ($scope.temp_storage.dcnumbers.length == 0 && action == 'add') {
+      $scope.cur_item_type = tag.grn_dept_type;
+    }
+    else {
+      $scope.cur_item_type = $scope.temp_storage.dcnumbers[0].grn_dept_type;
+    }
+
+    if ($scope.temp_storage.dcnumbers && $scope.temp_storage.dcnumbers.length > 0) {
+      $scope.temp_storage.dcnumbers.map(dc => {
+        dcnumberlist.push(dc);
+      })
+    }
+    if (action == 'add') {
+      dcnumberlist.push(tag);
+    }
+    // else if (action == 'remove'){
+    //   console.log('dcnumberlist 1: ',dcnumberlist)
+    //   dcnumberlist.splice(arrayObjectIndexOf(dcnumberlist,tag.iddc,'iddc'),1);
+    //   console.log('dcnumberlist 2: ',dcnumberlist)
+    // }
+
+    console.log('dcnumberlist: ', dcnumberlist)
+    dcnumberlist.forEach(dc => {
+      if (dc.lotlist) {
+        console.log('dc.lotlist.split: ', dc.lotlist.split(','));
+        dc.lotlist.split(',').forEach(lot => {
+          if ($scope.lotlist.length == 0 || arrayObjectIndexOf($scope.lotlist, lot, 'name', true) == -1) {
+            $scope.lotlist.push(master.lotlist[arrayObjectIndexOf(master.lotlist, lot, 'name', true)]);
+          }
+        });
+      }
+      if (dc.colourlist) {
+        console.log('dc.colourlist.split: ', dc.colourlist.split(','), '---', $scope.colourlist);
+        dc.colourlist.split(',').forEach(colour => {
+          if ($scope.colourlist.length == 0 || arrayObjectIndexOf($scope.colourlist, colour, 'name', true) == -1) {
+            $scope.colourlist.push(master.colourlist[arrayObjectIndexOf(master.colourlist, colour, 'name', true)]);
+          }
+        });
+      }
+      if (dc.iditemlist) {
+        console.log('dc.iditemlist.split: ', dc.iditemlist.split(','), '---', $scope.itemlist, '---', master.itemlist);
+        dc.iditemlist.split(',').forEach(iditem => {
+          iditem = parseInt(iditem)
+          if ($scope.itemlist.length == 0 || arrayObjectIndexOf($scope.itemlist, iditem, 'id') == -1) {
+            $scope.itemlist.push(master.itemlist[arrayObjectIndexOf(master.itemlist, iditem, 'id')]);
+          }
+        });
+      }
+    });
+  }
+
+
+  $scope.loadalllot = function () {
+    $scope.lotlist = master.lotlist;
+  }
+
+
+  $scope.loadallcolour = function () {
+    $scope.colourlist = master.colourlist;
+  }
+
+  $scope.loadallitem = function () {
+    $scope.itemlist = master.itemlist;
+  }
+
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += key.split(',').reduce((a, b) => a[b], item)
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+
+  $scope.loadDCs = function (query) {
+    return $scope.dclist.filter(function (dc) {
+      return dc.dc_no.toUpperCase().indexOf(query.toUpperCase()) != -1;
+    });
+  };
+
+  $scope.setitemsize = function () {
+    if (!$scope.temp_storage.newitemdetails) {
+      return;
+    }
+
+
+    angular.forEach($scope.sizerangelist, function (value, key) {
+      if ($scope.temp_storage.newitemdetails.sizerange == value.idsize) {
+        $scope.idsizetype = value.idsizetype;
+        $scope.sizerange = value;
+      }
+    });
+
+    angular.forEach($scope.sizetypelist, function (value, key) {
+      if ($scope.idsizetype == value.id) {
+        $scope.sizetype = value;
+      }
+    });
+    $scope.idsizerange = $scope.temp_storage.newitemdetails.sizerange;
+
+
+  };
+
+
+  var open = function (colour, lot_number, dialist, index) {
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: './html/colourdetails.html',
+      controller: 'colourdetailsCtrl',
+      size: 'md',
+      backdrop: 'static',
+      keyboard: false,
+      // animation:false,
+      resolve: {
+        colour: function () {
+          return colour;
+        },
+        lot_number: function () {
+          return lot_number;
+        },
+        dialist: function () {
+          return dialist;
+        },
+        index: function () {
+          return index;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (ret) {
+      console.log('received dialist: ', ret.dialist, 'received colour:  ', ret.colour);
+
+      if (ret.index == -1) {
+        delete ret.index;
+        if (!$scope.grn.items.cloth) $scope.grn.items.cloth = [];
+        $scope.grn.items.cloth.push(ret);
+        modalInstance.closed.then(function () {
+          a = findPos(document.getElementById("c1olour"));
+          $('html, body').animate({ scrollTop: a - 400 }, 'slow');
+          document.getElementById("c1olour").focus();
+        });
+
+      }
+      else {
+        // $scope.dc.items[ret.index].colour = ret.colour;
+        // $scope.cdc.items[ret.index].dialist = ret.dialist;
+      }
+      $scope.temp_storage.newcolour = null;
+
+
+    }, function (ret) {
+      console.log('Modal dismissed at: ' + new Date(), ret);
+    });
+  }
+
+  var openitemdetails = function (item, lot_number, partlist, index, sizerange, sizetype, cur_item_type) {
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: './html/itemdetails.html',
+      controller: 'itemdetailsCtrl',
+      size: 'xl',
+      backdrop: 'static',
+      keyboard: false,
+      // animation:false,
+      resolve: {
+        item: function () {
+          return item;
+        },
+        lot_number: function () {
+          return lot_number;
+        },
+        partlist: function () {
+          return partlist;
+        },
+        index: function () {
+          return index;
+        },
+        sizerange: function () {
+          return sizerange;
+        },
+        sizetype: function () {
+          return sizetype;
+        },
+        colourlist: function () {
+          return $scope.colourlist;
+        },
+        master_colourlist: () => master.colourlist,
+        cur_dept_type: () => cur_item_type
+      }
+    });
+
+    modalInstance.result.then(function (ret) {
+      console.log('received partlist: ', ret.partlist, 'received item:  ', ret.item);
+
+      if (ret.index == -1) {
+        delete ret.index;
+        if (ret.cur_dept_type == 'piece') {
+          if (!$scope.grn.items.piece) $scope.grn.items.piece = [];
+          $scope.grn.items.piece.push(ret);
+        }
+        if (ret.cur_dept_type == 'packed') {
+          if (!$scope.grn.items.packed) $scope.grn.items.packed = [];
+          $scope.grn.items.packed.push(ret);
+        }
+        modalInstance.closed.then(function () {
+          a = findPos(document.getElementById("itembox"));
+          $('html, body').animate({ scrollTop: a - 400 }, 'slow');
+          document.getElementById("itembox").focus();
+        });
+
+      }
+      else {
+        // $scope.dc.items[ret.index].item = ret.item;
+        // $scope.cdc.items[ret.index].dialist = ret.dialist;
+      }
+      $scope.temp_storage.newitemdetails = null;
+
+
+    }, function (ret) {
+      console.log('Modal dismissed at: ' + new Date(), ret);
+    });
+  }
+
+
+  $scope.grand_total_weight = arr => arr.reduce((a, b) => a + $scope.total(b.dialist, 'weight', 3), 0)
+
+  $scope.grand_total_weight_partlist = arr => arr.reduce((a, b) => a + $scope.total(b.partlist, 'wsize1', 3) +
+    $scope.total(b.partlist, 'wsize2', 3) +
+    $scope.total(b.partlist, 'wsize3', 3) +
+    $scope.total(b.partlist, 'wsize4', 3) +
+    $scope.total(b.partlist, 'wsize5', 3) +
+    $scope.total(b.partlist, 'wsize6', 3) +
+    $scope.total(b.partlist, 'wsize7', 3) +
+    $scope.total(b.partlist, 'wsize8', 3) +
+    $scope.total(b.partlist, 'wsize9', 3) +
+    $scope.total(b.partlist, 'wsize10', 3), 0)
+
+
+  $scope.addClothItem = function (colour, lot_number) {
+    if(!colour){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Colour... '
+      });
+      return;
+    }
+    if(!lot_number){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Lot Number... '
+      });
+      return;
+    }
+    open(colour, lot_number, [], -1);
+  }
+
+  $scope.removeClothItem = function (index) {
+    $scope.grn.items.cloth.splice(index, 1);
+    if ($scope.grn.items.cloth.length == 0) {
+      delete $scope.grn.items.cloth;
+    }
+    ngToast.create({
+      className: 'danger',
+      content: 'Colour deleted... '//undo
+    });
+  }
+
+  $scope.editClothItem = function (item, index) {
+    open(item.colour, item.lot_number, item.dialist, index);
+  }
+
+
+  $scope.addItem = function (item, lot_number, sizerange, sizetype, cur_item_type) {
+    if(!item){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Item name... '
+      });
+      return;
+    }
+    if(!lot_number){
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Lot Number... '
+      });
+      return;
+    }
+    openitemdetails(item, lot_number, [], -1, sizerange, sizetype, cur_item_type);
+  }
+
+  $scope.removeItem = function (index, cur_item_type) {
+    $scope.grn.items[cur_item_type].splice(index, 1);
+    if ($scope.grn.items[cur_item_type].length == 0) {
+      delete $scope.grn.items[cur_item_type];
+    }
+    ngToast.create({
+      className: 'danger',
+      content: 'Item deleted... '//undo
+    });
+  }
+
+  $scope.editItem = function (item, index, cur_item_type) {
+    openitemdetails(item.item, item.lot_number, item.partlist, index, item.sizerange, item.sizetype, cur_item_type);
+  }
+
+  var opengrnmodal = function (grn) {
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: './html/grnmodal.html',
+      controller: 'grnmodalCtrl',
+      size: 'xl',
+      windowTopClass: 'hidden-print',
+      resolve: {
+        grn: function () {
+          return grn;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (ret) {
+      console.log(ret);
+
+
+    }, function (ret) {
+      console.log('Modal dismissed at: ' + new Date(), ret);
+    });
+
+    $scope.$on("modalClosing", function (event, ret) {
+      console.log('inside modalClosing event', ret);
+
+      if (ret) {
+        $scope.cleargrn();
+      }
+
+
+    });
+  }
+
+  $scope.cleargrn = () => {
+    $route.reload();
+  }
+
+  $scope.savegrn = () => {
+
+    if ($scope.grn.supplier_id === null) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select Supplier... '
+      });
+      return;
+    }
+
+    if ($scope.grn.against == 'dc') {
+      if(!$scope.temp_storage.dcnumbers || $scope.temp_storage.dcnumbers.length == 0){
+        ngToast.create({
+          className: 'warning',
+          content: 'Please select DC... '
+        });
+        return;
+      }
+      else{
+        $scope.grn.dclist = "";
+        $scope.grn.dc_numbers = [];
+        $scope.temp_storage.dcnumbers.forEach(dc =>{
+          $scope.grn.dclist += dc.dc_no + ", ";
+          $scope.grn.dc_numbers.push(dc.iddc);
+        }
+        );
+        $scope.grn.dclist = $scope.grn.dclist.substring(0,$scope.grn.dclist.length-2);
+      }
+    }
+
+    if (!$scope.grn.items.piece && !$scope.grn.items.cloth && !$scope.grn.items.packed) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Nothing to Deliver?... '
+      });
+      return;
+    }
+
+    $scope.grn.grn_item_type = Object.keys($scope.grn.items).join(', ');
+
+    opengrnmodal($scope.grn);
+  }
+
+}]);
+
+app.controller('viewgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', function viewgrnCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource) {
+  $scope.tabselect4();
+  $scope.displayedCollection = [];
+  $scope.rowCollection = [];
+  $scope.filter = {};
+  $scope.addFilter = false;
+
+  $scope.initialState = function () {
+    $scope.loadAll = false;
+    $scope.itemsByPage = 75;
+    $scope.showpagination = false;
+  }
+  $scope.initialState();
+
+  $scope.hidelist = false;
+  $scope.isCollapsed = true;
+  $scope.filterString = '';
+
+  $scope.refresh = function () {
+    $scope.initialState();
+    callListAPI($scope.itemsByPage, $scope.filterString)
+  }
+
+  $scope.addFilters = function () {
+    if ($scope.addFilter == false) {
+      $scope.addFilter = true;
+      downloadFilterList();
+    }
+    $scope.isCollapsed = !$scope.isCollapsed;
+  }
+
+  $scope.applyFilters = function () {
+    $scope.filterString = '';
+    Object.keys($scope.filter).map(function (key) {
+      if ($scope.filter[key] != null)
+        $scope.filterString += '&' + key + '=' + $scope.filter[key];
+    });
+    $scope.initialState();
+    callListAPI($scope.itemsByPage, $scope.filterString);
+  }
+
+  $scope.clearFilters = function () {
+    $scope.filterString = '';
+    Object.keys($scope.filter).map(function (key) {
+      $scope.filter[key] = null;
+    });
+    $scope.filter_supplier = null;
+    $scope.filter_item = null;
+    $scope.after_grn_date = null;
+    $scope.before_grn_date = null;
+    $scope.initialState();
+    callListAPI($scope.itemsByPage, $scope.filterString);
+  }
+
+  $scope.loadAllItems = function () {
+    $scope.loadAll = true;
+    callListAPI(Number.MAX_SAFE_INTEGER, $scope.filterString)
+    $scope.showpagination = true;
+  }
+
+  $scope.updateItemsByPage = function () {
+    if ($scope.showpagination == true) {
+      $scope.showpagination = false;
+      $scope.itemsByPage = $scope.rowCollection.length;
+    }
+  }
+
+  $scope.ds = function (a) {
+    var b = new Date(a);
+    return b.toString('dd.MM.yyyy');
+  }
+
+  $scope.setsupplierFilter = function () {
+    $scope.filter.idsupplier = $scope.filter_supplier.id;
+  }
+
+  $scope.setnameid = function () {
+    $scope.filter.iditem = $scope.filter_item.id;
+
+  }
+
+  $scope.setafterdate = function () {
+    $scope.filter.after_grn_date = $scope.after_grn_date.yyyymmdd();
+
+  }
+
+  $scope.setbeforedate = function () {
+    $scope.filter.before_grn_date = $scope.before_grn_date.yyyymmdd();
+
+  }
+
+  $scope.getters = {
+    grn_number: function (value) {
+      //this will sort by the length of the first name string
+      return value.naming_series + Array(value.grn_no_length - String(value.grn_number).length + 1).join('0') + value.grn_number;
+    }
+  }
+
+  let downloadFilterList = function () {
+    $http({
+      method: 'GET',
+      url: '/api/department'
+    }).then(function successCallback(response) {
+      $scope.departmentlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'Department list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+    $http({
+      method: 'GET',
+      url: '/api/lot?status=active'
+    }).then(function successCallback(response) {
+      $scope.lotlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'LOT list fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+      });
+
+    $http({
+      method: 'GET',
+      url: '/api/supplier?allfeilds=0'
+    }).then(function successCallback(response) {
+      $scope.supplierlist = response.data;
+      console.log(response);
+    },
+      function errorCallback(response) {
+        console.log(response);
+      });
+
+    $http({
+      method: 'GET',
+      url: '/api/item?itemstatus=active'
+    }).then(function successCallback(response) {
+      console.log(response);
+      $scope.itemlist = [];
+      $scope.sizerangelist = response.data.sizerange;
+      $scope.sizetypelist = response.data.sizetype;
+      angular.forEach(response.data.items, function (value, key) {
+        var temp = { naming_series: value.naming_series, fullname: value.naming_series.concat(' ', value.name), name: value.name, id: value.id, sizerange: value.sizerange };
+        this.push(temp);
+      }, $scope.itemlist);
+    }, function errorCallback(response) {
+      console.log(response);
+    });
+
+  }
+
+
+  let callListAPI = function (limit, filterString) {
+    $http({
+      method: 'GET',
+      url: '/api/grn?limit=' + limit + filterString
+    }).then(function successCallback(response) {
+      $scope.rowCollection = [].concat(response.data);
+      console.log(response);
+      $scope.displayedCollection = [].concat($scope.rowCollection);
+    },
+      function errorCallback(response) {
+        console.log(response);
+      });
+  }
+  callListAPI($scope.itemsByPage, '');
+
+  single_grn_loading = false;
+  $scope.open = function (item) {
+
+    if (single_grn_loading) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please wait loading... '
+      });
+      return;
+    }
+    single_grn_loading = true;
+    $http({
+      method: 'GET',
+      url: '/api/grn?id=' + item.idgrn
+    }).then(function successCallback(response) {
+      console.log(response);
+      $scope.grn = response.data[0];
+      if ($scope.grn.items.piece && $scope.grn.items.piece.length > 0) {
+        temp_items = {}
+        $scope.grn.items.piece.forEach(element => {
+          if (!temp_items[element.part_index]) {
+            temp_items[element.part_index] = {}
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series, };
+            angular.forEach($scope.grn.sizerange, function (value, key) {
+              if (element.sizerange == value.idsize) {
+                $scope.idsizetype = value.idsizetype;
+                temp_items[element.part_index].sizerange = value;
+              }
+            });
+
+            angular.forEach($scope.grn.sizetype, function (value, key) {
+              if ($scope.idsizetype == value.id) {
+                temp_items[element.part_index].sizetype = value;
+              }
+            });
+
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].partlist = [];
+          }
+          temp_items[element.part_index].partlist.push({
+            part: element.part, colour: element.colour, comment: element.comment,
+            size1: element.size1,
+            size2: element.size2,
+            size3: element.size3,
+            size4: element.size4,
+            size5: element.size5,
+            size6: element.size6,
+            size7: element.size7,
+            size8: element.size8,
+            size9: element.size9,
+            size10: element.size10,
+            wsize1: element.wsize1,
+            wsize2: element.wsize2,
+            wsize3: element.wsize3,
+            wsize4: element.wsize4,
+            wsize5: element.wsize5,
+            wsize6: element.wsize6,
+            wsize7: element.wsize7,
+            wsize8: element.wsize8,
+            wsize9: element.wsize9,
+            wsize10: element.wsize10
+          });
+
+        });
+        grn_part_index_list = Object.keys(temp_items).sort();
+        $scope.grn.items.piece = [];
+        grn_part_index_list.forEach(x => {
+          $scope.grn.items.piece.push(temp_items[x]);
+        });
+        console.log('grn.items.piece: ', $scope.grn.items.piece)
+      }
+      if ($scope.grn.items.cloth && $scope.grn.items.cloth.length > 0) {
+        temp_items = {}
+        $scope.grn.items.cloth.forEach(element => {
+          if (!temp_items[element.colour_index]) {
+            temp_items[element.colour_index] = {}
+            temp_items[element.colour_index].colour = element.colour;
+            temp_items[element.colour_index].lot_number = element.lot_number;
+            temp_items[element.colour_index].dialist = [];
+          }
+          temp_items[element.colour_index].dialist.push({ dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
+        });
+        grn_colour_index_list = Object.keys(temp_items).sort();
+        $scope.grn.items.cloth = [];
+        grn_colour_index_list.forEach(x => {
+          $scope.grn.items.cloth.push(temp_items[x]);
+        });
+      }
+      if ($scope.grn.items.packed && $scope.grn.items.packed.length > 0) {
+        temp_items = {}
+        $scope.grn.items.packed.forEach(element => {
+          if (!temp_items[element.part_index]) {
+            temp_items[element.part_index] = {}
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series, };
+            angular.forEach($scope.grn.sizerange, function (value, key) {
+              if (element.sizerange == value.idsize) {
+                $scope.idsizetype = value.idsizetype;
+                temp_items[element.part_index].sizerange = value;
+              }
+            });
+
+            angular.forEach($scope.grn.sizetype, function (value, key) {
+              if ($scope.idsizetype == value.id) {
+                temp_items[element.part_index].sizetype = value;
+              }
+            });
+
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].partlist = [];
+          }
+          temp_items[element.part_index].partlist.push({
+            part: element.part, colour: element.colour, comment: element.comment,
+            size1: element.size1,
+            size2: element.size2,
+            size3: element.size3,
+            size4: element.size4,
+            size5: element.size5,
+            size6: element.size6,
+            size7: element.size7,
+            size8: element.size8,
+            size9: element.size9,
+            size10: element.size10
+          });
+
+        });
+        grn_part_index_list = Object.keys(temp_items).sort();
+        $scope.grn.items.packed = [];
+        grn_part_index_list.forEach(x => {
+          $scope.grn.items.packed.push(temp_items[x]);
+        });
+        console.log('grn.items.packed: ', $scope.grn.items.packed)
+      }
+      $scope.hidelist = true;
+      var modalInstance = $uibModal.open({
+        animation: true,
+        templateUrl: './html/grnmodal.html',
+        controller: 'grnmodalCtrl',
+        size: 'xl',
+        windowTopClass: 'hidden-print',
+        resolve: {
+          grn: function () {
+            return $scope.grn;
+          }
+        }
+      });
+
+      modalInstance.result.then(function (generated) {
+
+      }, function (ret) {
+
+        console.log('Modal dismissed at: ' + new Date(), ret);
+
+      });
+
+      $scope.$on("modalClosing", function (event, ret) {
+        console.log('inside modalClosing event', ret);
+
+        $scope.grn = {};
+        single_grn_loading = false;
+        $scope.hidelist = false;
+
+      });
+
+
+
+    },
+      function errorCallback(response) {
+        console.log(response);
+        var er = 'Single grn fetch ERROR !!! ' + response.statusText + '  :' + response.status + '... try again...'
+        ngToast.create({
+          className: 'danger',
+          content: er
+        });
+        single_grn_loading = false;
+      });
+
+
+  }
+
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += item[key];
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+  $scope.grand_total_weight = arr => arr.reduce((a, b) => a + $scope.total(b.dialist, 'weight', 3), 0)
+
+  $scope.grand_total_weight_partlist = arr => arr.reduce((a, b) => a + $scope.total(b.partlist, 'wsize1', 3) +
+    $scope.total(b.partlist, 'wsize2', 3) +
+    $scope.total(b.partlist, 'wsize3', 3) +
+    $scope.total(b.partlist, 'wsize4', 3) +
+    $scope.total(b.partlist, 'wsize5', 3) +
+    $scope.total(b.partlist, 'wsize6', 3) +
+    $scope.total(b.partlist, 'wsize7', 3) +
+    $scope.total(b.partlist, 'wsize8', 3) +
+    $scope.total(b.partlist, 'wsize9', 3) +
+    $scope.total(b.partlist, 'wsize10', 3), 0)
+
+
+  // datepicker stuff - to be decoded later
+
+  $scope.clear = function () {
+    $scope.filter.grn_date = null;
+  };
+
+  $scope.inlineOptions = {
+    customClass: getDayClass,
+    minDate: new Date(),
+    showWeeks: true
+  };
+
+  $scope.dateOptions = {
+    dateDisabled: disabled,
+    formatYear: 'yy',
+    maxDate: new Date(2020, 5, 22),
+    minDate: new Date(),
+    startingDay: 1
+  };
+
+  // Disable weekend selection
+  function disabled(data) {
+    var date = data.date,
+      mode = data.mode;
+    //return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    return false;
+  }
+
+  $scope.toggleMin = function () {
+    $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+    $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+  };
+
+  $scope.toggleMin();
+
+  $scope.open1 = function () {
+    $scope.popup1.opened = true;
+  };
+
+  $scope.open2 = function () {
+    $scope.popup2.opened = true;
+  };
+
+  $scope.setDate = function (year, month, day) {
+    $scope.grn.grn_date = new Date(year, month, day);
+  };
+
+  $scope.altInputFormats = ['d!.M!.yyyy', 'd!.M!.yy', 'd!/M!/yyyy', 'd!/M!/yy'];//,'d!.M!','d!.M!.yy'];
+
+  $scope.popup1 = {
+    opened: false
+  };
+
+  $scope.popup2 = {
+    opened: false
+  };
+
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  var afterTomorrow = new Date();
+  afterTomorrow.setDate(tomorrow.getDate() + 1);
+  $scope.events = [
+    {
+      date: tomorrow,
+      status: 'full'
+    },
+    {
+      date: afterTomorrow,
+      status: 'partially'
+    }
+  ];
+
+  function getDayClass(data) {
+    var date = data.date,
+      mode = data.mode;
+    if (mode === 'day') {
+      var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
+
+      for (var i = 0; i < $scope.events.length; i++) {
+        var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
+
+        if (dayToCheck === currentDay) {
+          return $scope.events[i].status;
+        }
+      }
+    }
+
+    return '';
+  }
+
+
+
+
+}]);
+
+app.controller('managemasterCtrl', ['$scope', '$uibModal', '$http', function managemasterCtrl($scope, $uibModal, $http) {
+  $scope.tabselect5();
 
 
   $scope.openaddsupplier = function () {
@@ -1946,6 +3010,14 @@ app.config(function ($routeProvider) {
       templateUrl: './html/viewdc.html',
       controller: 'viewdcCtrl'
     }).
+    when('/newgrn', {
+      templateUrl: './html/newgrn.html',
+      controller: 'newgrnCtrl'
+    }).
+    when('/viewgrn', {
+      templateUrl: './html/viewgrn.html',
+      controller: 'viewgrnCtrl'
+    }).
     otherwise({
       redirectTo: '/newdc'
     });
@@ -2076,9 +3148,14 @@ function findPos(obj) {
   }
 }
 
-function arrayObjectIndexOf(myArray, searchTerm, property) {
+function arrayObjectIndexOf(myArray, searchTerm, property, trim = false) {
   for (var i = 0, len = myArray.length; i < len; i++) {
-    if (myArray[i][property] === searchTerm) return i;
+    if (trim) {
+      if (myArray[i][property].trim() === searchTerm.trim()) return i;
+    }
+    else {
+      if (myArray[i][property] === searchTerm) return i;
+    }
   }
   return -1;
 }

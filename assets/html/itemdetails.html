@@ -42,72 +42,160 @@
                     <td class="text-capitalize">{{row.colour}}</td>
                     <td class="text-capitalize">{{row.comment}}</td>
                     <td class="text-center" ng-show="sizerange.size1===0?false:true">
-                        <span ng-show="row.size1 != 0">{{row.size1}} Pcs
-                        </span>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <span ng-show="row.size1 != 0">{{row.size1}} Pcs
+                            </span>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <span ng-show="row.size1 != 0">{{row.size1}} Box
+                            </span>
+                        </div>
                         <br>
-                        <small ng-show="row.wsize1 != 0" class="pull-right">({{row.wsize1 | number:3}} KG)</small>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <small ng-show="row.wsize1 != 0" class="pull-right">({{row.wsize1 | number:3}} KG)</small>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size2===0?false:true">
-                        <span ng-show="row.size2 != 0">{{row.size2}} Pcs
-                        </span>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <span ng-show="row.size2 != 0">{{row.size2}} Pcs
+                            </span>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <span ng-show="row.size2 != 0">{{row.size2}} Box
+                            </span>
+                        </div>
                         <br>
-                        <small ng-show="row.wsize2 != 0" class="pull-right">({{row.wsize2 | number:3}} KG)</small>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <small ng-show="row.wsize2 != 0" class="pull-right">({{row.wsize2 | number:3}} KG)</small>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size3===0?false:true">
-                        <span ng-show="row.size3 != 0">{{row.size3}} Pcs
-                        </span>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <span ng-show="row.size3 != 0">{{row.size3}} Pcs
+                            </span>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <span ng-show="row.size3 != 0">{{row.size3}} Box
+                            </span>
+                        </div>
                         <br>
-                        <small ng-show="row.wsize3 != 0" class="pull-right">({{row.wsize3 | number:3}} KG)</small>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <small ng-show="row.wsize3 != 0" class="pull-right">({{row.wsize3 | number:3}} KG)</small>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size4===0?false:true">
-                        <span ng-show="row.size4 != 0">{{row.size4}} Pcs
-                        </span>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <span ng-show="row.size4 != 0">{{row.size4}} Pcs
+                            </span>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <span ng-show="row.size4 != 0">{{row.size4}} Box
+                            </span>
+                        </div>
                         <br>
-                        <small ng-show="row.wsize4 != 0" class="pull-right">({{row.wsize4 | number:3}} KG)</small>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <small ng-show="row.wsize4 != 0" class="pull-right">({{row.wsize4 | number:3}} KG)</small>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size5===0?false:true">
-                        <span ng-show="row.size5 != 0">{{row.size5}} Pcs
-                        </span>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <span ng-show="row.size5 != 0">{{row.size5}} Pcs
+                            </span>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <span ng-show="row.size5 != 0">{{row.size5}} Box
+                            </span>
+                        </div>
                         <br>
-                        <small ng-show="row.wsize5 != 0" class="pull-right">({{row.wsize5 | number:3}} KG)</small>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <small ng-show="row.wsize5 != 0" class="pull-right">({{row.wsize5 | number:3}} KG)</small>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size6===0?false:true">
-                        <span ng-show="row.size6 != 0">{{row.size6}} Pcs
-                        </span>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <span ng-show="row.size6 != 0">{{row.size6}} Pcs
+                            </span>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <span ng-show="row.size6 != 0">{{row.size6}} Box
+                            </span>
+                        </div>
                         <br>
-                        <small ng-show="row.wsize6 != 0" class="pull-right">({{row.wsize6 | number:3}} KG)</small>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <small ng-show="row.wsize6 != 0" class="pull-right">({{row.wsize6 | number:3}} KG)</small>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size7===0?false:true">
-                        <span ng-show="row.size7 != 0">{{row.size7}} Pcs
-                        </span>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <span ng-show="row.size7 != 0">{{row.size7}} Pcs
+                            </span>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <span ng-show="row.size7 != 0">{{row.size7}} Box
+                            </span>
+                        </div>
                         <br>
-                        <small ng-show="row.wsize7 != 0" class="pull-right">({{row.wsize7 | number:3}} KG)</small>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <small ng-show="row.wsize7 != 0" class="pull-right">({{row.wsize7 | number:3}} KG)</small>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size8===0?false:true">
-                        <span ng-show="row.size8 != 0">{{row.size8}} Pcs
-                        </span>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <span ng-show="row.size8 != 0">{{row.size8}} Pcs
+                            </span>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <span ng-show="row.size8 != 0">{{row.size8}} Box
+                            </span>
+                        </div>
                         <br>
-                        <small ng-show="row.wsize8 != 0" class="pull-right">({{row.wsize8 | number:3}} KG)</small>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <small ng-show="row.wsize8 != 0" class="pull-right">({{row.wsize8 | number:3}} KG)</small>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size9===0?false:true">
-                        <span ng-show="row.size9 != 0">{{row.size9}} Pcs
-                        </span>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <span ng-show="row.size9 != 0">{{row.size9}} Pcs
+                            </span>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <span ng-show="row.size9 != 0">{{row.size9}} Box
+                            </span>
+                        </div>
                         <br>
-                        <small ng-show="row.wsize9 != 0" class="pull-right">({{row.wsize9 | number:3}} KG)</small>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <small ng-show="row.wsize9 != 0" class="pull-right">({{row.wsize9 | number:3}} KG)</small>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size10===0?false:true">
-                        <span ng-show="row.size10 != 0">{{row.size10}} Pcs
-                        </span>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <span ng-show="row.size10 != 0">{{row.size10}} Pcs
+                            </span>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <span ng-show="row.size10 != 0">{{row.size10}Boxcs
+                            </span>
+                        </div>
                         <br>
-                        <small ng-show="row.wsize10 != 0" class="pull-right">({{row.wsize10 | number:3}} KG)</small>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <small ng-show="row.wsize10 != 0" class="pull-right">({{row.wsize10 | number:3}} KG)</small>
+                        </div>
                     </td>
                     <td class="text-center">
-                        <strong> {{row.size1+row.size2+row.size3+row.size4+row.size5+row.size6+row.size7+row.size8+row.size9+row.size10}}
-                            Pcs
-                            <br>
-                            <small class="pull-right">({{(row.wsize1+row.wsize2+row.wsize3+row.wsize4+row.wsize5+row.wsize6+row.wsize7+row.wsize8+row.wsize9+row.wsize10)
-                                | number:3}} KG)</small>
-                        </strong>
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <strong> {{row.size1+row.size2+row.size3+row.size4+row.size5+row.size6+row.size7+row.size8+row.size9+row.size10}}
+                                Pcs
+                                <br>
+                                <small class="pull-right">({{(row.wsize1+row.wsize2+row.wsize3+row.wsize4+row.wsize5+row.wsize6+row.wsize7+row.wsize8+row.wsize9+row.wsize10)
+                                    | number:3}} KG)</small>
+                            </strong>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                                <strong> {{row.size1+row.size2+row.size3+row.size4+row.size5+row.size6+row.size7+row.size8+row.size9+row.size10}}
+                                    Box
+                                    <br>
+                                </strong>
+                            </div>
                     </td>
                     <td class="hidden-print">
                         <span ng-click="edit(partlist,$index,newitem)" type="button" class="close" aria-label="Close">
@@ -127,72 +215,128 @@
                         <strong class="pull-right">Total</strong>
                     </td>
                     <td class="text-center" ng-show="sizerange.size1===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
                         <strong>{{total(partlist,'size1',0)}} Pcs
                             <br>
                             <small class="pull-right">({{total(partlist,'wsize1',3)}} KG)</small>
                         </strong>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                        <strong>{{total(partlist,'size1',0)}} Box</strong>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size2===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
                         <strong>{{total(partlist,'size2',0)}} Pcs
                             <br>
                             <small class="pull-right">({{total(partlist,'wsize2',3)}} KG)</small>
                         </strong>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                        <strong>{{total(partlist,'size2',0)}} Box</strong>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size3===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
                         <strong>{{total(partlist,'size3',0)}} Pcs
                             <br>
                             <small class="pull-right">({{total(partlist,'wsize3',3)}} KG)</small>
                         </strong>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                        <strong>{{total(partlist,'size3',0)}} Box</strong>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size4===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
                         <strong>{{total(partlist,'size4',0)}} Pcs
                             <br>
                             <small class="pull-right">({{total(partlist,'wsize4',3)}} KG)</small>
                         </strong>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                        <strong>{{total(partlist,'size4',0)}} Box</strong>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size5===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
                         <strong>{{total(partlist,'size5',0)}} Pcs
                             <br>
                             <small class="pull-right">({{total(partlist,'wsize5',3)}} KG)</small>
                         </strong>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                        <strong>{{total(partlist,'size5',0)}} Box</strong>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size6===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
                         <strong>{{total(partlist,'size6',0)}} Pcs
                             <br>
                             <small class="pull-right">({{total(partlist,'wsize6',3)}} KG)</small>
                         </strong>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                        <strong>{{total(partlist,'size6',0)}} Box</strong>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size7===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
                         <strong>{{total(partlist,'size7',0)}} Pcs
                             <br>
                             <small class="pull-right">({{total(partlist,'wsize7',3)}} KG)</small>
                         </strong>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                        <strong>{{total(partlist,'size7',0)}} Box</strong>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size8===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
                         <strong>{{total(partlist,'size8',0)}} Pcs
                             <br>
                             <small class="pull-right">({{total(partlist,'wsize8',3)}} KG)</small>
                         </strong>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                        <strong>{{total(partlist,'size8',0)}} Box</strong>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size9===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
                         <strong>{{total(partlist,'size9',0)}} Pcs
                             <br>
                             <small class="pull-right">({{total(partlist,'wsize9',3)}} KG)</small>
                         </strong>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                        <strong>{{total(partlist,'size9',0)}} Box</strong>
+                        </div>
                     </td>
                     <td class="text-center" ng-show="sizerange.size10===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
                         <strong>{{total(partlist,'size10',0)}} Pcs
                             <br>
                             <small class="pull-right">({{total(partlist,'wsize10',3)}} KG)</small>
                         </strong>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                        <strong>{{total(partlist,'size10',0)}}Boxs </strong>
+                        </div>
                     </td>
                     <td class="text-center">
+                        <div ng-if="cur_dept_type == 'piece'">
                         <strong> {{total(partlist,'size1',0)+total(partlist,'size2',0)+total(partlist,'size3',0)+total(partlist,'size4',0)+total(partlist,'size5',0)+total(partlist,'size6',0)+total(partlist,'size7',0)+total(partlist,'size8',0)+total(partlist,'size9',0)+total(partlist,'size10',0)}}
                             Pcs
                             <br>
                             <small class="pull-right">({{(total(partlist,'wsize1',3)+total(partlist,'wsize2',3)+total(partlist,'wsize3',3)+total(partlist,'wsize4',3)+total(partlist,'wsize5',3)+total(partlist,'wsize6',3)+total(partlist,'wsize7',3)+total(partlist,'wsize8',3)+total(partlist,'wsize9',3)+total(partlist,'wsize10',0))
                                 | number:3}} KG)</small>
                         </strong>
+                    </div>
+                    <div ng-if="cur_dept_type == 'packed'">
+                            <strong> {{total(partlist,'size1',0)+total(partlist,'size2',0)+total(partlist,'size3',0)+total(partlist,'size4',0)+total(partlist,'size5',0)+total(partlist,'size6',0)+total(partlist,'size7',0)+total(partlist,'size8',0)+total(partlist,'size9',0)+total(partlist,'size10',0)}}
+                                Box</strong>
+                        </div>
                     </td>
                 </tr>
             </tfoot>
@@ -220,110 +364,195 @@
                     </div>
                     <div data-field-span="6" class="form-group">
                         <label>Colour</label>
-                        <input class="form-control input-sm" id="colourbox" type="text" ng-model="newitem.colour" uib-typeahead="item.name for item in colourlist | filter:$viewValue | limitTo:25"
-                            placeholder="Enter Colour (Optional)" autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false">
+                        <div class="input-group">
+                            <input class="form-control input-sm" id="colourbox" type="text" ng-model="newitem.colour" uib-typeahead="item.name for item in colourlist | filter:$viewValue | limitTo:25"
+                                placeholder="Enter Colour (Optional)" autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" tabindex="-1" ng-click="loadallcolour()">Load all</button>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div data-row-span="10">
-                    <div data-field-span="1" ng-hide="sizerange.size1===0?true:false">
-                        <label>{{sizetype.size1}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size1" ng-init="newitem.size1 = 0" ng-disabled="sizerange.size1===0?true:false">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize1" ng-init="newitem.wsize1 = 0"
-                            ng-disabled="sizerange.size1===0?true:false">
+                    <div data-field-span="1" ng-show="sizerange.size1===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>{{sizetype.size1}}
+                                <br>Pieces</label>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <label>{{sizetype.size1}}
+                                <br>Box</label>
+                        </div>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size1" ng-init="newitem.size1 = 0">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>
+                                <small>WEIGHT</small>
+                            </label>
+                            <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize1" ng-init="newitem.wsize1 = 0"
+                                ng-disabled="sizerange.size1===0?true:false">
+                        </div>
                     </div>
-                    <div data-field-span="1" ng-hide="sizerange.size2===0?true:false">
-                        <label>{{sizetype.size2}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size2" ng-init="newitem.size2 = 0" ng-disabled="sizerange.size2===0?true:false]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize2" ng-init="newitem.wsize2 = 0"
-                            ng-disabled="sizerange.size2===0?true:false">
+                    <div data-field-span="1" ng-show="sizerange.size2===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>{{sizetype.size2}}
+                                <br>Pieces</label>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <label>{{sizetype.size2}}
+                                <br>Box</label>
+                        </div>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size2" ng-init="newitem.size2 = 0">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>
+                                <small>WEIGHT</small>
+                            </label>
+                            <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize2" ng-init="newitem.wsize2 = 0"
+                                ng-disabled="sizerange.size2===0?true:false">
+                        </div>
                     </div>
-                    <div data-field-span="1" ng-hide="sizerange.size3===0?true:false">
-                        <label>{{sizetype.size3}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size3" ng-init="newitem.size3 = 0" ng-disabled="sizerange.size3===0?true:false">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize3" ng-init="newitem.wsize3 = 0"
-                            ng-disabled="sizerange.size3===0?true:false]">
+                    <div data-field-span="1" ng-show="sizerange.size3===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>{{sizetype.size3}}
+                                <br>Pieces</label>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <label>{{sizetype.size3}}
+                                <br>Box</label>
+                        </div>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size3" ng-init="newitem.size3 = 0">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>
+                                <small>WEIGHT</small>
+                            </label>
+                            <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize3" ng-init="newitem.wsize3 = 0"
+                                ng-disabled="sizerange.size3===0?true:false">
+                        </div>
                     </div>
-                    <div data-field-span="1" ng-hide="sizerange.size4===0?true:false">
-                        <label>{{sizetype.size4}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size4" ng-init="newitem.size4 = 0" ng-disabled="sizerange.size4===0?true:false]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize4" ng-init="newitem.wsize4 = 0"
-                            ng-disabled="sizerange.size4===0?true:false">
+                    <div data-field-span="1" ng-show="sizerange.size4===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>{{sizetype.size4}}
+                                <br>Pieces</label>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <label>{{sizetype.size4}}
+                                <br>Box</label>
+                        </div>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size4" ng-init="newitem.size4 = 0">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>
+                                <small>WEIGHT</small>
+                            </label>
+                            <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize4" ng-init="newitem.wsize4 = 0"
+                                ng-disabled="sizerange.size4===0?true:false">
+                        </div>
                     </div>
-                    <div data-field-span="1" ng-hide="sizerange.size5===0?true:false">
-                        <label>{{sizetype.size5}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size5" ng-init="newitem.size5 = 0" ng-disabled="sizerange.size5===0?true:false">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize5" ng-init="newitem.wsize5 = 0"
-                            ng-disabled="sizerange.size5===0?true:false">
+                    <div data-field-span="1" ng-show="sizerange.size5===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>{{sizetype.size5}}
+                                <br>Pieces</label>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <label>{{sizetype.size5}}
+                                <br>Box</label>
+                        </div>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size5" ng-init="newitem.size5 = 0">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>
+                                <small>WEIGHT</small>
+                            </label>
+                            <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize5" ng-init="newitem.wsize5 = 0"
+                                ng-disabled="sizerange.size5===0?true:false">
+                        </div>
                     </div>
-                    <div data-field-span="1" ng-hide="sizerange.size6===0?true:false">
-                        <label>{{sizetype.size6}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size6" ng-init="newitem.size6 = 0" ng-disabled="sizerange.size6===0?true:false]">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize6" ng-init="newitem.wsize6 = 0"
-                            ng-disabled="sizerange.size6===0?true:false]">
+                    <div data-field-span="1" ng-show="sizerange.size6===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>{{sizetype.size6}}
+                                <br>Pieces</label>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <label>{{sizetype.size6}}
+                                <br>Box</label>
+                        </div>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size6" ng-init="newitem.size6 = 0">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>
+                                <small>WEIGHT</small>
+                            </label>
+                            <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize6" ng-init="newitem.wsize6 = 0"
+                                ng-disabled="sizerange.size6===0?true:false">
+                        </div>
                     </div>
-                    <div data-field-span="1" ng-hide="sizerange.size7===0?true:false">
-                        <label>{{sizetype.size7}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size7" ng-init="newitem.size7 = 0" ng-disabled="sizerange.size7===0?true:false">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize7" ng-init="newitem.wsize7 = 0"
-                            ng-disabled="sizerange.size7===0?true:false">
+                    <div data-field-span="1" ng-show="sizerange.size7===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>{{sizetype.size7}}
+                                <br>Pieces</label>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <label>{{sizetype.size7}}
+                                <br>Box</label>
+                        </div>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size7" ng-init="newitem.size7 = 0">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>
+                                <small>WEIGHT</small>
+                            </label>
+                            <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize7" ng-init="newitem.wsize7 = 0"
+                                ng-disabled="sizerange.size7===0?true:false">
+                        </div>
                     </div>
-                    <div data-field-span="1" ng-hide="sizerange.size8===0?true:false">
-                        <label>{{sizetype.size8}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size8" ng-init="newitem.size8 = 0" ng-disabled="sizerange.size8===0?true:false">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize8" ng-init="newitem.wsize8 = 0"
-                            ng-disabled="sizerange.size8===0?true:false">
+                    <div data-field-span="1" ng-show="sizerange.size8===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>{{sizetype.size8}}
+                                <br>Pieces</label>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <label>{{sizetype.size8}}
+                                <br>Box</label>
+                        </div>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size8" ng-init="newitem.size8 = 0">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>
+                                <small>WEIGHT</small>
+                            </label>
+                            <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize8" ng-init="newitem.wsize8 = 0"
+                                ng-disabled="sizerange.size8===0?true:false">
+                        </div>
                     </div>
-                    <div data-field-span="1" ng-hide="sizerange.size9===0?true:false">
-                        <label>{{sizetype.size9}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size9" ng-init="newitem.size9 = 0" ng-disabled="sizerange.size9===0?true:false">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize9" ng-init="newitem.wsize9 = 0"
-                            ng-disabled="sizerange.size9===0?true:false]">
+                    <div data-field-span="1" ng-show="sizerange.size9===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>{{sizetype.size9}}
+                                <br>Pieces</label>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <label>{{sizetype.size9}}
+                                <br>Box</label>
+                        </div>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size9" ng-init="newitem.size9 = 0">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>
+                                <small>WEIGHT</small>
+                            </label>
+                            <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize9" ng-init="newitem.wsize9 = 0"
+                                ng-disabled="sizerange.size9===0?true:false">
+                        </div>
                     </div>
-                    <div data-field-span="1" ng-hide="sizerange.size10===0?true:false">
-                        <label>{{sizetype.size10}}
-                            <br>Pieces</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size10" ng-init="newitem.size10 = 0" ng-disabled="sizerange.size10===0?true:false">
-                        <label>
-                            <small>WEIGHT</small>
-                        </label>
-                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize10" ng-init="newitem.wsize10 = 0"
-                            ng-disabled="sizerange.size10===0?true:false">
+                    <div data-field-span="1" ng-show="sizerange.size10===0?false:true">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>{{sizetype.size10}}
+                                <br>Pieces</label>
+                        </div>
+                        <div ng-if="cur_dept_type == 'packed'">
+                            <label>{{sizetype.size10}}
+                                <br>Box</label>
+                        </div>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size10" ng-init="newitem.size10 = 0">
+                        <div ng-if="cur_dept_type == 'piece'">
+                            <label>
+                                <small>WEIGHT</small>
+                            </label>
+                            <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize10" ng-init="newitem.wsize10 = 0"
+                                ng-disabled="sizerange.size10===0?true:false">
+                        </div>
                     </div>
 
                 </div>
@@ -335,10 +564,11 @@
                             ng-model="newitem.comment">
                     </div>
                     <div class="col-md-2">
-                        <label>Total Pieces</label>
+                            <label ng-if="cur_dept_type == 'piece'">Total Pieces</label>
+                            <label ng-if="cur_dept_type == 'packed'">Total Box</label>
                         <br>{{(newitem.size1+newitem.size2+newitem.size3+newitem.size4+newitem.size5+newitem.size6+newitem.size7+newitem.size8+newitem.size9+newitem.size10)}}
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2" ng-if="cur_dept_type == 'piece'">
                         <label>Total Weight</label>
                         <br>{{(newitem.wsize1+newitem.wsize2+newitem.wsize3+newitem.wsize4+newitem.wsize5+newitem.wsize6+newitem.wsize7+newitem.wsize8+newitem.wsize9+newitem.wsize10).toFixed(3)}}
                     </div>

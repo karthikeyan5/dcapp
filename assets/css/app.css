@@ -170,3 +170,8 @@ td[contentEditable]:focus {
   #loading-bar .peg {
     height: 6px !important;
   }
+
+  tags-input .autocomplete .suggestion-item.selected {
+    color: #262626;
+    background-color: #38abf8;
+  }
