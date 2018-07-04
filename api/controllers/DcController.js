@@ -757,9 +757,9 @@ module.exports = {
     },
     savegrn: function (req, res) {
         let today = new Date;
-        q = "INSERT INTO grn (idsupplier, naming_series, grn_date, against, against_other, vehicle_number, comment, blame_user) \
-                        VALUES (?,?,?,?,?,?,?,?);";
-        d = [req.body.supplier_id, req.body.naming_series, dateFormat(today, 'yyyy-mm-dd'), req.body.against, req.body.against_other, req.body.vehicle_number, req.body.comment, req.user.email];
+        q = "INSERT INTO grn (idsupplier, naming_series, grn_date, against, supplier_dc_no, against_other, vehicle_number, comment, blame_user) \
+                        VALUES (?,?,?,?,?,?,?,?,?);";
+        d = [req.body.supplier_id, req.body.naming_series, dateFormat(today, 'yyyy-mm-dd'), req.body.against, req.body.supplier_dc_no, req.body.against_other, req.body.vehicle_number, req.body.comment, req.user.email];
         temp = {}
 
         let get_dc_number = (return_ref, idgrn) => new Promise((resolve, reject) => {
@@ -897,6 +897,7 @@ module.exports = {
         series.length grn_no_length, \
         against_dc.dclist, \
         grn.against, \
+        grn.supplier_dc_no, \
         grn.against_other, \
         grn.grn_number, \
         grn.grn_date, \
