@@ -974,7 +974,7 @@ module.exports = {
         UNION ALL \
         SELECT idgrn, 'piece' as item_type from pgrnitems group by idgrn \
         UNION ALL \
-        SELECT idgrn, 'packed' as item_type from cgrnitems group by idgrn) as grn_type GROUP BY idgrn \
+        SELECT idgrn, 'packed' as item_type from pcgrnitems group by idgrn) as grn_type GROUP BY idgrn \
         ) as grn_item_type on grn_item_type.idgrn = grn.id \
         WHERE 1 = 1";
         d = []
