@@ -348,13 +348,24 @@ app.controller('itemdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$
   $scope.colourlist = colourlist;
   $scope.newitem = {};
   $scope.add = function (collection, item) {
-    if (((item.size1 + item.size2 + item.size3 + item.size4 + item.size5 + item.size6 + item.size7 + item.size8 + item.size9 + item.size10) == 0)
-      && ((item.wsize1 + item.wsize2 + item.wsize3 + item.wsize4 + item.wsize5 + item.wsize6 + item.wsize7 + item.wsize8 + item.wsize9 + item.wsize10) == 0)) {
-      ngToast.create({
-        className: 'danger',
-        content: 'Empty !!! Item not added...<br>Please try again...'
-      });
-      return;
+    if ($scope.cur_dept_type == 'piece') {
+      if (((item.size1 + item.size2 + item.size3 + item.size4 + item.size5 + item.size6 + item.size7 + item.size8 + item.size9 + item.size10) == 0)
+        && ((item.wsize1 + item.wsize2 + item.wsize3 + item.wsize4 + item.wsize5 + item.wsize6 + item.wsize7 + item.wsize8 + item.wsize9 + item.wsize10) == 0)) {
+        ngToast.create({
+          className: 'danger',
+          content: 'Empty !!! Item not added...<br>Please try again...'
+        });
+        return;
+      }
+    }
+    if ($scope.cur_dept_type == 'packed') {
+      if ((item.size1 + item.size2 + item.size3 + item.size4 + item.size5 + item.size6 + item.size7 + item.size8 + item.size9 + item.size10) == 0) {
+        ngToast.create({
+          className: 'danger',
+          content: 'Empty !!! Item not added...<br>Please try again...'
+        });
+        return;
+      }
     }
 
     if (item.index == undefined) {
@@ -825,14 +836,14 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
 
 
   $scope.addColor = function (colour, lot_number) {
-    if(!colour){
+    if (!colour) {
       ngToast.create({
         className: 'warning',
         content: 'Please select valid Colour... '
       });
       return;
     }
-    if(!lot_number){
+    if (!lot_number) {
       ngToast.create({
         className: 'warning',
         content: 'Please select valid Lot Number... '
@@ -857,14 +868,14 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
 
 
   $scope.addItem = function (item, lot_number, sizerange, sizetype) {
-    if(!item){
+    if (!item) {
       ngToast.create({
         className: 'warning',
         content: 'Please select valid Item name... '
       });
       return;
     }
-    if(!lot_number){
+    if (!lot_number) {
       ngToast.create({
         className: 'warning',
         content: 'Please select valid Lot Number... '
@@ -1888,14 +1899,14 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
 
   $scope.addClothItem = function (colour, lot_number) {
-    if(!colour){
+    if (!colour) {
       ngToast.create({
         className: 'warning',
         content: 'Please select valid Colour... '
       });
       return;
     }
-    if(!lot_number){
+    if (!lot_number) {
       ngToast.create({
         className: 'warning',
         content: 'Please select valid Lot Number... '
@@ -1922,14 +1933,14 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
 
   $scope.addItem = function (item, lot_number, sizerange, sizetype, cur_item_type) {
-    if(!item){
+    if (!item) {
       ngToast.create({
         className: 'warning',
         content: 'Please select valid Item name... '
       });
       return;
     }
-    if(!lot_number){
+    if (!lot_number) {
       ngToast.create({
         className: 'warning',
         content: 'Please select valid Lot Number... '
@@ -2002,22 +2013,22 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     }
 
     if ($scope.grn.against == 'dc') {
-      if(!$scope.temp_storage.dcnumbers || $scope.temp_storage.dcnumbers.length == 0){
+      if (!$scope.temp_storage.dcnumbers || $scope.temp_storage.dcnumbers.length == 0) {
         ngToast.create({
           className: 'warning',
           content: 'Please select DC... '
         });
         return;
       }
-      else{
+      else {
         $scope.grn.dclist = "";
         $scope.grn.dc_numbers = [];
-        $scope.temp_storage.dcnumbers.forEach(dc =>{
+        $scope.temp_storage.dcnumbers.forEach(dc => {
           $scope.grn.dclist += dc.dc_no + ", ";
           $scope.grn.dc_numbers.push(dc.iddc);
         }
         );
-        $scope.grn.dclist = $scope.grn.dclist.substring(0,$scope.grn.dclist.length-2);
+        $scope.grn.dclist = $scope.grn.dclist.substring(0, $scope.grn.dclist.length - 2);
       }
     }
 
@@ -2030,7 +2041,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     }
 
     $scope.grn.grn_item_type = Object.keys($scope.grn.items).join(', ');
-    if($scope.grn.against != 'dc'){
+    if ($scope.grn.against != 'dc') {
       $scope.grn.supplier_dc_no = null;
     }
 
