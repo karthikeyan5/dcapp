@@ -762,7 +762,7 @@ module.exports = {
         d = [req.body.supplier_id, req.body.naming_series, dateFormat(today, 'yyyy-mm-dd'), req.body.against, req.body.supplier_dc_no, req.body.against_other, req.body.vehicle_number, req.body.comment, req.user.email];
         temp = {}
 
-        let get_dc_number = (return_ref, idgrn) => new Promise((resolve, reject) => {
+        let get_grn_number = (return_ref, idgrn) => new Promise((resolve, reject) => {
             Dc.query("SELECT grn.naming_series,grn.grn_number,series.length, now() as server_time FROM grn,series WHERE grn.naming_series = series.name AND grn.id = ?", [idgrn], function (err, results) {
                 if (err) reject(err);
                 else {
@@ -855,24 +855,50 @@ module.exports = {
             });
         });
 
+        let agrn_insert = (return_ref, idgrn, items) => new Promise((resolve, reject) => {
+            flag = 0;
+            q1 = "INSERT INTO agrnitems (idgrn, lot_number, lot_index, iditem, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment, blame_user) VALUES ";
+            d1 = [];
+            items.forEach((element, index) => {
+                element.accessorylist.forEach(accessorylist => {
+                    accessorylist.item.forEach(item => {
+                        if (flag == 1) q1 = q1.concat(", ");
+                        q1 = q1.concat("(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                        flag = 1;
+                        d1.push(idgrn, element.lot_number, index, item.item.id, item.size1, item.size2, item.size3, item.size4, item.size5, item.size6, item.size7, item.size8, item.size9, item.size10, item.wsize1, item.wsize2, item.wsize3, item.wsize4, item.wsize5, item.wsize6, item.wsize7, item.wsize8, item.wsize9, item.wsize10, item.comment, req.user.email);
+                    });
+                });
+            });
+            Dc.query(q1, d1, function (err, results) {
+                if (err) reject(err);
+                else {
+                    return_ref.agrnitems_insert = results;
+                    resolve();
+                }
+            });
+        });
+
         Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
             else {
-                temp.dc_insert = results;
-                temp.iddc = results.insertId;
+                temp.grn_insert = results;
+                temp.idgrn = results.insertId;
                 let promises_list = []
-                promises_list.push(get_dc_number(temp, temp.iddc));
+                promises_list.push(get_grn_number(temp, temp.idgrn));
                 if (req.body.against == 'dc') {
-                    promises_list.push(add_grn_dc_relation(temp, temp.iddc, req.body.dc_numbers));
+                    promises_list.push(add_grn_dc_relation(temp, temp.idgrn, req.body.dc_numbers));
                 }
                 if (req.body.items.cloth) {
-                    promises_list.push(cgrn_insert(temp, temp.iddc, req.body.items.cloth));
+                    promises_list.push(cgrn_insert(temp, temp.idgrn, req.body.items.cloth));
                 }
                 if (req.body.items.piece) {
-                    promises_list.push(pgrn_insert(temp, temp.iddc, req.body.items.piece));
+                    promises_list.push(pgrn_insert(temp, temp.idgrn, req.body.items.piece));
                 }
                 if (req.body.items.packed) {
-                    promises_list.push(pcgrn_insert(temp, temp.iddc, req.body.items.packed));
+                    promises_list.push(pcgrn_insert(temp, temp.idgrn, req.body.items.packed));
+                }
+                if (req.body.items.accessory) {
+                    promises_list.push(agrn_insert(temp, temp.idgrn, req.body.items.accessory));
                 }
                 Promise.all(promises_list).then((result) => res.ok(temp)).catch((err) => res.serverError(err));
             }
@@ -922,31 +948,31 @@ module.exports = {
       FROM (SELECT * FROM grn ORDER BY id DESC) as grn LEFT JOIN supplier ON grn.idsupplier = supplier.id \
         LEFT JOIN series ON grn.naming_series = series.name \
         LEFT JOIN ( SELECT idgrn,GROUP_CONCAT(distinct colourlist SEPARATOR ', ') colourlist, group_concat(distinct itemlist SEPARATOR ', ') itemlist,  group_concat(distinct iditemlist SEPARATOR ', ') iditemlist, group_concat(distinct lotlist SEPARATOR ', ') lotlist, group_concat(distinct partlist SEPARATOR ', ') partlist, group_concat(distinct dialist SEPARATOR ', ') dialist FROM \
-            (SELECT idgrn,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, group_concat(distinct iteminfo.name SEPARATOR ', ') itemlist,  group_concat(distinct iteminfo.id SEPARATOR ', ') iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, group_concat(distinct part SEPARATOR ', ') partlist, null dialist FROM (select idgrn, colour, iditem, part, lot_number from pgrnitems union all select idgrn, colour, iditem, part, lot_number from pcgrnitems) as items, iteminfo where iteminfo.id = items.iditem group by idgrn \
+            (SELECT idgrn,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, group_concat(distinct iteminfo.name SEPARATOR ', ') itemlist,  group_concat(distinct iteminfo.id SEPARATOR ', ') iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, group_concat(distinct part SEPARATOR ', ') partlist, null dialist FROM (select idgrn, colour, iditem, part, lot_number from pgrnitems union all select idgrn, null as colour, iditem, null as part, lot_number from agrnitems union all select idgrn, colour, iditem, part, lot_number from pcgrnitems) as items, iteminfo where iteminfo.id = items.iditem group by idgrn \
 		union all \
 		SELECT idgrn,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, null itemlist, null iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, null partlist, group_concat(distinct dia separator ', ') dialist FROM cgrnitems group by idgrn order by idgrn) as temp group by idgrn \
         ) items_agg ON grn.id = items_agg.idgrn \
         LEFT JOIN ( \
         Select idgrn, group_concat(distinct sizelist.size_text ORDER BY sizelist.id,sizelist.size separator ', ') sizelist from \
-        (SELECT sizerange.idsizetype, 1 size, idgrn FROM (select idgrn, iditem, size1, wsize1 from pgrnitems union all select idgrn, iditem, size1, 0 as wsize1 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size1 > 0 or items.wsize1 > 0) \
+        (SELECT sizerange.idsizetype, 1 size, idgrn FROM (select idgrn, iditem, size1, wsize1 from pgrnitems union all select idgrn, iditem, size1, wsize1 from agrnitems union all select idgrn, iditem, size1, 0 as wsize1 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size1 > 0 or items.wsize1 > 0) \
         union all \
-        SELECT sizerange.idsizetype, 2 size, idgrn FROM (select idgrn, iditem, size2, wsize2 from pgrnitems union all select idgrn, iditem, size2, 0 as wsize2 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size2 > 0 or items.wsize2 > 0) \
+        SELECT sizerange.idsizetype, 2 size, idgrn FROM (select idgrn, iditem, size2, wsize2 from pgrnitems union all select idgrn, iditem, size2, wsize2 from agrnitems union all select idgrn, iditem, size2, 0 as wsize2 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size2 > 0 or items.wsize2 > 0) \
         union all \
-        SELECT sizerange.idsizetype, 3 size, idgrn FROM (select idgrn, iditem, size3, wsize3 from pgrnitems union all select idgrn, iditem, size3, 0 as wsize3 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size3 > 0 or items.wsize3 > 0) \
+        SELECT sizerange.idsizetype, 3 size, idgrn FROM (select idgrn, iditem, size3, wsize3 from pgrnitems union all select idgrn, iditem, size3, wsize3 from agrnitems union all select idgrn, iditem, size3, 0 as wsize3 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size3 > 0 or items.wsize3 > 0) \
         union all \
-        SELECT sizerange.idsizetype, 4 size, idgrn FROM (select idgrn, iditem, size4, wsize4 from pgrnitems union all select idgrn, iditem, size4, 0 as wsize4 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size4 > 0 or items.wsize4 > 0) \
+        SELECT sizerange.idsizetype, 4 size, idgrn FROM (select idgrn, iditem, size4, wsize4 from pgrnitems union all select idgrn, iditem, size4, wsize4 from agrnitems union all select idgrn, iditem, size4, 0 as wsize4 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size4 > 0 or items.wsize4 > 0) \
         union all \
-        SELECT sizerange.idsizetype, 5 size, idgrn FROM (select idgrn, iditem, size5, wsize5 from pgrnitems union all select idgrn, iditem, size5, 0 as wsize5 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size5 > 0 or items.wsize5 > 0) \
+        SELECT sizerange.idsizetype, 5 size, idgrn FROM (select idgrn, iditem, size5, wsize5 from pgrnitems union all select idgrn, iditem, size5, wsize5 from agrnitems union all select idgrn, iditem, size5, 0 as wsize5 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size5 > 0 or items.wsize5 > 0) \
         union all \
-        SELECT sizerange.idsizetype, 6 size, idgrn FROM (select idgrn, iditem, size6, wsize6 from pgrnitems union all select idgrn, iditem, size6, 0 as wsize6 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size6 > 0 or items.wsize6 > 0) \
+        SELECT sizerange.idsizetype, 6 size, idgrn FROM (select idgrn, iditem, size6, wsize6 from pgrnitems union all select idgrn, iditem, size6, wsize6 from agrnitems union all select idgrn, iditem, size6, 0 as wsize6 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size6 > 0 or items.wsize6 > 0) \
         union all \
-        SELECT sizerange.idsizetype, 7 size, idgrn FROM (select idgrn, iditem, size7, wsize7 from pgrnitems union all select idgrn, iditem, size7, 0 as wsize7 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size7 > 0 or items.wsize7 > 0) \
+        SELECT sizerange.idsizetype, 7 size, idgrn FROM (select idgrn, iditem, size7, wsize7 from pgrnitems union all select idgrn, iditem, size7, wsize7 from agrnitems union all select idgrn, iditem, size7, 0 as wsize7 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size7 > 0 or items.wsize7 > 0) \
         union all \
-        SELECT sizerange.idsizetype, 8 size, idgrn FROM (select idgrn, iditem, size8, wsize8 from pgrnitems union all select idgrn, iditem, size8, 0 as wsize8 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size8 > 0 or items.wsize8 > 0) \
+        SELECT sizerange.idsizetype, 8 size, idgrn FROM (select idgrn, iditem, size8, wsize8 from pgrnitems union all select idgrn, iditem, size8, wsize8 from agrnitems union all select idgrn, iditem, size8, 0 as wsize8 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size8 > 0 or items.wsize8 > 0) \
         union all \
-        SELECT sizerange.idsizetype, 9 size, idgrn FROM (select idgrn, iditem, size9, wsize9 from pgrnitems union all select idgrn, iditem, size9, 0 as wsize9 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size9 > 0 or items.wsize9 > 0) \
+        SELECT sizerange.idsizetype, 9 size, idgrn FROM (select idgrn, iditem, size9, wsize9 from pgrnitems union all select idgrn, iditem, size9, wsize9 from agrnitems union all select idgrn, iditem, size9, 0 as wsize9 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size9 > 0 or items.wsize9 > 0) \
         union all \
-        SELECT sizerange.idsizetype, 10 size, idgrn FROM (select idgrn, iditem, size10, wsize10 from pgrnitems union all select idgrn, iditem, size10, 0 as wsize10 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size10 > 0 or items.wsize10 > 0)) grn_sizes, \
+        SELECT sizerange.idsizetype, 10 size, idgrn FROM (select idgrn, iditem, size10, wsize10 from pgrnitems union all select idgrn, iditem, size10, wsize10 from agrnitems union all select idgrn, iditem, size10, 0 as wsize10 from pcgrnitems) as items, iteminfo, sizerange where items.iditem = iteminfo.id and iteminfo.sizerange = sizerange.idsize and (items.size10 > 0 or items.wsize10 > 0)) grn_sizes, \
         (SELECT id,1 size,size1 size_text FROM sizetype \
         UNION ALL \
         SELECT id,2 size,size2 size_text FROM sizetype \
@@ -973,6 +999,8 @@ module.exports = {
         (SELECT idgrn, 'cloth' as item_type from cgrnitems group by idgrn \
         UNION ALL \
         SELECT idgrn, 'piece' as item_type from pgrnitems group by idgrn \
+        UNION ALL \
+        SELECT idgrn, 'accessory' as item_type from agrnitems group by idgrn \
         UNION ALL \
         SELECT idgrn, 'packed' as item_type from cgrnitems group by idgrn) as grn_type GROUP BY idgrn \
         ) as grn_item_type on grn_item_type.idgrn = grn.id \
@@ -1013,8 +1041,8 @@ module.exports = {
         }
 
         if (req.param('iditem') != undefined) {
-            q = q.concat(" AND grn.id = any(select distinct idgrn from (select distinct idgrn from pcgrnitems where pcgrnitems.iditem = ? union all select distinct idgrn from pgrnitems where pgrnitems.iditem = ? ) as a)");
-            d.push(req.param('iditem'),req.param('iditem'));
+            q = q.concat(" AND grn.id = any(select distinct idgrn from (select distinct idgrn from pcgrnitems where pcgrnitems.iditem = ? union all select distinct idgrn from pgrnitems where pgrnitems.iditem = ? union all select distinct idgrn from agrnitems where agrnitems.iditem = ? ) as a)");
+            d.push(req.param('iditem'),req.param('iditem'),req.param('iditem'));
         }
 
         if (req.param('after_grn_date') != undefined) {
@@ -1053,6 +1081,18 @@ module.exports = {
             });
         });
 
+        let get_agrnitems = (return_ref, idgrn) => new Promise((resolve, reject) => {
+            Dc.query('SELECT lot_number, lot_index, sizerange, iditem, iteminfo.name as itemname, iteminfo.naming_series as item_naming_series, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment FROM agrnitems,iteminfo WHERE agrnitems.iditem = iteminfo.id and idgrn = ? ORDER BY agrnitems.id;', [idgrn], function (err, results) {
+                if (err) return reject(err);
+                else {
+                    if (results.length > 0) {
+                        return_ref[0].items.accessory = results;
+                    }
+                    resolve();
+                }
+            });
+        });
+
         let get_pcgrnitems = (return_ref, idgrn) => new Promise((resolve, reject) => {
             Dc.query('SELECT colour, lot_number, part, part_index, sizerange, iditem, iteminfo.name as itemname, iteminfo.naming_series as item_naming_series, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, comment FROM pcgrnitems,iteminfo WHERE pcgrnitems.iditem = iteminfo.id and idgrn = ? ORDER BY pcgrnitems.id;', [idgrn], function (err, results) {
                 if (err) return reject(err);
@@ -1066,13 +1106,13 @@ module.exports = {
         });
 
         let get_size_details = (return_ref, idgrn) => new Promise((resolve, reject) => {
-            Dc.query('SELECT DISTINCT sizerange.* FROM sizerange,iteminfo WHERE sizerange.idsize = iteminfo.sizerange AND iteminfo.id = any(select distinct iditem from (select distinct iditem from pcgrnitems where pcgrnitems.idgrn = ? union all select distinct iditem from pgrnitems where pgrnitems.idgrn = ? ) as a);', [idgrn,idgrn], function (err, results) {
+            Dc.query('SELECT DISTINCT sizerange.* FROM sizerange,iteminfo WHERE sizerange.idsize = iteminfo.sizerange AND iteminfo.id = any(select distinct iditem from (select distinct iditem from pcgrnitems where pcgrnitems.idgrn = ? union all select distinct iditem from pgrnitems where pgrnitems.idgrn = ? union all select distinct iditem from agrnitems where agrnitems.idgrn = ? ) as a);', [idgrn,idgrn,idgrn], function (err, results) {
                 if (err) return reject(err);
                 else {
                     if (results.length > 0) {
                         return_ref[0].sizerange = results;
                     }
-                    Dc.query('SELECT DISTINCT sizetype.* FROM sizetype, sizerange, iteminfo WHERE sizerange.idsizetype = sizetype.id AND sizerange.idsize = iteminfo.sizerange AND iteminfo.id = any(select distinct iditem from (select distinct iditem from pcgrnitems where pcgrnitems.idgrn = ? union all select distinct iditem from pgrnitems where pgrnitems.idgrn = ? ) as a);', [idgrn,idgrn], function (err, results) {
+                    Dc.query('SELECT DISTINCT sizetype.* FROM sizetype, sizerange, iteminfo WHERE sizerange.idsizetype = sizetype.id AND sizerange.idsize = iteminfo.sizerange AND iteminfo.id = any(select distinct iditem from (select distinct iditem from pcgrnitems where pcgrnitems.idgrn = ? union all select distinct iditem from pgrnitems where pgrnitems.idgrn = ? union all select distinct iditem from agrnitems where agrnitems.idgrn = ? ) as a);', [idgrn,idgrn,idgrn], function (err, results) {
                         if (err) return reject(err);
                         else {
                             if (results.length > 0) {
@@ -1093,7 +1133,7 @@ module.exports = {
                     temp[0].items = {};
                     temp[0].server_time = new Date();
                     temp[0].current_user = req.user.email;
-                    let promises_list = [get_cgrnitems(temp, temp[0].idgrn), get_pgrnitems(temp, temp[0].idgrn), get_pcgrnitems(temp, temp[0].idgrn), get_size_details(temp, temp[0].idgrn)];
+                    let promises_list = [get_cgrnitems(temp, temp[0].idgrn), get_pgrnitems(temp, temp[0].idgrn), get_pcgrnitems(temp, temp[0].idgrn), get_size_details(temp, temp[0].idgrn, get_agrnitems(temp, temp[0].idgrn))];
                     Promise.all(promises_list).then((result) => res.ok(temp)).catch((err) => res.serverError(err));
                 }
                 else {

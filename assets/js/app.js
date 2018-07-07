@@ -471,6 +471,159 @@ app.controller('itemdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$
 
 }]);
 
+app.controller('accessorydetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'lot_number', 'accessorylist', 'index', 'itemlist', 'master_itemlist', 'sizerangelist', 'sizetypelist', function accessorydetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, lot_number, accessorylist, index, itemlist, master_itemlist, sizerangelist, sizetypelist) {
+  $scope.lot_number = lot_number;
+  $scope.accessorylist = accessorylist;
+  console.log($scope.accessorylist);
+  $scope.index = index;
+  $scope.itemlist = itemlist;
+  $scope.newitem = {};
+  $scope.sizerangelist = sizerangelist;
+  $scope.sizetypelist = sizetypelist;
+  $scope.add = function (collection, item) {
+    if (((item.size1 + item.size2 + item.size3 + item.size4 + item.size5 + item.size6 + item.size7 + item.size8 + item.size9 + item.size10) == 0)
+      && ((item.wsize1 + item.wsize2 + item.wsize3 + item.wsize4 + item.wsize5 + item.wsize6 + item.wsize7 + item.wsize8 + item.wsize9 + item.wsize10) == 0)) {
+      ngToast.create({
+        className: 'danger',
+        content: 'Empty !!! Item not added...<br>Please try again...'
+      });
+      return;
+    }
+    if (item.index == undefined) {
+      if(collection.length == 0){
+        collection.push({'item': [], 'sizerange': $scope.cur_sizerange, 'sizetype': $scope.cur_sizetype});
+        collection[0].item.push(item);
+      }
+      else {
+        let flag = 0;
+        collection.forEach(element =>{
+          if(element.sizerange.idsize == $scope.cur_sizerange.idsize){
+            element.item.push(item);
+            flag = 1;
+          }
+        });
+        if(flag == 0){
+          collection.push({'item': [], 'sizerange': $scope.cur_sizerange, 'sizetype': $scope.cur_sizetype});
+          collection[collection.length-1].item.push(item);
+        }
+      }
+      ngToast.create({
+        className: 'success',
+        content: 'Item added...'
+      });
+    }
+    else {
+      index_temp = item.index;
+      collection[index_temp] = item;
+      ngToast.create({
+        className: 'success',
+        content: 'Item Updated...'
+      });
+    }
+
+    $scope.clearnewitem();
+  }
+
+  $scope.setitemsize = function () {
+    if (!$scope.newitem.item) {
+      return;
+    }
+
+
+    angular.forEach($scope.sizerangelist, function (value, key) {
+      if ($scope.newitem.item.sizerange == value.idsize) {
+        $scope.cur_idsizetype = value.idsizetype;
+        $scope.cur_sizerange = value;
+      }
+    });
+
+    angular.forEach($scope.sizetypelist, function (value, key) {
+      if ($scope.cur_idsizetype == value.id) {
+        $scope.cur_sizetype = value;
+      }
+    });
+    $scope.cur_idsizerange = $scope.newitem.item.sizerange;
+
+
+  };
+
+  $scope.focuspart = function () {
+    a = findPos(document.getElementById("itembox"));
+    $('html, body').animate({ scrollTop: a - 400 }, 'slow');
+    document.getElementById("itembox").focus();
+  }
+
+  $scope.clearnewitem = function () {
+    $scope.newitem = { "size1": 0, "wsize1": 0, "size2": 0, "wsize2": 0, "size3": 0, "wsize3": 0, "size4": 0, "wsize4": 0, "size5": 0, "wsize5": 0, "size6": 0, "wsize6": 0, "size7": 0, "wsize7": 0, "size8": 0, "wsize8": 0, "size9": 0, "wsize9": 0, "size10": 0, "wsize10": 0, "item": undefined, "comment": undefined, "sizerange": undefined, "sizetype": undefined };
+    setTimeout(function () { $scope.focuspart() }, 100);
+  }
+
+  $scope.remove = function (collection, index) {
+    collection.splice(index, 1);
+    ngToast.create({
+      className: 'danger',
+      content: 'Deleted... '//undo
+    });
+  }
+
+  $scope.edit = function (collection, index) {
+    angular.copy(collection[index], $scope.newitem);
+    $scope.newitem.index = index;
+  }
+
+
+
+  $scope.total = function (collection, key, precision) {
+    var total = 0;
+    collection.map(function (item) {
+      total += item[key];
+    });
+    return parseFloat(total.toFixed(precision));
+  }
+
+  $scope.loadallitem = function () {
+    $scope.itemlist = master_itemlist;
+  }
+
+
+  $uibModalInstance.rendered.then(function () {
+    console.log('Modal rendered at: ' + new Date())
+  });
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  }
+
+  $scope.ok = function () {
+
+    if ($scope.accessorylist.length < 1) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please make atleast one entry... '
+      });
+      return;
+    }
+
+
+    $uibModalInstance.close({ accessorylist: $scope.accessorylist, lot_number: $scope.lot_number, index: index });
+  }
+
+
+
+  hotkeys.bindTo($scope)
+    .add({
+      combo: 'ctrl+d',
+      description: 'Save Current Dia Details',
+      allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
+      callback: function (event, hotkey) {
+        event.preventDefault();
+        console.log('ctrl+d');
+        $scope.ok();
+      }
+    });
+
+}]);
+
 app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys', '$resource', '$route', function newdcCtrl($scope, $http, ngToast, $uibModal, hotkeys, $resource, $route) {
   $scope.tabselect1();
   $scope.dc = {};
@@ -1451,6 +1604,10 @@ app.controller('grnmodalCtrl', function ($scope, $http, $uibModalInstance, $uibM
       });
   }
 
+  $scope.checklength = function (collection) {
+    if (Object.keys(collection).length == 0) return false;
+    return true;
+  }
 
   $scope.$on("modal.closing", function () {
     $rootScope.$broadcast("modalClosing", $scope.grn.grn_number ? $scope.grn.grn_number : undefined);
@@ -1504,7 +1661,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
   $scope.grn.items = {};
 
   window.onbeforeunload = function () {
-    return $scope.grn.items && Object.keys($scope.grn.items).length > 0 && !$scope.grn.grn_number ? "If you leave this page you will lose your unsaved changes." : null;
+    return $scope.grn.items && $scope.checklength($scope.grn.items) && !$scope.grn.grn_number ? "If you leave this page you will lose your unsaved changes." : null;
   }
   $scope.$on('$locationChangeStart', function (event) {
 
@@ -1606,6 +1763,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
       url: '/api/lot?status=active'
     }).then(function successCallback(response) {
       master.lotlist = response.data;
+      $scope.lotlist = response.data;
       console.log(response);
     },
       function errorCallback(response) {
@@ -1622,6 +1780,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
       url: '/api/colour?status=active'
     }).then(function successCallback(response) {
       master.colourlist = response.data;
+      $scope.colourlist = response.data;
       console.log(response);
     },
       function errorCallback(response) {
@@ -1645,6 +1804,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
         var temp = { naming_series: value.naming_series, fullname: value.naming_series.concat(' ', value.name), name: value.name, id: value.id, sizerange: value.sizerange };
         this.push(temp);
       }, master.itemlist);
+      $scope.itemlist = master.itemlist;
     }, function errorCallback(response) {
       console.log(response);
     });
@@ -1710,6 +1870,16 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
         });
       }
     });
+
+    if ($scope.lotlist.length == 0) {
+      $scope.loadalllot();
+    }
+    if ($scope.colourlist.length == 0) {
+      $scope.loadallcolour();
+    }
+    if ($scope.itemlist.length == 0) {
+      $scope.loadallitem();
+    }
   }
 
 
@@ -1883,6 +2053,65 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     });
   }
 
+  var openaccessorydetails = function (lot_number, accessorylist, index) {
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: './html/accessorydetails.html',
+      controller: 'accessorydetailsCtrl',
+      size: 'xl',
+      backdrop: 'static',
+      keyboard: false,
+      // animation:false,
+      resolve: {
+        lot_number: function () {
+          return lot_number;
+        },
+        accessorylist: function () {
+          return accessorylist;
+        },
+        index: function () {
+          return index;
+        },
+        itemlist: function () {
+          return $scope.itemlist;
+        },
+        master_itemlist: () => master.itemlist,
+        sizerangelist: () => $scope.sizerangelist,
+        sizetypelist: () => $scope.sizetypelist
+      }
+    });
+
+    modalInstance.result.then(function (ret) {
+      console.log('received accessorylist: ', ret.accessorylist);
+
+      if (ret.index == -1) {
+        delete ret.index;
+        if (!$scope.grn.items.accessory) $scope.grn.items.accessory = [];
+        $scope.grn.items.accessory.push(ret);
+        modalInstance.closed.then(function () {
+          a = findPos(document.getElementById("lotbox"));
+          $('html, body').animate({ scrollTop: a - 400 }, 'slow');
+          document.getElementById("lotbox").focus();
+        });
+
+      }
+      else {
+        // $scope.dc.items[ret.index].item = ret.item;
+        // $scope.cdc.items[ret.index].dialist = ret.dialist;
+      }
+      $scope.temp_storage.newitemdetails = null;
+
+
+    }, function (ret) {
+      console.log('Modal dismissed at: ' + new Date(), ret);
+    });
+  }
+
+
+  $scope.checklength = function (collection) {
+    if (Object.keys(collection).length == 0) return false;
+    return true;
+  }
 
   $scope.grand_total_weight = arr => arr.reduce((a, b) => a + $scope.total(b.dialist, 'weight', 3), 0)
 
@@ -1965,6 +2194,32 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     openitemdetails(item.item, item.lot_number, item.partlist, index, item.sizerange, item.sizetype, cur_item_type);
   }
 
+  $scope.addAccessory = function (lot_number, sizerange, sizetype, cur_item_type) {
+    if (!lot_number) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Please select valid Lot Number... '
+      });
+      return;
+    }
+    openaccessorydetails(lot_number, [], -1);
+  }
+
+  $scope.removeAccessory = function (index, cur_item_type) {
+    $scope.grn.items[cur_item_type].splice(index, 1);
+    if ($scope.grn.items[cur_item_type].length == 0) {
+      delete $scope.grn.items[cur_item_type];
+    }
+    ngToast.create({
+      className: 'danger',
+      content: 'Item deleted... '//undo
+    });
+  }
+
+  $scope.editAccessory = function (item, index) {
+    openaccessorydetails(item.lot_number, item.accessorylist, index);
+  }
+
   var opengrnmodal = function (grn) {
     var modalInstance = $uibModal.open({
       animation: true,
@@ -2032,7 +2287,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
       }
     }
 
-    if (!$scope.grn.items.piece && !$scope.grn.items.cloth && !$scope.grn.items.packed) {
+    if (!$scope.checklength($scope.grn.items)) {
       ngToast.create({
         className: 'warning',
         content: 'Nothing to Deliver?... '
@@ -2359,6 +2614,125 @@ app.controller('viewgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotke
           $scope.grn.items.packed.push(temp_items[x]);
         });
         console.log('grn.items.packed: ', $scope.grn.items.packed)
+      }
+      if ($scope.grn.items.accessory && $scope.grn.items.accessory.length > 0) {
+        temp_items = {}
+        $scope.grn.items.accessory.forEach(element => {
+          if (!temp_items[element.lot_index]) {
+            temp_items[element.lot_index] = {}
+            temp_items[element.lot_index].lot_number = element.lot_number;
+            temp_items[element.lot_index].accessorylist = [];
+          }
+          temp_items_1 = {};
+          temp_items_1.item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series, fullname: element.item_naming_series.concat(' ', element.itemname) };
+          angular.forEach($scope.grn.sizerange, function (value, key) {
+            if (element.sizerange == value.idsize) {
+              $scope.idsizetype = value.idsizetype;
+              temp_items_1.sizerange = value;
+            }
+          });
+
+          angular.forEach($scope.grn.sizetype, function (value, key) {
+            if ($scope.idsizetype == value.id) {
+              temp_items_1.sizetype = value;
+            }
+          });
+          if(temp_items[element.lot_index].accessorylist.length == 0){
+            temp_items[element.lot_index].accessorylist.push({ 'item': [], 'sizerange': temp_items_1.sizerange, 'sizetype': temp_items_1.sizetype});
+            temp_items[element.lot_index].accessorylist[0].item.push({
+              comment: element.comment,
+              size1: element.size1,
+              size2: element.size2,
+              size3: element.size3,
+              size4: element.size4,
+              size5: element.size5,
+              size6: element.size6,
+              size7: element.size7,
+              size8: element.size8,
+              size9: element.size9,
+              size10: element.size10,
+              wsize1: element.wsize1,
+              wsize2: element.wsize2,
+              wsize3: element.wsize3,
+              wsize4: element.wsize4,
+              wsize5: element.wsize5,
+              wsize6: element.wsize6,
+              wsize7: element.wsize7,
+              wsize8: element.wsize8,
+              wsize9: element.wsize9,
+              wsize10: element.wsize10,
+              item: temp_items_1.item
+            });
+          }
+          else {
+            let flag = 0;
+            temp_items[element.lot_index].accessorylist.forEach(accessorylist => {
+              if(accessorylist.sizerange.idsize == temp_items_1.sizerange.idsize){
+                flag = 1;
+                accessorylist.item.push({
+                  comment: element.comment,
+                  size1: element.size1,
+                  size2: element.size2,
+                  size3: element.size3,
+                  size4: element.size4,
+                  size5: element.size5,
+                  size6: element.size6,
+                  size7: element.size7,
+                  size8: element.size8,
+                  size9: element.size9,
+                  size10: element.size10,
+                  wsize1: element.wsize1,
+                  wsize2: element.wsize2,
+                  wsize3: element.wsize3,
+                  wsize4: element.wsize4,
+                  wsize5: element.wsize5,
+                  wsize6: element.wsize6,
+                  wsize7: element.wsize7,
+                  wsize8: element.wsize8,
+                  wsize9: element.wsize9,
+                  wsize10: element.wsize10,
+                  item: temp_items_1.item
+                });
+              }
+            });
+            if(flag == 0){
+              temp_items[element.lot_index].accessorylist.push({ 'item': [], 'sizerange': temp_items_1.sizerange, 'sizetype': temp_items_1.sizetype });
+              temp_items[element.lot_index].accessorylist[temp_items[element.lot_index].accessorylist.length-1].item.push({
+                comment: element.comment,
+                size1: element.size1,
+                size2: element.size2,
+                size3: element.size3,
+                size4: element.size4,
+                size5: element.size5,
+                size6: element.size6,
+                size7: element.size7,
+                size8: element.size8,
+                size9: element.size9,
+                size10: element.size10,
+                wsize1: element.wsize1,
+                wsize2: element.wsize2,
+                wsize3: element.wsize3,
+                wsize4: element.wsize4,
+                wsize5: element.wsize5,
+                wsize6: element.wsize6,
+                wsize7: element.wsize7,
+                wsize8: element.wsize8,
+                wsize9: element.wsize9,
+                wsize10: element.wsize10,
+                item: temp_items_1.item
+              });
+            }
+          }
+          
+          
+
+        });
+        grn_part_index_list = Object.keys(temp_items).sort();
+        $scope.grn.items.accessory = [];
+        grn_part_index_list.forEach(x => {
+          $scope.grn.items.accessory.push(temp_items[x]);
+        });
+        console.log('grn.items.accessory: ', $scope.grn.items.accessory)
       }
       $scope.hidelist = true;
       var modalInstance = $uibModal.open({
