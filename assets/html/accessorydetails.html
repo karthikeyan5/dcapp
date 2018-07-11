@@ -1,0 +1,272 @@
+<div style="padding: 10px;">
+
+    <div style="padding: 10px;" class="row">
+        <label for="c2olour" class="col-sm-2 control-label"> Lot Number:</label>
+        <div class="col-sm-4">
+            <input readonly autocomplete="off" required type="text" class="form-control" id="c2olour" placeholder="Lot Number" ng-model="lot_number">
+        </div>
+    </div>
+    <div class="hidden-print" style="padding-top: 8px;" ng-if="accessorylist.length > 0">
+        <table class="table table-bordered table-striped">
+            <tr ng-repeat="row in accessorylist track by $index" class="repeated-item">
+                <td>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <!-- <th class="text-center">S.No</th> -->
+                                <th class="text-center">Item</th>
+                                <th class="text-center">Comment</th>
+                                <td class="text-center" style="white-space: nowrap;" ng-show="row.sizerange.size1===0?false:true">{{row.sizetype.size1}}</td>
+                                <td class="text-center" style="white-space: nowrap;" ng-show="row.sizerange.size2===0?false:true">{{row.sizetype.size2}}</td>
+                                <td class="text-center" style="white-space: nowrap;" ng-show="row.sizerange.size3===0?false:true">{{row.sizetype.size3}}</td>
+                                <td class="text-center" style="white-space: nowrap;" ng-show="row.sizerange.size4===0?false:true">{{row.sizetype.size4}}</td>
+                                <td class="text-center" style="white-space: nowrap;" ng-show="row.sizerange.size5===0?false:true">{{row.sizetype.size5}}</td>
+                                <td class="text-center" style="white-space: nowrap;" ng-show="row.sizerange.size6===0?false:true">{{row.sizetype.size6}}</td>
+                                <td class="text-center" style="white-space: nowrap;" ng-show="row.sizerange.size7===0?false:true">{{row.sizetype.size7}}</td>
+                                <td class="text-center" style="white-space: nowrap;" ng-show="row.sizerange.size8===0?false:true">{{row.sizetype.size8}}</td>
+                                <td class="text-center" style="white-space: nowrap;" ng-show="row.sizerange.size9===0?false:true">{{row.sizetype.size9}}</td>
+                                <td class="text-center" style="white-space: nowrap;" ng-show="row.sizerange.size10===0?false:true">{{row.sizetype.size10}}</td>
+                                <th class="text-center">
+                                    <strong>Total</strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in row.item track by $index" class="repeated-item">
+                                <!-- <td>{{$index + 1}}</td> -->
+                                <td class="text-capitalize">{{item.item.fullname}}</td>
+                                <td class="text-capitalize">{{item.comment}}</td>
+                                <td class="text-center" ng-show="row.sizerange.size1===0?false:true">
+                                    <span ng-show="item.size1 != 0">{{item.size1}} Nos</span>
+                                    <br>
+                                    <small ng-show="item.wsize1 != 0" class="pull-right">({{item.wsize1 | number:3}} KG)</small>
+                                </td>
+                                <td class="text-center" ng-show="row.sizerange.size2===0?false:true">
+                                    <span ng-show="item.size2 != 0">{{item.size2}} Nos</span>
+                                    <br>
+                                    <small ng-show="item.wsize2 != 0" class="pull-right">({{item.wsize2 | number:3}} KG)</small>
+                                </td>
+                                <td class="text-center" ng-show="row.sizerange.size3===0?false:true">
+                                    <span ng-show="item.size3 != 0">{{item.size3}} Nos</span>
+                                    <br>
+                                    <small ng-show="item.wsize3 != 0" class="pull-right">({{item.wsize3 | number:3}} KG)</small>
+                                </td>
+                                <td class="text-center" ng-show="row.sizerange.size4===0?false:true">
+                                    <span ng-show="item.size4 != 0">{{item.size4}} Nos</span>
+                                    <br>
+                                    <small ng-show="item.wsize4 != 0" class="pull-right">({{item.wsize4 | number:3}} KG)</small>
+                                </td>
+                                <td class="text-center" ng-show="row.sizerange.size5===0?false:true">
+                                    <span ng-show="item.size5 != 0">{{item.size5}} Nos</span>
+                                    <br>
+                                    <small ng-show="item.wsize5 != 0" class="pull-right">({{item.wsize5 | number:3}} KG)</small>
+                                </td>
+                                <td class="text-center" ng-show="row.sizerange.size6===0?false:true">
+                                    <span ng-show="item.size6 != 0">{{item.size6}} Nos</span>
+                                    <br>
+                                    <small ng-show="item.wsize6 != 0" class="pull-right">({{item.wsize6 | number:3}} KG)</small>
+                                </td>
+                                <td class="text-center" ng-show="row.sizerange.size7===0?false:true">
+                                    <span ng-show="item.size7 != 0">{{item.size7}} Nos</span>
+                                    <br>
+                                    <small ng-show="item.wsize7 != 0" class="pull-right">({{item.wsize7 | number:3}} KG)</small>
+                                </td>
+                                <td class="text-center" ng-show="row.sizerange.size8===0?false:true">
+                                    <span ng-show="item.size8 != 0">{{item.size8}} Nos</span>
+                                    <br>
+                                    <small ng-show="item.wsize8 != 0" class="pull-right">({{item.wsize8 | number:3}} KG)</small>
+                                </td>
+                                <td class="text-center" ng-show="row.sizerange.size9===0?false:true">
+                                    <span ng-show="item.size9 != 0">{{item.size9}} Nos</span>
+                                    <br>
+                                    <small ng-show="item.wsize9 != 0" class="pull-right">({{item.wsize9 | number:3}} KG)</small>
+                                </td>
+                                <td class="text-center" ng-show="row.sizerange.size10===0?false:true">
+                                    <span ng-show="item.size10 != 0">{{item.size10}} Nos</span>
+                                    <br>
+                                    <small ng-show="item.wsize10 != 0" class="pull-right">({{item.wsize10 | number:3}} KG)</small>
+                                </td>
+                                <td class="text-center">
+                                    <strong> {{item.size1+item.size2+item.size3+item.size4+item.size5+item.size6+item.size7+item.size8+item.size9+item.size10}}
+                                        Nos
+                                        <br>
+                                        <small class="pull-right">({{(item.wsize1+item.wsize2+item.wsize3+item.wsize4+item.wsize5+item.wsize6+item.wsize7+item.wsize8+item.wsize9+item.wsize10)
+                                            | number:3}} KG)</small>
+                                    </strong>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td class="hidden-print">
+                    <span ng-click="edit(accessorylist,$index)" type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">Edit</span>
+                    </span>
+                </td>
+                <td class="hidden-print">
+                    <span ng-click="remove(accessorylist,$index)" type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="padding: 10px;" class="row">
+        <button ng-click="ok()" class="btn btn-success pull-right" data-toggle="tooltip" title="Ctrl + D">Done</button>
+        <button ng-click="cancel()" ng-show="index == -1" tabindex="-1" class="btn btn-warning">Cancel</button>
+    </div>
+
+    <div class="hidden-print" style="padding-top: 8px;">
+
+        <form name="formq" class="grid-form panel panel-default " ng-submit="add(accessorylist,newitem)">
+            <!-- -->
+            <fieldset>
+                <legend class="panel-heading">Add Item:
+                </legend>
+                <div data-row-span="12">
+                    <div data-field-span="6" class="form-group">
+                        <label>Item:</label>
+                        <div class="input-group">
+                            <input class="form-control input-sm" name="itembox" id="itembox" type="text" ng-model="newitem.item" uib-typeahead="item as item.fullname for item in itemlist | filter:$viewValue | limitTo:25"
+                                placeholder="Enter item name / id" typeahead-on-select="setitemsize()" ng-change="setitemsize()"
+                                required autofocus autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false" typeahead-template-url="itemCustomTemplate.html"
+                                typeahead-min-length="0">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" tabindex="-1" ng-click="loadallitem()">Load all</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div data-row-span="10" ng-show="newitem.item">
+                    <div data-field-span="1" ng-show="cur_sizerange.size1===0?false:true">
+                        <label>{{cur_sizetype.size1}}
+                            <br>Nos
+                        </label>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size1" ng-init="newitem.size1 = 0">
+                        <label>
+                            <small>WEIGHT</small>
+                        </label>
+                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize1" ng-init="newitem.wsize1 = 0">
+                    </div>
+                    <div data-field-span="1" ng-show="cur_sizerange.size2===0?false:true">
+                        <label>{{cur_sizetype.size2}}
+                            <br>Nos
+                        </label>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size2" ng-init="newitem.size2 = 0">
+                        <label>
+                            <small>WEIGHT</small>
+                        </label>
+                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize2" ng-init="newitem.wsize2 = 0">
+                    </div>
+                    <div data-field-span="1" ng-show="cur_sizerange.size3===0?false:true">
+                        <label>{{cur_sizetype.size3}}
+                            <br>Nos
+                        </label>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size3" ng-init="newitem.size3 = 0">
+                        <label>
+                            <small>WEIGHT</small>
+                        </label>
+                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize3" ng-init="newitem.wsize3 = 0">
+                    </div>
+                    <div data-field-span="1" ng-show="cur_sizerange.size4===0?false:true">
+                        <label>{{cur_sizetype.size4}}
+                            <br>Nos
+                        </label>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size4" ng-init="newitem.size4 = 0">
+                        <label>
+                            <small>WEIGHT</small>
+                        </label>
+                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize4" ng-init="newitem.wsize4 = 0">
+                    </div>
+                    <div data-field-span="1" ng-show="cur_sizerange.size5===0?false:true">
+                        <label>{{cur_sizetype.size5}}
+                            <br>Nos
+                        </label>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size5" ng-init="newitem.size5 = 0">
+                        <label>
+                            <small>WEIGHT</small>
+                        </label>
+                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize5" ng-init="newitem.wsize5 = 0">
+                    </div>
+                    <div data-field-span="1" ng-show="cur_sizerange.size6===0?false:true">
+                        <label>{{cur_sizetype.size6}}
+                            <br>Nos
+                        </label>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size6" ng-init="newitem.size6 = 0">
+                        <label>
+                            <small>WEIGHT</small>
+                        </label>
+                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize6" ng-init="newitem.wsize6 = 0">
+                    </div>
+                    <div data-field-span="1" ng-show="cur_sizerange.size7===0?false:true">
+                        <label>{{cur_sizetype.size7}}
+                            <br>Nos
+                        </label>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size7" ng-init="newitem.size7 = 0">
+                        <label>
+                            <small>WEIGHT</small>
+                        </label>
+                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize7" ng-init="newitem.wsize7 = 0">
+                    </div>
+                    <div data-field-span="1" ng-show="cur_sizerange.size8===0?false:true">
+                        <label>{{cur_sizetype.size8}}
+                            <br>Nos
+                        </label>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size8" ng-init="newitem.size8 = 0">
+                        <label>
+                            <small>WEIGHT</small>
+                        </label>
+                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize8" ng-init="newitem.wsize8 = 0">
+                    </div>
+                    <div data-field-span="1" ng-show="cur_sizerange.size9===0?false:true">
+                        <label>{{cur_sizetype.size9}}
+                            <br>Nos
+                        </label>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size9" ng-init="newitem.size9 = 0">
+                        <label>
+                            <small>WEIGHT</small>
+                        </label>
+                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize9" ng-init="newitem.wsize9 = 0">
+                    </div>
+                    <div data-field-span="1" ng-show="cur_sizerange.size10===0?false:true">
+                        <label>{{cur_sizetype.size10}}
+                            <br>Nos
+                        </label>
+                        <input autocomplete="off" required type="number" min="0" ng-model="newitem.size10" ng-init="newitem.size10 = 0">
+                        <label>
+                            <small>WEIGHT</small>
+                        </label>
+                        <input autocomplete="off" required type="number" min="0.000" step="0.001" ng-model="newitem.wsize10" ng-init="newitem.wsize10 = 0">
+                    </div>
+
+                </div>
+
+                <div class="row container" ng-if="newitem.item">
+                    <div class="col-md-8">
+                        <label>Item Comment</label>
+                        <input autocomplete="on" type="text" maxlength="120" placeholder="Enter Item Comment (optional)" class="form-control input-sm"
+                            ng-model="newitem.comment">
+                    </div>
+                    <div class="col-md-2">
+                        <label>Total Nos</label>
+                        <br>{{(newitem.size1+newitem.size2+newitem.size3+newitem.size4+newitem.size5+newitem.size6+newitem.size7+newitem.size8+newitem.size9+newitem.size10)}}
+                    </div>
+                    <div class="col-md-2">
+                        <label>Total Weight</label>
+                        <br>{{(newitem.wsize1+newitem.wsize2+newitem.wsize3+newitem.wsize4+newitem.wsize5+newitem.wsize6+newitem.wsize7+newitem.wsize8+newitem.wsize9+newitem.wsize10).toFixed(3)}}
+                    </div>
+                </div>
+
+
+            </fieldset>
+            <div class="row container">
+                <input ng-show="" ng-if="newitem.index == undefined" id="addbutton" class="btn btn-primary pull-right" type="submit" value="Add Item">
+                <input ng-if="newitem.index != undefined" id="addbutton" class="btn btn-success pull-right" type="submit" value="Update Item">
+                <input ng-if="newitem.index != undefined" class="btn btn-info pull-right" ng-click="clearnewitem()" tabindex="-1" value="Cancel">
+            </div>
+
+        </form>
+    </div>
+</div>
