@@ -94,21 +94,21 @@
                                             | number:3}} KG)</small>
                                     </strong>
                                 </td>
-
+                                <td class="hidden-print">
+                                    <span ng-click="edit(item,row,$index)" type="button" class="close" aria-label="Close">
+                                        <span aria-hidden="true">Edit</span>
+                                    </span>
+                                </td>
+                                <td class="hidden-print">
+                                    <span ng-click="remove(item,$index)" type="button" class="close" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </td>
-                <td class="hidden-print">
-                    <span ng-click="edit(accessorylist,$index)" type="button" class="close" aria-label="Close">
-                        <span aria-hidden="true">Edit</span>
-                    </span>
-                </td>
-                <td class="hidden-print">
-                    <span ng-click="remove(accessorylist,$index)" type="button" class="close" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </span>
-                </td>
+                
             </tr>
         </table>
     </div>
@@ -264,7 +264,6 @@
             <div class="row container">
                 <input ng-show="" ng-if="newitem.index == undefined" id="addbutton" class="btn btn-primary pull-right" type="submit" value="Add Item">
                 <input ng-if="newitem.index != undefined" id="addbutton" class="btn btn-success pull-right" type="submit" value="Update Item">
-                <input ng-if="newitem.index != undefined" class="btn btn-info pull-right" ng-click="clearnewitem()" tabindex="-1" value="Cancel">
             </div>
 
         </form>
