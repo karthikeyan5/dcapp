@@ -467,67 +467,124 @@ module.exports = {
         d = [req.body.supplier_id, req.body.naming_series, req.body.department, dateFormat(today, 'yyyy-mm-dd'), req.body.rateperkg, req.body.additionalvalue, req.body.vehicle_number, req.body.comment, req.user.email];
         temp = {}
 
+        let get_dc_number = (return_ref, iddc) => new Promise((resolve, reject) => {
+            Dc.query("SELECT dc.naming_series,dc.dc_number,series.length, now() as server_time FROM dc,series WHERE dc.naming_series = series.name AND dc.id = ?", [iddc], function (err, results) {
+                if (err) return reject(err);
+                else {
+                    return_ref.dc = results[0];
+                    return_ref.dc.current_user = req.user.email + '.';
+                    resolve();
+                }
+            });
+        });
+
+        let cdc_insert = (return_ref, iddc, items) => new Promise((resolve, reject) => {
+            flag = 0;
+            q1 = "INSERT INTO cdcitems (iddc, lot_number, colour, cdc_colour_index, dia, roll, weight, comment, blame_user) VALUES ";
+            d1 = [];
+            items.forEach((element, index) => {
+                element.dialist.forEach(dialist => {
+                    if (flag == 1) q1 = q1.concat(", ");
+                    q1 = q1.concat("(?,?,?,?,?,?,?,?,?)");
+                    flag = 1;
+                    d1.push(iddc, element.lot_number, element.colour, index, dialist.dia, dialist.roll, dialist.weight, dialist.comment, req.user.email);
+                });
+            });
+            Dc.query(q1, d1, function (err, results) {
+                if (err) return reject(err);
+                else {
+                    return_ref.cdcitems_insert = results;
+                    resolve();
+                }
+            });
+        });
+
+        let pdc_insert = (return_ref, iddc, items) => new Promise((resolve, reject) => {
+            flag = 0;
+            q1 = "INSERT INTO pdcitems (iddc, colour, lot_number, iditem, pdc_part_index, part, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment, blame_user) VALUES ";
+            d1 = [];
+            items.forEach((element, index) => {
+                element.partlist.forEach(partlist => {
+                    if (flag == 1) q1 = q1.concat(", ");
+                    q1 = q1.concat("(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    flag = 1;
+                    d1.push(iddc, partlist.colour, element.lot_number, element.item.id, index, partlist.part, partlist.size1, partlist.size2, partlist.size3, partlist.size4, partlist.size5, partlist.size6, partlist.size7, partlist.size8, partlist.size9, partlist.size10, partlist.wsize1, partlist.wsize2, partlist.wsize3, partlist.wsize4, partlist.wsize5, partlist.wsize6, partlist.wsize7, partlist.wsize8, partlist.wsize9, partlist.wsize10, partlist.comment, req.user.email);
+                });
+            });
+            Dc.query(q1, d1, function (err, results) {
+                if (err) reject(err);
+                else {
+                    return_ref.cdcitems_insert = results;
+                }
+            });
+
+
+        });
+
+        let pcdc_insert = (return_ref, iddc, items) => new Promise((resolve, reject) => {
+            flag = 0;
+            q1 = "INSERT INTO pcdcitems (iddc, colour, lot_number, iditem, part_index, part, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, comment, blame_user) VALUES ";
+            d1 = [];
+            items.forEach((element, index) => {
+                element.partlist.forEach(partlist => {
+                    if (flag == 1) q1 = q1.concat(", ");
+                    q1 = q1.concat("(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    flag = 1;
+                    d1.push(iddc, partlist.colour, element.lot_number, element.item.id, index, partlist.part, partlist.size1, partlist.size2, partlist.size3, partlist.size4, partlist.size5, partlist.size6, partlist.size7, partlist.size8, partlist.size9, partlist.size10, partlist.comment, req.user.email);
+                });
+            });
+            Dc.query(q1, d1, function (err, results) {
+                if (err) reject(err);
+                else {
+                    return_ref.pcdcitems_insert = results;
+                    resolve();
+                }
+            });
+        });
+
+        let adc_insert = (return_ref, iddc, items) => new Promise((resolve, reject) => {
+            flag = 0;
+            q1 = "INSERT INTO adcitems (iddc, lot_number, lot_index, iditem, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment, blame_user) VALUES ";
+            d1 = [];
+            items.forEach((element, index) => {
+                element.accessorylist.forEach(accessorylist => {
+                    accessorylist.item.forEach(item => {
+                        if (flag == 1) q1 = q1.concat(", ");
+                        q1 = q1.concat("(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                        flag = 1;
+                        d1.push(iddc, element.lot_number, index, item.item.id, item.size1, item.size2, item.size3, item.size4, item.size5, item.size6, item.size7, item.size8, item.size9, item.size10, item.wsize1, item.wsize2, item.wsize3, item.wsize4, item.wsize5, item.wsize6, item.wsize7, item.wsize8, item.wsize9, item.wsize10, item.comment, req.user.email);
+                    });
+                });
+            });
+            Dc.query(q1, d1, function (err, results) {
+                if (err) reject(err);
+                else {
+                    return_ref.adcitems_insert = results;
+                    resolve();
+                }
+            });
+        });
+
         Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
             else {
-                if (req.body.dept_type == 'cloth') {
-                    temp.dc_insert = results;
-                    temp.iddc = results.insertId;
-                    flag = 0;
-                    q1 = "INSERT INTO cdcitems (iddc, lot_number, colour, cdc_colour_index, dia, roll, weight, comment, blame_user) VALUES ";
-                    d1 = [];
-                    req.body.items.forEach((element, index) => {
-                        element.dialist.forEach(dialist => {
-                            if (flag == 1) q1 = q1.concat(", ");
-                            q1 = q1.concat("(?,?,?,?,?,?,?,?,?)");
-                            flag = 1;
-                            d1.push(temp.iddc, element.lot_number, element.colour, index, dialist.dia, dialist.roll, dialist.weight, dialist.comment, req.user.email);
-                        });
-                    });
-                    Dc.query(q1, d1, function (err, results) {
-                        if (err) return res.serverError(err);
-                        else {
-                            temp.cdcitems_insert = results;
-                            Dc.query("SELECT dc.naming_series,dc.dc_number,series.length, now() as server_time FROM dc,series WHERE dc.naming_series = series.name AND dc.id = ?", [temp.iddc], function (err, results) {
-                                if (err) return res.serverError(err);
-                                else {
-                                    temp.dc = results[0];
-                                    temp.dc.current_user = req.user.email + '.';
-                                    return res.ok(temp);
-                                }
-                            });
-                        }
-                    });
+                temp.dc_insert = results;
+                temp.iddc = results.insertId;
+                let promises_list = []
+                promises_list.push(get_dc_number(temp, temp.iddc));
+                if (req.body.items.cloth) {
+                    promises_list.push(cdc_insert(temp, temp.iddc, req.body.items.cloth));
                 }
-                else if (req.body.dept_type == 'piece') {
-                    temp.dc_insert = results;
-                    temp.iddc = results.insertId;
-                    flag = 0;
-                    q1 = "INSERT INTO pdcitems (iddc, colour, lot_number, iditem, pdc_part_index, part, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment, blame_user) VALUES ";
-                    d1 = [];
-                    req.body.items.forEach((element, index) => {
-                        element.partlist.forEach(partlist => {
-                            if (flag == 1) q1 = q1.concat(", ");
-                            q1 = q1.concat("(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                            flag = 1;
-                            d1.push(temp.iddc, partlist.colour, element.lot_number, element.item.id, index, partlist.part, partlist.size1, partlist.size2, partlist.size3, partlist.size4, partlist.size5, partlist.size6, partlist.size7, partlist.size8, partlist.size9, partlist.size10, partlist.wsize1, partlist.wsize2, partlist.wsize3, partlist.wsize4, partlist.wsize5, partlist.wsize6, partlist.wsize7, partlist.wsize8, partlist.wsize9, partlist.wsize10, partlist.comment, req.user.email);
-                        });
-                    });
-                    Dc.query(q1, d1, function (err, results) {
-                        if (err) return res.serverError(err);
-                        else {
-                            temp.cdcitems_insert = results;
-                            Dc.query("SELECT dc.naming_series,dc.dc_number,series.length, now() as server_time FROM dc,series WHERE dc.naming_series = series.name AND dc.id = ?", [temp.iddc], function (err, results) {
-                                if (err) return res.serverError(err);
-                                else {
-                                    temp.dc = results[0];
-                                    temp.dc.current_user = req.user.email + '.';
-                                    return res.ok(temp);
-                                }
-                            });
-                        }
-                    });
+                if (req.body.items.piece) {
+                    promises_list.push(pdc_insert(temp, temp.iddc, req.body.items.piece));
                 }
+                if (req.body.items.packed) {
+                    promises_list.push(pcdc_insert(temp, temp.iddc, req.body.items.packed));
+                }
+                if (req.body.items.accessory) {
+                    promises_list.push(adc_insert(temp, temp.iddc, req.body.items.accessory));
+                }
+                Promise.all(promises_list).then((result) => res.ok(temp)).catch((err) => res.serverError(err));
             }
         });
     },
