@@ -720,4 +720,4 @@
 
 
 </div>
-<ng-include src="'./html/print/dcprint.html'" class="visible-print-block" ng-if="dc.dc_number && dc.items && dc.items.length > 0"></ng-include>
+<ng-include src="'./html/print/dcprint.html'" class="visible-print-block" ng-if="dc.dc_number && dc.items && checklength(dc.items)"></ng-include>

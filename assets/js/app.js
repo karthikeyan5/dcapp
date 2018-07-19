@@ -476,12 +476,11 @@ app.controller('itemdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$
 
 }]);
 
-app.controller('accessorydetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'lot_number', 'accessorylist', 'index', 'itemlist', 'master_itemlist', 'sizerangelist', 'sizetypelist', function accessorydetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, lot_number, accessorylist, index, itemlist, master_itemlist, sizerangelist, sizetypelist) {
+app.controller('accessorydetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'lot_number', 'accessorylist', 'index', 'accessoryitemlist', 'master_accessoryitemlist', 'sizerangelist', 'sizetypelist', function accessorydetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, lot_number, accessorylist, index, accessoryitemlist, master_accessoryitemlist, sizerangelist, sizetypelist) {
   $scope.lot_number = lot_number;
   $scope.accessorylist = accessorylist;
-  console.log($scope.accessorylist);
   $scope.index = index;
-  $scope.itemlist = itemlist;
+  $scope.accessoryitemlist = accessoryitemlist;
   $scope.newitem = {};
   $scope.sizerangelist = sizerangelist;
   $scope.sizetypelist = sizetypelist;
@@ -588,7 +587,7 @@ app.controller('accessorydetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal
   }
 
   $scope.loadallitem = function () {
-    $scope.itemlist = master_itemlist;
+    $scope.accessoryitemlist = master_accessoryitemlist;
   }
 
 
@@ -818,7 +817,7 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
 
   $http({
     method: 'GET',
-    url: '/api/item?itemstatus=active'
+    url: '/api/item?naming_series=ESSDEE ,D%26B,Other&itemstatus=active'
   }).then(function successCallback(response) {
     console.log(response);
     $scope.itemlist = [];
@@ -832,6 +831,21 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
     console.log(response);
   });
 
+  $http({
+    method: 'GET',
+    url: '/api/item?naming_series=Accessory&itemstatus=active'
+  }).then(function successCallback(response) {
+    console.log(response);
+    $scope.accessoryitemlist = [];
+    $scope.sizerangelist = response.data.sizerange;
+    $scope.sizetypelist = response.data.sizetype;
+    angular.forEach(response.data.items, function (value, key) {
+      var temp = { naming_series: value.naming_series, fullname: value.naming_series.concat(' ', value.name), name: value.name, id: value.id, sizerange: value.sizerange };
+      this.push(temp);
+    }, $scope.accessoryitemlist);
+  }, function errorCallback(response) {
+    console.log(response);
+  });
 
   $scope.setnameid = function () {
     if (!$scope.temp_storage.newitemdetails) {
@@ -997,10 +1011,10 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
         index: function () {
           return index;
         },
-        itemlist: function () {
-          return $scope.itemlist;
+        accessoryitemlist: function () {
+          return $scope.accessoryitemlist;
         },
-        master_itemlist: () => $scope.itemlist,
+        master_accessoryitemlist: () => $scope.accessoryitemlist,
         sizerangelist: () => $scope.sizerangelist,
         sizetypelist: () => $scope.sizetypelist
       }
@@ -1408,30 +1422,30 @@ app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     }).then(function successCallback(response) {
       console.log(response);
       $scope.dc = response.data[0];
-      if ($scope.dc.dept_type == 'piece') {
+      if ($scope.dc.items.piece && $scope.dc.items.piece.length > 0) {
         temp_items = {}
-        $scope.dc.items.forEach(element => {
-          if (!temp_items[element.pdc_part_index]) {
-            temp_items[element.pdc_part_index] = {}
-            temp_items[element.pdc_part_index].lot_number = element.lot_number;
-            temp_items[element.pdc_part_index].item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series, };
+        $scope.dc.items.piece.forEach(element => {
+          if (!temp_items[element.part_index]) {
+            temp_items[element.part_index] = {}
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series, };
             angular.forEach($scope.dc.sizerange, function (value, key) {
               if (element.sizerange == value.idsize) {
                 $scope.idsizetype = value.idsizetype;
-                temp_items[element.pdc_part_index].sizerange = value;
+                temp_items[element.part_index].sizerange = value;
               }
             });
 
             angular.forEach($scope.dc.sizetype, function (value, key) {
               if ($scope.idsizetype == value.id) {
-                temp_items[element.pdc_part_index].sizetype = value;
+                temp_items[element.part_index].sizetype = value;
               }
             });
 
-            temp_items[element.pdc_part_index].lot_number = element.lot_number;
-            temp_items[element.pdc_part_index].partlist = [];
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].partlist = [];
           }
-          temp_items[element.pdc_part_index].partlist.push({
+          temp_items[element.part_index].partlist.push({
             part: element.part, colour: element.colour, comment: element.comment,
             size1: element.size1,
             size2: element.size2,
@@ -1456,29 +1470,193 @@ app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
           });
 
         });
-        dc_colour_index_list = Object.keys(temp_items).sort();
-        $scope.dc.items = [];
-        dc_colour_index_list.forEach(x => {
-          $scope.dc.items.push(temp_items[x]);
+        dc_part_index_list = Object.keys(temp_items).sort();
+        $scope.dc.items.piece = [];
+        dc_part_index_list.forEach(x => {
+          $scope.dc.items.piece.push(temp_items[x]);
         });
-        console.log('dc.items: ', $scope.dc.items)
+        console.log('dc.items.piece: ', $scope.dc.items.piece)
       }
-      else if ($scope.dc.dept_type == 'cloth') {
+      if ($scope.dc.items.cloth && $scope.dc.items.cloth.length > 0) {
         temp_items = {}
-        $scope.dc.items.forEach(element => {
-          if (!temp_items[element.cdc_colour_index]) {
-            temp_items[element.cdc_colour_index] = {}
-            temp_items[element.cdc_colour_index].colour = element.colour;
-            temp_items[element.cdc_colour_index].lot_number = element.lot_number;
-            temp_items[element.cdc_colour_index].dialist = [];
+        $scope.dc.items.cloth.forEach(element => {
+          if (!temp_items[element.colour_index]) {
+            temp_items[element.colour_index] = {}
+            temp_items[element.colour_index].colour = element.colour;
+            temp_items[element.colour_index].lot_number = element.lot_number;
+            temp_items[element.colour_index].dialist = [];
           }
-          temp_items[element.cdc_colour_index].dialist.push({ dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
+          temp_items[element.colour_index].dialist.push({ dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
         });
         dc_colour_index_list = Object.keys(temp_items).sort();
-        $scope.dc.items = [];
+        $scope.dc.items.cloth = [];
         dc_colour_index_list.forEach(x => {
-          $scope.dc.items.push(temp_items[x]);
+          $scope.dc.items.cloth.push(temp_items[x]);
         });
+      }
+      if ($scope.dc.items.packed && $scope.dc.items.packed.length > 0) {
+        temp_items = {}
+        $scope.dc.items.packed.forEach(element => {
+          if (!temp_items[element.part_index]) {
+            temp_items[element.part_index] = {}
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series, };
+            angular.forEach($scope.dc.sizerange, function (value, key) {
+              if (element.sizerange == value.idsize) {
+                $scope.idsizetype = value.idsizetype;
+                temp_items[element.part_index].sizerange = value;
+              }
+            });
+
+            angular.forEach($scope.dc.sizetype, function (value, key) {
+              if ($scope.idsizetype == value.id) {
+                temp_items[element.part_index].sizetype = value;
+              }
+            });
+
+            temp_items[element.part_index].lot_number = element.lot_number;
+            temp_items[element.part_index].partlist = [];
+          }
+          temp_items[element.part_index].partlist.push({
+            part: element.part, colour: element.colour, comment: element.comment,
+            size1: element.size1,
+            size2: element.size2,
+            size3: element.size3,
+            size4: element.size4,
+            size5: element.size5,
+            size6: element.size6,
+            size7: element.size7,
+            size8: element.size8,
+            size9: element.size9,
+            size10: element.size10
+          });
+
+        });
+        dc_part_index_list = Object.keys(temp_items).sort();
+        $scope.dc.items.packed = [];
+        dc_part_index_list.forEach(x => {
+          $scope.dc.items.packed.push(temp_items[x]);
+        });
+        console.log('dc.items.packed: ', $scope.dc.items.packed)
+      }
+      if ($scope.dc.items.accessory && $scope.dc.items.accessory.length > 0) {
+        temp_items = {}
+        $scope.dc.items.accessory.forEach(element => {
+          if (!temp_items[element.lot_index]) {
+            temp_items[element.lot_index] = {}
+            temp_items[element.lot_index].lot_number = element.lot_number;
+            temp_items[element.lot_index].accessorylist = [];
+          }
+          temp_items_1 = {};
+          temp_items_1.item = { name: element.itemname, id: element.iditem, naming_series: element.item_naming_series, fullname: element.item_naming_series.concat(' ', element.itemname) };
+          angular.forEach($scope.dc.sizerange, function (value, key) {
+            if (element.sizerange == value.idsize) {
+              $scope.idsizetype = value.idsizetype;
+              temp_items_1.sizerange = value;
+            }
+          });
+
+          angular.forEach($scope.dc.sizetype, function (value, key) {
+            if ($scope.idsizetype == value.id) {
+              temp_items_1.sizetype = value;
+            }
+          });
+          if(temp_items[element.lot_index].accessorylist.length == 0){
+            temp_items[element.lot_index].accessorylist.push({ 'item': [], 'sizerange': temp_items_1.sizerange, 'sizetype': temp_items_1.sizetype});
+            temp_items[element.lot_index].accessorylist[0].item.push({
+              comment: element.comment,
+              size1: element.size1,
+              size2: element.size2,
+              size3: element.size3,
+              size4: element.size4,
+              size5: element.size5,
+              size6: element.size6,
+              size7: element.size7,
+              size8: element.size8,
+              size9: element.size9,
+              size10: element.size10,
+              wsize1: element.wsize1,
+              wsize2: element.wsize2,
+              wsize3: element.wsize3,
+              wsize4: element.wsize4,
+              wsize5: element.wsize5,
+              wsize6: element.wsize6,
+              wsize7: element.wsize7,
+              wsize8: element.wsize8,
+              wsize9: element.wsize9,
+              wsize10: element.wsize10,
+              item: temp_items_1.item
+            });
+          }
+          else {
+            let flag = 0;
+            temp_items[element.lot_index].accessorylist.forEach(accessorylist => {
+              if(accessorylist.sizerange.idsize == temp_items_1.sizerange.idsize){
+                flag = 1;
+                accessorylist.item.push({
+                  comment: element.comment,
+                  size1: element.size1,
+                  size2: element.size2,
+                  size3: element.size3,
+                  size4: element.size4,
+                  size5: element.size5,
+                  size6: element.size6,
+                  size7: element.size7,
+                  size8: element.size8,
+                  size9: element.size9,
+                  size10: element.size10,
+                  wsize1: element.wsize1,
+                  wsize2: element.wsize2,
+                  wsize3: element.wsize3,
+                  wsize4: element.wsize4,
+                  wsize5: element.wsize5,
+                  wsize6: element.wsize6,
+                  wsize7: element.wsize7,
+                  wsize8: element.wsize8,
+                  wsize9: element.wsize9,
+                  wsize10: element.wsize10,
+                  item: temp_items_1.item
+                });
+              }
+            });
+            if(flag == 0){
+              temp_items[element.lot_index].accessorylist.push({ 'item': [], 'sizerange': temp_items_1.sizerange, 'sizetype': temp_items_1.sizetype });
+              temp_items[element.lot_index].accessorylist[temp_items[element.lot_index].accessorylist.length-1].item.push({
+                comment: element.comment,
+                size1: element.size1,
+                size2: element.size2,
+                size3: element.size3,
+                size4: element.size4,
+                size5: element.size5,
+                size6: element.size6,
+                size7: element.size7,
+                size8: element.size8,
+                size9: element.size9,
+                size10: element.size10,
+                wsize1: element.wsize1,
+                wsize2: element.wsize2,
+                wsize3: element.wsize3,
+                wsize4: element.wsize4,
+                wsize5: element.wsize5,
+                wsize6: element.wsize6,
+                wsize7: element.wsize7,
+                wsize8: element.wsize8,
+                wsize9: element.wsize9,
+                wsize10: element.wsize10,
+                item: temp_items_1.item
+              });
+            }
+          }
+          
+          
+
+        });
+        dc_part_index_list = Object.keys(temp_items).sort();
+        $scope.dc.items.accessory = [];
+        dc_part_index_list.forEach(x => {
+          $scope.dc.items.accessory.push(temp_items[x]);
+        });
+        console.log('dc.items.accessory: ', $scope.dc.items.accessory)
       }
       $scope.hidelist = true;
       var modalInstance = $uibModal.open({
@@ -1546,6 +1724,11 @@ app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     $scope.total(b.partlist, 'wsize8', 3) +
     $scope.total(b.partlist, 'wsize9', 3) +
     $scope.total(b.partlist, 'wsize10', 3), 0)
+
+    $scope.checklength = function (collection) {
+      if (Object.keys(collection).length == 0) return false;
+      return true;
+    }
 
 
   // datepicker stuff - to be decoded later
@@ -1886,7 +2069,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
     $http({
       method: 'GET',
-      url: '/api/item?itemstatus=active'
+      url: '/api/item?naming_series=ESSDEE ,D%26B,Other&itemstatus=active'
     }).then(function successCallback(response) {
       console.log(response);
       master.itemlist = [];
@@ -1901,6 +2084,23 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
       console.log(response);
     });
 
+    $http({
+      method: 'GET',
+      url: '/api/item?naming_series=Accessory&itemstatus=active'
+    }).then(function successCallback(response) {
+      console.log(response);
+      master.accessoryitemlist = [];
+      $scope.sizerangelist = response.data.sizerange;
+      $scope.sizetypelist = response.data.sizetype;
+      angular.forEach(response.data.items, function (value, key) {
+        var temp = { naming_series: value.naming_series, fullname: value.naming_series.concat(' ', value.name), name: value.name, id: value.id, sizerange: value.sizerange };
+        this.push(temp);
+      }, master.accessoryitemlist);
+      $scope.accessoryitemlist = master.accessoryitemlist;
+    }, function errorCallback(response) {
+      console.log(response);
+    });
+
 
   }
 
@@ -1908,6 +2108,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     $scope.lotlist = [];
     $scope.colourlist = [];
     $scope.itemlist = [];
+    $scope.accessoryitemlist = [];
     let dcnumberlist = [];
 
     if (!$scope.temp_storage.dcnumbers) {
@@ -1956,8 +2157,11 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
         console.log('dc.iditemlist.split: ', dc.iditemlist.split(','), '---', $scope.itemlist, '---', master.itemlist);
         dc.iditemlist.split(',').forEach(iditem => {
           iditem = parseInt(iditem)
-          if ($scope.itemlist.length == 0 || arrayObjectIndexOf($scope.itemlist, iditem, 'id') == -1) {
+          if (($scope.itemlist.length == 0 || arrayObjectIndexOf($scope.itemlist, iditem, 'id') == -1) && arrayObjectIndexOf(master.itemlist, iditem, 'id')) {
             $scope.itemlist.push(master.itemlist[arrayObjectIndexOf(master.itemlist, iditem, 'id')]);
+          }
+          if (($scope.accessoryitemlist.length == 0 || arrayObjectIndexOf($scope.accessoryitemlist, iditem, 'id') == -1) && arrayObjectIndexOf(master.accessoryitemlist, iditem, 'id')) {
+            $scope.accessoryitemlist.push(master.accessoryitemlist[arrayObjectIndexOf(master.accessoryitemlist, iditem, 'id')]);
           }
         });
       }
@@ -1971,6 +2175,9 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     }
     if ($scope.itemlist.length == 0) {
       $scope.loadallitem();
+    }
+    if ($scope.accessoryitemlist.length == 0) {
+      $scope.loadallaccessoryitem();
     }
   }
 
@@ -1986,6 +2193,10 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
   $scope.loadallitem = function () {
     $scope.itemlist = master.itemlist;
+  }
+
+  $scope.loadallaccessoryitem = function () {
+    $scope.accessoryitemlist = master.accessoryitemlist;
   }
 
   $scope.total = function (collection, key, precision) {

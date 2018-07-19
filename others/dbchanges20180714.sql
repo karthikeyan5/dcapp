@@ -1,0 +1,1 @@
+update iteminfo set category = 'product' where naming_series <> 'Accessory';

@@ -129,7 +129,7 @@
                     <div data-field-span="6" class="form-group">
                         <label>Item:</label>
                         <div class="input-group">
-                            <input class="form-control input-sm" name="itembox" id="itembox" type="text" ng-model="newitem.item" uib-typeahead="item as item.fullname for item in itemlist | filter:$viewValue | limitTo:25"
+                            <input class="form-control input-sm" name="itembox" id="itembox" type="text" ng-model="newitem.item" uib-typeahead="item as item.fullname for item in accessoryitemlist | filter:$viewValue | limitTo:25"
                                 placeholder="Enter item name / id" typeahead-on-select="setitemsize()" ng-change="setitemsize()"
                                 required autofocus autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false" typeahead-template-url="itemCustomTemplate.html"
                                 typeahead-min-length="0">

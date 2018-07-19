@@ -261,12 +261,12 @@ module.exports = {
         });
     },
     item: function (req, res) {
-        // params: id(comma seperated multiple ids) ,naming_series, uid, status('active','inactive')
+        // params: id(comma seperated multiple ids) ,naming_series(comma seperated multiple naming_series) , uid, status('active','inactive')
         q = 'SELECT * from iteminfo WHERE 1=1 ';
         d = [];
         q_where = '';
 
-        param_equal_list = ["naming_series", "uid"];
+        param_equal_list = ["uid"];
         param_equal_list.forEach(function (param) {
             if (req.param(param) != undefined) {
                 q_where = q_where.concat(" AND iteminfo.", param, " = ? ");
@@ -274,7 +274,7 @@ module.exports = {
             }
         });
 
-        comma_seperated_in_list = ["id"];
+        comma_seperated_in_list = ["id","naming_series"];
         comma_seperated_in_list.forEach(function (param) {
             if (req.param(param) != undefined) {
                 q_where = q_where.concat(" AND iteminfo.", param, " in (?) ");
@@ -515,6 +515,7 @@ module.exports = {
                 if (err) reject(err);
                 else {
                     return_ref.cdcitems_insert = results;
+                    resolve();
                 }
             });
 
@@ -572,7 +573,7 @@ module.exports = {
                 temp.iddc = results.insertId;
                 let promises_list = []
                 promises_list.push(get_dc_number(temp, temp.iddc));
-                if (req.body.items.cloth) {
+                if (req.body.items.cloth && req.body.items.cloth.length > 0) {
                     promises_list.push(cdc_insert(temp, temp.iddc, req.body.items.cloth));
                 }
                 if (req.body.items.piece) {
@@ -596,6 +597,13 @@ module.exports = {
         // ---- 
 
         // ---- Warning: the order by in this query acts differently in higher versions of MySQL. watchout during Upgrade.
+
+
+
+        // todo: add pcdcitems,adcitems
+
+
+
         q = "SELECT  \
         dc.id iddc,  \
         dc.naming_series,  \
@@ -634,7 +642,7 @@ module.exports = {
         LEFT JOIN department ON dc.department = department.id  \
         LEFT JOIN series ON dc.naming_series = series.name  \
         LEFT JOIN (SELECT iddc,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, group_concat(distinct iteminfo.name SEPARATOR ', ') itemlist,  group_concat(distinct iteminfo.id SEPARATOR ', ') iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, group_concat(distinct part SEPARATOR ', ') partlist, null dialist FROM pdcitems, iteminfo where iteminfo.id = pdcitems.iditem group by iddc \
-		union all \
+        union all \
 		SELECT iddc,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, null itemlist, null iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, null partlist, group_concat(distinct dia separator ', ') dialist FROM cdcitems group by iddc order by iddc \
         ) items_agg ON dc.id = items_agg.iddc  \
         LEFT JOIN ( \
@@ -731,45 +739,84 @@ module.exports = {
         q = q.concat(' LIMIT ?,?;');
         d.push(offset, limit);
 
+        let get_cdcitems = (return_ref, iddc) => new Promise((resolve, reject) => {
+            Dc.query('SELECT colour, lot_number, cdc_colour_index, dia, roll, weight, comment FROM cdcitems WHERE iddc = ? ORDER BY id;', [iddc], function (err, results) {
+                if (err) return reject(err);
+                else {
+                    if (results.length > 0) {
+                        return_ref[0].items.cloth = results;
+                    }
+                    resolve();
+                }
+            });
+        });
+        
+        let get_pdcitems = (return_ref, iddc) => new Promise((resolve, reject) => {
+            Dc.query('SELECT colour, lot_number, part, pdc_part_index, sizerange, iditem, iteminfo.name as itemname, iteminfo.naming_series as item_naming_series, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment FROM pdcitems,iteminfo WHERE pdcitems.iditem = iteminfo.id and iddc = ? ORDER BY pdcitems.id;', [iddc], function (err, results) {
+                if (err) return reject(err);
+                else {
+                    if (results.length > 0) {
+                        return_ref[0].items.piece = results;
+                    }
+                    resolve();
+                }
+            });
+        });
+        
+        let get_adcitems = (return_ref, iddc) => new Promise((resolve, reject) => {
+            Dc.query('SELECT lot_number, lot_index, sizerange, iditem, iteminfo.name as itemname, iteminfo.naming_series as item_naming_series, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment FROM adcitems,iteminfo WHERE adcitems.iditem = iteminfo.id and iddc = ? ORDER BY adcitems.id;', [iddc], function (err, results) {
+                if (err) return reject(err);
+                else {
+                    if (results.length > 0) {
+                        return_ref[0].items.accessory = results;
+                    }
+                    resolve();
+                }
+            });
+        });
+        
+        let get_pcdcitems = (return_ref, iddc) => new Promise((resolve, reject) => {
+            Dc.query('SELECT colour, lot_number, part, part_index, sizerange, iditem, iteminfo.name as itemname, iteminfo.naming_series as item_naming_series, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, comment FROM pcdcitems,iteminfo WHERE pcdcitems.iditem = iteminfo.id and iddc = ? ORDER BY pcdcitems.id;', [iddc], function (err, results) {
+                if (err) return reject(err);
+                else {
+                    if (results.length > 0) {
+                        return_ref[0].items.packed = results;
+                    }
+                    resolve();
+                }
+            });
+        });
+        
+        let get_size_details = (return_ref, iddc) => new Promise((resolve, reject) => {
+            Dc.query('SELECT DISTINCT sizerange.* FROM sizerange,iteminfo WHERE sizerange.idsize = iteminfo.sizerange AND iteminfo.id = any(select distinct iditem from (select distinct iditem from pcdcitems where pcdcitems.iddc = ? union all select distinct iditem from pdcitems where pdcitems.iddc = ? union all select distinct iditem from adcitems where adcitems.iddc = ? ) as a);', [iddc,iddc,iddc], function (err, results) {
+                if (err) return reject(err);
+                else {
+                    if (results.length > 0) {
+                        return_ref[0].sizerange = results;
+                    }
+                    Dc.query('SELECT DISTINCT sizetype.* FROM sizetype, sizerange, iteminfo WHERE sizerange.idsizetype = sizetype.id AND sizerange.idsize = iteminfo.sizerange AND iteminfo.id = any(select distinct iditem from (select distinct iditem from pcdcitems where pcdcitems.iddc = ? union all select distinct iditem from pdcitems where pdcitems.iddc = ? union all select distinct iditem from adcitems where adcitems.iddc = ? ) as a);', [iddc,iddc,iddc], function (err, results) {
+                        if (err) return reject(err);
+                        else {
+                            if (results.length > 0) {
+                                return_ref[0].sizetype = results;
+                            }
+                            resolve();
+                        }
+                    });
+                }
+            });
+        });
+        
         Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
             else {
                 if (results.length == 1) {
                     temp = results;
-                    if (temp[0].dept_type == 'piece') {
-                        Dc.query('SELECT colour, lot_number, part,pdc_part_index, sizerange, iditem, iteminfo.name as itemname, iteminfo.naming_series as item_naming_series, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment FROM pdcitems,iteminfo WHERE pdcitems.iditem = iteminfo.id and iddc = ? ORDER BY pdcitems.id;', [temp[0].iddc], function (err, results) {
-                            if (err) return res.serverError(err);
-                            else {
-                                temp[0].items = results;
-                                temp[0].server_time = new Date();
-                                temp[0].current_user = req.user.email;
-                                Dc.query('SELECT sizerange.* FROM sizerange,iteminfo WHERE sizerange.idsize = iteminfo.sizerange AND iteminfo.id = any(select distinct iditem from pdcitems where iddc = ?);', [temp[0].iddc], function (err, results) {
-                                    if (err) return res.serverError(err);
-                                    else {
-                                        temp[0].sizerange = results;
-                                        Dc.query('SELECT sizetype.* FROM sizetype, sizerange, iteminfo WHERE sizerange.idsizetype = sizetype.id AND sizerange.idsize = iteminfo.sizerange AND iteminfo.id = any(select distinct iditem from pdcitems where iddc = ?);', [temp[0].iddc], function (err, results) {
-                                            if (err) return res.serverError(err);
-                                            else {
-                                                temp[0].sizetype = results;
-                                                return res.ok(temp);
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                    else if (results[0].dept_type == 'cloth') {
-                        Dc.query('SELECT colour, lot_number, cdc_colour_index, dia, roll, weight, comment FROM cdcitems WHERE iddc = ? ORDER BY id;', [temp[0].iddc], function (err, results) {
-                            if (err) return res.serverError(err);
-                            else {
-                                temp[0].items = results;
-                                temp[0].server_time = new Date();
-                                temp[0].current_user = req.user.email;
-                                return res.ok(temp);
-                            }
-                        });
-                    }
+                    temp[0].items = {};
+                    temp[0].server_time = new Date();
+                    temp[0].current_user = req.user.email;
+                    let promises_list = [get_cdcitems(temp, temp[0].iddc), get_pdcitems(temp, temp[0].iddc), get_pcdcitems(temp, temp[0].iddc), get_size_details(temp, temp[0].iddc, get_adcitems(temp, temp[0].iddc))];
+                    Promise.all(promises_list).then((result) => res.ok(temp)).catch((err) => res.serverError(err));
                 }
                 else {
                     return res.ok(results);
