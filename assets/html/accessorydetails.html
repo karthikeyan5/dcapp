@@ -1,3 +1,10 @@
+<script type="text/ng-template" id="itemCustomTemplate.html">
+    <a style="cursor: pointer;">
+            <!-- <span ng-bind-html="match.model.naming_series | uibTypeaheadHighlight:query"></span>  -->
+        <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
+    </a>
+</script>
+
 <div style="padding: 10px;">
 
     <div style="padding: 10px;" class="row">

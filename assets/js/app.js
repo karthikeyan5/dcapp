@@ -661,11 +661,11 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
   });
 
   window.onbeforeunload = function () {
-    return $scope.dc.items.length > 0 && !$scope.dc.dc_number ? "If you leave this page you will lose your unsaved changes." : null;
+    return $scope.dc.items && $scope.checklength($scope.dc.items) && !$scope.dc.dc_number ? "If you leave this page you will lose your unsaved changes." : null;
   }
   $scope.$on('$locationChangeStart', function (event) {
 
-    if ($scope.dc.items.length > 0 && !$scope.dc.dc_number) {
+    if ($scope.dc.items && $scope.checklength($scope.dc.items) && !$scope.dc.dc_number) {
       var answer = confirm("If you leave this page you will lose your unsaved changes.")
       if (!answer) {
         event.preventDefault();
@@ -837,8 +837,8 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
   }).then(function successCallback(response) {
     console.log(response);
     $scope.accessoryitemlist = [];
-    $scope.sizerangelist = response.data.sizerange;
-    $scope.sizetypelist = response.data.sizetype;
+    $scope.acc_sizerangelist = response.data.sizerange;
+    $scope.acc_sizetypelist = response.data.sizetype;
     angular.forEach(response.data.items, function (value, key) {
       var temp = { naming_series: value.naming_series, fullname: value.naming_series.concat(' ', value.name), name: value.name, id: value.id, sizerange: value.sizerange };
       this.push(temp);
@@ -1015,8 +1015,8 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
           return $scope.accessoryitemlist;
         },
         master_accessoryitemlist: () => $scope.accessoryitemlist,
-        sizerangelist: () => $scope.sizerangelist,
-        sizetypelist: () => $scope.sizetypelist
+        sizerangelist: () => $scope.acc_sizerangelist,
+        sizetypelist: () => $scope.acc_sizetypelist
       }
     });
 
@@ -2090,8 +2090,8 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     }).then(function successCallback(response) {
       console.log(response);
       master.accessoryitemlist = [];
-      $scope.sizerangelist = response.data.sizerange;
-      $scope.sizetypelist = response.data.sizetype;
+      $scope.acc_sizerangelist = response.data.sizerange;
+      $scope.acc_sizetypelist = response.data.sizetype;
       angular.forEach(response.data.items, function (value, key) {
         var temp = { naming_series: value.naming_series, fullname: value.naming_series.concat(' ', value.name), name: value.name, id: value.id, sizerange: value.sizerange };
         this.push(temp);
@@ -2375,12 +2375,12 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
         index: function () {
           return index;
         },
-        itemlist: function () {
-          return $scope.itemlist;
+        accessoryitemlist: function () {
+          return $scope.accessoryitemlist;
         },
-        master_itemlist: () => master.itemlist,
-        sizerangelist: () => $scope.sizerangelist,
-        sizetypelist: () => $scope.sizetypelist
+        master_accessoryitemlist: () => master.accessoryitemlist,
+        sizerangelist: () => $scope.acc_sizerangelist,
+        sizetypelist: () => $scope.acc_sizetypelist
       }
     });
 
@@ -2497,7 +2497,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     openitemdetails(item.item, item.lot_number, item.partlist, index, item.sizerange, item.sizetype, cur_item_type);
   }
 
-  $scope.addAccessory = function (lot_number, sizerange, sizetype, cur_item_type) {
+  $scope.addAccessory = function (lot_number) {
     if (!lot_number) {
       ngToast.create({
         className: 'warning',
@@ -2701,6 +2701,11 @@ app.controller('viewgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotke
       //this will sort by the length of the first name string
       return value.naming_series + Array(value.grn_no_length - String(value.grn_number).length + 1).join('0') + value.grn_number;
     }
+  }
+
+  $scope.checklength = function (collection) {
+    if (Object.keys(collection).length == 0) return false;
+    return true;
   }
 
   let downloadFilterList = function () {
