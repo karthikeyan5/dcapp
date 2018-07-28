@@ -18,7 +18,7 @@ app.factory('redirectInterceptor', function ($q, $location, $window) {
     'responseError': function (response) {
       if (response.status == 401) {
         console.log("LOGIN!!");
-        $window.location.href = "/login";
+        $window.location.href = "/login?redirect_to="+encodeURIComponent($window.location.href);
         return $q.reject(response);
       } else {
         // return response;
@@ -817,7 +817,7 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
 
   $http({
     method: 'GET',
-    url: '/api/item?naming_series=ESSDEE ,D%26B,Other&itemstatus=active'
+    url: '/api/item?naming_series='+encodeURIComponent('ESSDEE ,D&B,Other')+'&itemstatus=active'
   }).then(function successCallback(response) {
     console.log(response);
     $scope.itemlist = [];
@@ -2069,7 +2069,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
     $http({
       method: 'GET',
-      url: '/api/item?naming_series=ESSDEE ,D%26B,Other&itemstatus=active'
+      url: '/api/item?naming_series='+encodeURIComponent('ESSDEE ,D&B,Other')+'&itemstatus=active'
     }).then(function successCallback(response) {
       console.log(response);
       master.itemlist = [];
