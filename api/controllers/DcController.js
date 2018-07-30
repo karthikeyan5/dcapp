@@ -480,14 +480,14 @@ module.exports = {
 
         let cdc_insert = (return_ref, iddc, items) => new Promise((resolve, reject) => {
             let flag = 0;
-            let q1 = "INSERT INTO cdcitems (iddc, lot_number, colour, cdc_colour_index, dia, roll, weight, comment, blame_user) VALUES ";
+            let q1 = "INSERT INTO cdcitems (iddc, lot_number, colour, colour_index, dia, roll, weight, comment, blame_user) VALUES ";
             let d1 = [];
             items.forEach((element, index) => {
                 element.dialist.forEach(dialist => {
                     if (flag == 1) q1 = q1.concat(", ");
                     q1 = q1.concat("(?,?,?,?,?,?,?,?,?)");
                     flag = 1;
-                    d1.push(iddc, element.lot_number, element.colour, index, dialist.dia, dialist.roll, dialist.weight, dialist.comment, req.user.email);
+                    d1.push(iddc, element.lot_number, dialist.colour, index, dialist.dia, dialist.roll, dialist.weight, dialist.comment, req.user.email);
                 });
             });
             Dc.query(q1, d1, function (err, results) {
@@ -501,7 +501,7 @@ module.exports = {
 
         let pdc_insert = (return_ref, iddc, items) => new Promise((resolve, reject) => {
             let flag = 0;
-            let q1 = "INSERT INTO pdcitems (iddc, colour, lot_number, iditem, pdc_part_index, part, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment, blame_user) VALUES ";
+            let q1 = "INSERT INTO pdcitems (iddc, colour, lot_number, iditem, part_index, part, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment, blame_user) VALUES ";
             let d1 = [];
             items.forEach((element, index) => {
                 element.partlist.forEach(partlist => {
@@ -636,19 +636,17 @@ module.exports = {
         LEFT JOIN department ON dc.department = department.id  \
         LEFT JOIN series ON dc.naming_series = series.name  \
         LEFT JOIN ( \
-            SELECT iddc,GROUP_CONCAT(distinct colourlist SEPARATOR ', ') colourlist, group_concat(distinct itemlist SEPARATOR ', ') itemlist,  group_concat(distinct iditemlist SEPARATOR ', ') iditemlist, group_concat(distinct lotlist SEPARATOR ', ') lotlist, group_concat(distinct partlist SEPARATOR ', ') partlist, group_concat(distinct dialist SEPARATOR ', ') dialist FROM \
-                ( \
-                    SELECT iddc,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, group_concat(distinct iteminfo.name SEPARATOR ', ') itemlist,  group_concat(distinct iteminfo.id SEPARATOR ', ') iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, group_concat(distinct part SEPARATOR ', ') partlist, null dialist \
-                    FROM ( \
-                        select iddc, colour, iditem, part, lot_number from pdcitems \
-                        union all \
-                        select iddc, null as colour, iditem, null as part, lot_number from adcitems \
-                        union all \
-                        select iddc, colour, iditem, part, lot_number from pcdcitems \
-                    ) as items, iteminfo where iteminfo.id = items.iditem group by iddc \
-                    union all \
-                    SELECT iddc,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, null itemlist, null iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, null partlist, group_concat(distinct dia separator ', ') dialist FROM cdcitems group by iddc order by iddc \
-            ) as temp group by iddc \
+            SELECT iddc,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, group_concat(distinct iteminfo.name SEPARATOR ', ') itemlist,  group_concat(distinct iteminfo.id SEPARATOR ', ') iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, group_concat(distinct part SEPARATOR ', ') partlist, group_concat(distinct dia SEPARATOR ', ') dialist \
+            FROM ( \
+                select iddc, colour, iditem, part, lot_number, null as dia from pdcitems \
+                union all \
+                select iddc, null as colour, iditem, null as part, lot_number, null as dia from adcitems \
+                union all \
+                select iddc, colour, iditem, part, lot_number, null as dia from pcdcitems \
+                union all \
+                select iddc, colour, null as iditem, null as part, lot_number, dia from cdcitems \
+            ) as items \
+            LEFT JOIN iteminfo on iteminfo.id = items.iditem group by iddc \
         ) items_agg ON dc.id = items_agg.iddc  \
         LEFT JOIN ( \
         Select iddc, group_concat(distinct sizelist.size_text ORDER BY sizelist.id,sizelist.size separator ', ') sizelist from  \
@@ -754,7 +752,7 @@ module.exports = {
         d.push(offset, limit);
 
         let get_cdcitems = (return_ref, iddc) => new Promise((resolve, reject) => {
-            Dc.query('SELECT colour, lot_number, cdc_colour_index, dia, roll, weight, comment FROM cdcitems WHERE iddc = ? ORDER BY id;', [iddc], function (err, results) {
+            Dc.query('SELECT colour, lot_number, colour_index, dia, roll, weight, comment FROM cdcitems WHERE iddc = ? ORDER BY id;', [iddc], function (err, results) {
                 if (err) return reject(err);
                 else {
                     if (results.length > 0) {
@@ -766,7 +764,7 @@ module.exports = {
         });
         
         let get_pdcitems = (return_ref, iddc) => new Promise((resolve, reject) => {
-            Dc.query('SELECT colour, lot_number, part, pdc_part_index, sizerange, iditem, iteminfo.name as itemname, iteminfo.naming_series as item_naming_series, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment FROM pdcitems,iteminfo WHERE pdcitems.iditem = iteminfo.id and iddc = ? ORDER BY pdcitems.id;', [iddc], function (err, results) {
+            Dc.query('SELECT colour, lot_number, part, part_index, sizerange, iditem, iteminfo.name as itemname, iteminfo.naming_series as item_naming_series, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment FROM pdcitems,iteminfo WHERE pdcitems.iditem = iteminfo.id and iddc = ? ORDER BY pdcitems.id;', [iddc], function (err, results) {
                 if (err) return reject(err);
                 else {
                     if (results.length > 0) {
@@ -919,7 +917,7 @@ module.exports = {
                     if (flag == 1) q1 = q1.concat(", ");
                     q1 = q1.concat("(?,?,?,?,?,?,?,?,?)");
                     flag = 1;
-                    d1.push(idgrn, element.lot_number, element.colour, index, dialist.dia, dialist.roll, dialist.weight, dialist.comment, req.user.email);
+                    d1.push(idgrn, element.lot_number, dialist.colour, index, dialist.dia, dialist.roll, dialist.weight, dialist.comment, req.user.email);
                 });
             });
             Dc.query(q1, d1, function (err, results) {
@@ -1066,19 +1064,17 @@ module.exports = {
       FROM (SELECT * FROM grn ORDER BY id DESC) as grn LEFT JOIN supplier ON grn.idsupplier = supplier.id \
         LEFT JOIN series ON grn.naming_series = series.name \
         LEFT JOIN ( \
-            SELECT idgrn,GROUP_CONCAT(distinct colourlist SEPARATOR ', ') colourlist, group_concat(distinct itemlist SEPARATOR ', ') itemlist,  group_concat(distinct iditemlist SEPARATOR ', ') iditemlist, group_concat(distinct lotlist SEPARATOR ', ') lotlist, group_concat(distinct partlist SEPARATOR ', ') partlist, group_concat(distinct dialist SEPARATOR ', ') dialist FROM \
-                ( \
-                    SELECT idgrn,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, group_concat(distinct iteminfo.name SEPARATOR ', ') itemlist,  group_concat(distinct iteminfo.id SEPARATOR ', ') iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, group_concat(distinct part SEPARATOR ', ') partlist, null dialist \
-                    FROM ( \
-                        select idgrn, colour, iditem, part, lot_number from pgrnitems \
-                        union all \
-                        select idgrn, null as colour, iditem, null as part, lot_number from agrnitems \
-                        union all \
-                        select idgrn, colour, iditem, part, lot_number from pcgrnitems \
-                    ) as items, iteminfo where iteminfo.id = items.iditem group by idgrn \
-                    union all \
-                    SELECT idgrn,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, null itemlist, null iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, null partlist, group_concat(distinct dia separator ', ') dialist FROM cgrnitems group by idgrn order by idgrn \
-            ) as temp group by idgrn \
+            SELECT idgrn,GROUP_CONCAT(distinct colour SEPARATOR ', ') colourlist, group_concat(distinct iteminfo.name SEPARATOR ', ') itemlist,  group_concat(distinct iteminfo.id SEPARATOR ', ') iditemlist, group_concat(distinct lot_number SEPARATOR ', ') lotlist, group_concat(distinct part SEPARATOR ', ') partlist, group_concat(distinct dia SEPARATOR ', ') dialist \
+            FROM ( \
+                select idgrn, colour, iditem, part, lot_number, null as dia from pgrnitems \
+                union all \
+                select idgrn, null as colour, iditem, null as part, lot_number, null as dia from agrnitems \
+                union all \
+                select idgrn, colour, iditem, part, lot_number, null as dia from pcgrnitems \
+                union all \
+                select idgrn, colour, null as iditem, null as part, lot_number, dia from cgrnitems \
+            ) as items \
+            LEFT JOIN iteminfo on iteminfo.id = items.iditem group by idgrn \
         ) items_agg ON grn.id = items_agg.idgrn \
         LEFT JOIN ( \
         Select idgrn, group_concat(distinct sizelist.size_text ORDER BY sizelist.id,sizelist.size separator ', ') sizelist from \
