@@ -1,101 +1,117 @@
 <div style="padding: 10px;">
+  <legend>Cloth item</legend>
+  <div style="padding: 10px;" ng-show="dialist.length > 0">
+    <span ng-if="colour"> Colour:
+      <strong>{{colour}}</strong>
+    </span>
+    <br> Lot Number:
+    <strong>{{lot_number}}</strong>
+    <table class="table table-bordered table-striped" style="margin-bottom:0px;">
+      <thead>
+        <tr>
+          <!-- <th class="text-center">S.No</th> -->
+          <th class="text-center pshead" ng-if="!colour">Colour</th>
+          <th class="text-center pshead">Dia</th>
+          <th class="text-center pshead">Roll</th>
+          <th class="text-center pshead">Weight (kg)</th>
+          <th class="text-center pshead">Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="dia in dialist track by $index" class="repeated-item">
+          <!-- <td>{{$index + 1}}</td> -->
+          <td class="text-center psrow" ng-if="!colour">{{dia.colour}}</td>
+          <td class="text-center psrow">{{dia.dia}}</td>
+          <td class="text-center psrow">{{dia.roll}}</td>
+          <td class="text-center psrow">{{dia.weight| number:3}}</td>
+          <td class="text-center psrow">{{dia.comment}}</td>
+          <td class="hidden-print">
+            <span ng-click="editdia($index)" type="button" class="close" aria-label="Close">
+              <span aria-hidden="true">Edit</span>
+            </span>
+          </td>
+          <td class="hidden-print">
+            <span ng-click="removedia($index)" type="button" class="close" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot ng-if="dialist.length > 1">
+        <tr>
+          <td ng-if="!colour"></td>
+          <td class="text-center psrow">
+            <strong>Total</strong>
+          </td>
+          <td class="text-center psrow">
+            <strong>{{total(dialist,'roll',0)}}</strong>
+          </td>
+          <td class="text-center psrow">
+            <strong>{{total(dialist,'weight',3)| number:3}}</strong>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div style="padding: 10px;" class="row">
+    <button ng-click="ok()" class="btn btn-success pull-right" data-toggle="tooltip" title="Ctrl + D">Done</button>
+    <button ng-click="cancel()" ng-show="index == -1" tabindex="-1" class="btn btn-warning">Cancel</button>
+  </div>
 
-    <div style="padding: 10px;" class="row">
-        <label for="c1olour" class="col-sm-2 control-label"> Colour:</label>
-        <div class="col-sm-4">
-            <input readonly autocomplete="off" required type="text" class="form-control" id="c1olour" placeholder="Enter New Colour" ng-model="colour">
+
+
+  <div style="padding: 10px;">
+    <form name="form" class="grid-form panel panel-default " ng-submit="add(newdia)">
+      <fieldset>
+        <legend class="panel-heading">Add Dia:</legend>
+        <div data-row-span="12">
+          <div data-field-span="6" class="form-group">
+            <label>Lot Number</label>
+            <input readonly disabled autocomplete="off" required type="text" class="form-control" id="lotbox" placeholder="Lot Number"
+              ng-model="lot_number">
+          </div>
+          <div data-field-span="6" class="form-group">
+            <label>Colour</label>
+            <div class="input-group" ng-if="!colour">
+              <input ng-disabled="colour?true:false" class="form-control input-sm" id="colourbox" type="text" ng-model="newdia.colour"
+                uib-typeahead="item.name for item in colourlist | filter:$viewValue | limitTo:25" placeholder="Enter Colour"
+                autocomplete="off" typeahead-editable="false" typeahead-focus-on-select="false">
+              <span class="input-group-btn">
+                <button ng-disabled="colour?true:false" class="btn btn-default" type="checkbox" tabindex="-1" ng-click="loadallcolour()">Load all</button>
+              </span>
+            </div>
+            <label ng-if="colour">
+              {{newdia.colour}}
+            </label>
+            <div class="btn btn-default" ng-click="toggle_ditto_colour()">{{colour?'disable':'enable'}} ditto colour</div>
+          </div>
+        </div>
+        <div data-row-span="12">
+          <div data-field-span="4" class="form-group">
+            <label>Dia</label>
+            <input id="diabox" type="number" min="0" step="0.05" ng-model="newdia.dia" placeholder="Enter Dia" required autocomplete="off">
+          </div>
+          <div data-field-span="4">
+            <label>Roll</label>
+            <input autocomplete="off" required type="number" min="0" ng-model="newdia.roll" ng-init="newdia.roll = 0">
+          </div>
+          <div data-field-span="4">
+            <label>Weight (kg)</label>
+            <input autocomplete="off" required type="number" min="0.001" step="0.001" ng-model="newdia.weight">
+          </div>
+        </div>
+        <div class="row container">
+          <div class="col-md-4">
+            <label>Comment</label>
+            <input autocomplete="on" type="text" maxlength="120" placeholder="Enter Comment (optional)" class="form-control input-sm"
+              ng-model="newdia.comment">
+          </div>
         </div>
 
-        <label for="lotbox" class="col-sm-2 control-label"> Lot Number:</label>
-        <div class="col-sm-4">
-            <input readonly autocomplete="off" required type="text" class="form-control" id="lotbox" placeholder="Lot Number" ng-model="lot_number">
-        </div>
-
-    </div>
-
-    <div style="padding: 10px;" ng-show="dialist.length > 0">
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <!-- <th class="text-center">S.No</th> -->
-                    <th class="text-center">Dia</th>
-                    <th class="text-center">Roll</th>
-                    <th class="text-center">Weight (kg)</th>
-                    <th class="text-center">Comment</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="dia in dialist track by $index" class="repeated-item">
-                    <!-- <td>{{$index + 1}}</td> -->
-                    <td class="text-capitalize">{{dia.dia}}</td>
-                    <td class="text-capitalize">{{dia.roll}}</td>
-                    <td class="text-capitalize">{{dia.weight| number:3}}</td>
-                    <td class="text-capitalize">{{dia.comment}}</td>
-                    <td class="hidden-print">
-                        <span ng-click="editdia($index)" type="button" class="close" aria-label="Close">
-                            <span aria-hidden="true">Edit</span>
-                        </span>
-                    </td>
-                    <td class="hidden-print">
-                        <span ng-click="removedia($index)" type="button" class="close" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </span>
-                    </td>
-
-                </tr>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td>
-                        <strong>Total</strong>
-                    </td>
-                    <td>
-                        <strong>{{total(dialist,'roll',0)}}</strong>
-                    </td>
-                    <td>
-                        <strong>{{total(dialist,'weight',3)| number:3}}</strong>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
-    <div style="padding: 10px;" class="row">
-        <button ng-click="ok()" class="btn btn-success pull-right" data-toggle="tooltip" title="Ctrl + D">Done</button>
-        <button ng-click="cancel()" ng-show="index == -1" tabindex="-1" class="btn btn-warning">Cancel</button>
-    </div>
-
-
-
-    <div style="padding: 10px;">
-        <form name="form" class="grid-form panel panel-default " ng-submit="add(newdia)">
-            <fieldset>
-                <legend class="panel-heading">Add Dia:</legend>
-                <div data-row-span="12">
-                    <div data-field-span="4" class="form-group">
-                        <label>Dia</label>
-                        <input id="diabox" type="number" min="0" step="0.05" ng-model="newdia.dia" placeholder="Enter Dia" required autocomplete="off">
-                    </div>
-                    <div data-field-span="4">
-                        <label>Roll</label>
-                        <input autocomplete="off" required type="number" min="0" ng-model="newdia.roll" ng-init="newdia.roll = 0">
-                    </div>
-                    <div data-field-span="4">
-                        <label>Weight (kg)</label>
-                        <input autocomplete="off" required type="number" min="0.001" step="0.001" ng-model="newdia.weight">
-                    </div>
-                </div>
-                <div class="row container">
-                    <div class="col-md-4">
-                        <label>Comment</label>
-                        <input autocomplete="on" type="text" maxlength="120" placeholder="Enter Comment (optional)" class="form-control input-sm"
-                            ng-model="newdia.comment">
-                    </div>
-                </div>
-
-            </fieldset>
-            <input ng-show="" id="addbutton" class="btn btn-primary pull-right" type="submit" value="Add Item">
-        </form>
-    </div>
+      </fieldset>
+      <input ng-show="" id="addbutton" class="btn btn-primary pull-right" type="submit" value="Add Item">
+    </form>
+  </div>
 </div>
 
 <div class="modal-footer">

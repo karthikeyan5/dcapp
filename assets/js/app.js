@@ -147,14 +147,21 @@ app.controller('mainCtrl', function ($scope) {
 
 });
 
-app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'colour', 'lot_number', 'dialist', 'index', function colourdetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, colour, lot_number, dialist, index) {
+app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', '$uibModalInstance', 'hotkeys', '$resource', 'colour', 'lot_number', 'dialist', 'index','colourlist', 'master_colourlist', function colourdetailsCtrl($scope, $http, ngToast, $uibModal, $uibModalInstance, hotkeys, $resource, colour, lot_number, dialist, index, colourlist, master_colourlist) {
+  $scope.colourlist = colourlist;
   $scope.colour = colour;
+  $scope.newdia = {}
+  $scope.newdia.colour = colour;
   $scope.lot_number = lot_number;
   $scope.dialist = dialist;
   $scope.index = index;
+  $scope.loadallcolour = function () {
+    $scope.colourlist = master_colourlist;
+  }
   $scope.add = function (dia) {
     if ($scope.newdia.editmode == undefined) {
       temp_dia = {};
+      temp_dia.colour = dia.colour;
       temp_dia.dia = dia.dia;
       temp_dia.roll = dia.roll;
       temp_dia.weight = dia.weight;
@@ -173,7 +180,52 @@ app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 
     }
     $scope.newdia = {}
     $scope.newdia.roll = 0;
-    document.getElementById("diabox").focus();
+    if ($scope.colour){
+      $scope.newdia.colour = $scope.colour;
+    }
+    focus_next_entry();
+  }
+  let focus_next_entry = () => {
+    if ($scope.colour){
+      document.getElementById("diabox").focus();
+    }
+    else{
+      document.getElementById("colourbox").focus();
+    }
+  }
+  $scope.toggle_ditto_colour = () => {
+    if ($scope.colour){
+      $scope.colour = null;
+    }
+    else{
+      let first_colour = null;
+      if ($scope.dialist && $scope.dialist.length > 0){
+        first_colour = $scope.dialist[0].colour;
+        $scope.dialist.map(dia => {
+          if (dia.colour != first_colour){
+            first_colour = null;
+          }
+        })
+      }
+      else if($scope.newdia.colour){
+        first_colour = $scope.newdia.colour;
+      }
+      else{
+        first_colour = colour;
+      }
+      if(first_colour){
+        $scope.colour = first_colour;
+        $scope.newdia.colour = first_colour;
+      }
+      else{
+        ngToast.create({
+          className: 'danger',
+          content: 'multiple colours already entered... '
+        });
+      }
+      
+
+    }
   }
 
 
@@ -189,7 +241,7 @@ app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 
 
     $scope.newdia = $scope.dialist[index]
     $scope.newdia.editmode = 1;
-    document.getElementById("diabox").focus();
+    focus_next_entry();
     ngToast.create({
       className: 'info',
       content: 'Please edit dia and press enter... '
@@ -207,7 +259,7 @@ app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 
 
   $uibModalInstance.rendered.then(function () {
     console.log('Modal rendered at: ' + new Date())
-    document.getElementById("diabox").focus();
+    focus_next_entry();
   });
 
   $scope.cancel = function () {
@@ -883,7 +935,7 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
       animation: true,
       templateUrl: './html/colourdetails.html',
       controller: 'colourdetailsCtrl',
-      size: 'md',
+      size: 'lg',
       backdrop: 'static',
       keyboard: false,
       // animation:false,
@@ -899,7 +951,11 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
         },
         index: function () {
           return index;
-        }
+        },
+        colourlist: function () {
+          return $scope.colourlist;
+        },
+        master_colourlist: () => $scope.colourlist
       }
     });
 
@@ -919,7 +975,7 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
 
       }
       else {
-        $scope.dc.items[ret.index].colour = ret.colour;
+        $scope.dc.items.cloth[ret.index].colour = ret.colour;
         // $scope.cdc.items[ret.index].dialist = ret.dialist;
       }
       $scope.temp_storage.newcolour = null;
@@ -1486,7 +1542,8 @@ app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
             temp_items[element.colour_index].lot_number = element.lot_number;
             temp_items[element.colour_index].dialist = [];
           }
-          temp_items[element.colour_index].dialist.push({ dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
+          if (temp_items[element.colour_index].colour && temp_items[element.colour_index].colour != element.colour) temp_items[element.colour_index].colour = null
+          temp_items[element.colour_index].dialist.push({ colour: element.colour, dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
         });
         dc_colour_index_list = Object.keys(temp_items).sort();
         $scope.dc.items.cloth = [];
@@ -2006,7 +2063,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
   $http({
     method: 'GET',
-    url: '/api/supplier?allfeilds=0'
+    url: '/api/supplier?allfeilds=1'
   }).then(function successCallback(response) {
     $scope.supplierlist = response.data;
     console.log(response);
@@ -2157,10 +2214,10 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
         console.log('dc.iditemlist.split: ', dc.iditemlist.split(','), '---', $scope.itemlist, '---', master.itemlist);
         dc.iditemlist.split(',').forEach(iditem => {
           iditem = parseInt(iditem)
-          if (($scope.itemlist.length == 0 || arrayObjectIndexOf($scope.itemlist, iditem, 'id') == -1) && arrayObjectIndexOf(master.itemlist, iditem, 'id')) {
+          if (($scope.itemlist.length == 0 || arrayObjectIndexOf($scope.itemlist, iditem, 'id') == -1) && arrayObjectIndexOf(master.itemlist, iditem, 'id') != -1 ) {
             $scope.itemlist.push(master.itemlist[arrayObjectIndexOf(master.itemlist, iditem, 'id')]);
           }
-          if (($scope.accessoryitemlist.length == 0 || arrayObjectIndexOf($scope.accessoryitemlist, iditem, 'id') == -1) && arrayObjectIndexOf(master.accessoryitemlist, iditem, 'id')) {
+          if (($scope.accessoryitemlist.length == 0 || arrayObjectIndexOf($scope.accessoryitemlist, iditem, 'id') == -1) && arrayObjectIndexOf(master.accessoryitemlist, iditem, 'id') != -1 ) {
             $scope.accessoryitemlist.push(master.accessoryitemlist[arrayObjectIndexOf(master.accessoryitemlist, iditem, 'id')]);
           }
         });
@@ -2242,7 +2299,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
       animation: true,
       templateUrl: './html/colourdetails.html',
       controller: 'colourdetailsCtrl',
-      size: 'md',
+      size: 'lg',
       backdrop: 'static',
       keyboard: false,
       // animation:false,
@@ -2258,7 +2315,11 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
         },
         index: function () {
           return index;
-        }
+        },
+        colourlist: function () {
+          return $scope.colourlist;
+        },
+        master_colourlist: () => master.colourlist
       }
     });
 
@@ -2277,7 +2338,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
 
       }
       else {
-        // $scope.dc.items[ret.index].colour = ret.colour;
+        $scope.grn.items.cloth[ret.index].colour = ret.colour;
         // $scope.cdc.items[ret.index].dialist = ret.dialist;
       }
       $scope.temp_storage.newcolour = null;
@@ -2867,7 +2928,8 @@ app.controller('viewgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotke
             temp_items[element.colour_index].lot_number = element.lot_number;
             temp_items[element.colour_index].dialist = [];
           }
-          temp_items[element.colour_index].dialist.push({ dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
+          if (temp_items[element.colour_index].colour && temp_items[element.colour_index].colour != element.colour) temp_items[element.colour_index].colour = null
+          temp_items[element.colour_index].dialist.push({ colour: element.colour, dia: element.dia, roll: element.roll, weight: element.weight, comment: element.comment });
         });
         grn_colour_index_list = Object.keys(temp_items).sort();
         $scope.grn.items.cloth = [];
