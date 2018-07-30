@@ -6,6 +6,7 @@
  */
 
 var passport = require('passport');
+var url = require('url');
 
 module.exports = {
 
@@ -30,7 +31,10 @@ module.exports = {
                 //     message: info.message,
                 //     user: user
                 // });
-                return res.redirect('/');
+
+                let referer = url.parse(req.header('Referer'),true)
+                let redirect_uri = referer.query.redirect_to?referer.query.redirect_to:'/';
+                return res.redirect(redirect_uri);
             });
 
         })(req, res);

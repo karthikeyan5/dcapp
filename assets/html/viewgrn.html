@@ -87,12 +87,11 @@
                 <th class="sortable" st-sort="getters.grn_number">GRN Number</th>
                 <th class="sortable" st-sort="supplier_name">Supplier Name</th>
                 <th class="sortable" st-sort="supplier_city">City</th>
-                <th class="sortable">Lot Numbers</th>
-                <th class="sortable">DC Numbers</th>
-                <th class="sortable">GRN Item Type</th>
-                <th class="sortable">Colours</th>
-                <th class="sortable">Items</th>
-                <th class="sortable">Sizes/Dia</th>
+                <th class="sortable" st-sort="lotlist">Lot Numbers</th>
+                <th class="sortable" st-sort="dclist">DC Numbers</th>
+                <th class="sortable" st-sort="grn_item_type">GRN Item Types</th>
+                <th>Items/Colours</th>
+                <th>Sizes/Dia</th>
 
                 <!--<th class="sortable" st-sort="agentname">No. of Cartons</th>-->
             </tr>
@@ -113,15 +112,21 @@
                 <td ng-click="open(row)">{{$index + 1}}</td>
                 <td ng-click="open(row)" ng-init="row.date = ds(row.grn_date)">{{row.grn_date | date:'dd.MM.yyyy'}}</td>
                 <td ng-click="open(row)" ng-init="row.grn_no = getters.grn_number(row)" style="white-space: nowrap;" ng-if="row.status != 'inactive'">{{row.naming_series}}{{ row.grn_number | minLength:row.grn_no_length }}</td>
-                <td ng-click="open(row)" ng-init="row.grn_no = getters.grn_number(row)" style="white-space: nowrap; text-decoration: line-through;"
-                    ng-if="row.status == 'inactive'">{{row.naming_series}}{{ row.grn_number | minLength:row.grn_no_length }}</td>
+                <td ng-click="open(row)" ng-init="row.grn_no = getters.grn_number(row)" style="white-space: nowrap; text-decoration: line-through;" ng-if="row.status == 'inactive'">{{row.naming_series}}{{ row.grn_number | minLength:row.grn_no_length }}</td>
                 <td ng-click="open(row)" class="text-capitalize">{{row.supplier_name.toLowerCase()}}</td>
                 <td ng-click="open(row)" class="text-capitalize">{{row.supplier_city.toLowerCase()}}</td>
                 <td ng-click="open(row)">{{row.lotlist}}</td>
                 <td ng-click="open(row)">{{row.dclist}}</td>
                 <td ng-click="open(row)">{{row.grn_item_type}}</td>
-                <td ng-click="open(row)">{{row.colourlist ? row.colourlist:'---'}}</td>
-                <td ng-click="open(row)">{{row.itemlist ? row.itemlist:'---'}}</td>
+                <td ng-click="open(row)">
+                    <span ng-if="row.itemlist">
+                        Items: {{row.itemlist}}
+                        <br>
+                    </span>
+                    <span ng-if="row.colourlist">
+                        Colours: {{row.colourlist}}
+                    </span>
+                </td>
                 <td ng-click="open(row)">
                     <span ng-if="row.sizelist">
                         Size: {{row.sizelist}}
@@ -151,4 +156,4 @@
     </table>
 
 </div>
-<ng-include src="'./html/print/grnprint.html'" class="visible-print-block" ng-if="grn.grn_number && grn.items"></ng-include>
+<ng-include src="'./html/print/grnprint.html'" class="visible-print-block" ng-if="grn.grn_number && grn.items && checklength(grn.items)"></ng-include>
