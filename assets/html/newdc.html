@@ -47,6 +47,10 @@
       <div class="col-md-2">
         <input autocomplete="false" type="text" class="form-control" id="p1in" placeholder="" readonly tabindex="-1" ng-model="dc.naming_series">
       </div>
+      <div class="col-md-3">
+        <input type="checkbox" ng-model="gt_check" ng-change="set_series()">
+        <label><small>Internal Goods Transfer</small></label>
+      </div>
       <!-- <label for="datebox" class="col-md-2 col-md-offset-1 control-label">DC Date:</label>
             <div class="col-md-2">
                 <p class="input-group">

@@ -223,7 +223,7 @@ app.controller('colourdetailsCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 
           content: 'multiple colours already entered... '
         });
       }
-      
+
 
     }
   }
@@ -687,24 +687,45 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
   $scope.currentSize = { size1: 'size 1', size2: 'size 2', size3: 'size 3', size4: 'size 4', size5: 'size 5', size6: 'size 6', size7: 'size 7', size8: 'size 8', size9: 'size 9', size10: 'size 10' };
   $scope.sizestate = [true, true, true, true, true, true, true, true, true, true];
   $scope.dc.items = {};
-  $scope.dc.naming_series = "DC-";
+  $scope.dc.naming_series = undefined;
   $scope.dc.supplier_id = null;
   $scope.dynamicPopover = [];
   $scope.dynamicPopover.templateUrl = "supplierpopup.html";
   $scope.newitem = {};
   $scope.temp_storage = {};
 
-  $http({
-    method: 'GET',
-    url: 'api/getdbinfo?infoname=dcseries'
-  }).then(function successCallback(response) {
-    console.log(response);
-    $scope.dc.naming_series = response.data[0].info;
-  },
-    function errorCallback(response) {
+  let set_dc_series = function() {
+    $http({
+      method: 'GET',
+      url: 'api/getdbinfo?infoname=dcseries'
+    }).then(function successCallback(response) {
       console.log(response);
-    });
+      $scope.dc.naming_series = response.data[0].info;
+    },
+      function errorCallback(response) {
+        console.log(response);
+      });
+  }
 
+  let set_gt_series = function() {
+    $http({
+      method: 'GET',
+      url: 'api/getdbinfo?infoname=gt_dcseries'
+    }).then(function successCallback(response) {
+      console.log(response);
+      $scope.dc.naming_series = response.data[0].info;
+    },
+      function errorCallback(response) {
+        console.log(response);
+      });
+  }
+  set_dc_series()
+
+  $scope.set_series = function(test) {
+    $scope.dc.naming_series = undefined
+    if ($scope.gt_check) set_gt_series()
+    else set_dc_series()
+  }
   $scope.$on('$viewContentLoaded', function () {
     setTimeout(function () {
       console.log("yeah!!!");
@@ -1275,6 +1296,13 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
       return;
     }
 
+    if ($scope.dc.naming_series === undefined) {
+      ngToast.create({
+        className: 'warning',
+        content: 'Invalid Naming Series...'
+      });
+      return;
+    }
 
 
     opendcmodal($scope.dc);
@@ -1704,8 +1732,8 @@ app.controller('viewdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
               });
             }
           }
-          
-          
+
+
 
         });
         dc_part_index_list = Object.keys(temp_items).sort();
@@ -3090,8 +3118,8 @@ app.controller('viewgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotke
               });
             }
           }
-          
-          
+
+
 
         });
         grn_part_index_list = Object.keys(temp_items).sort();
@@ -3843,7 +3871,7 @@ app.directive('contenteditable', function () {
         // {
         //  el.blur();
         //  if(Number.isInteger(parseInt(elm.html())))
-        // {	//ctrl.$setViewValue(Number.isInteger(parseInt(elm.html())));                
+        // {	//ctrl.$setViewValue(Number.isInteger(parseInt(elm.html())));
         //   ctrl.$setViewValue(parseInt(elm.html()));
         //   elm.html(parseInt(elm.html()));
         //   }
@@ -3865,7 +3893,7 @@ app.directive('contenteditable', function () {
 
 
 
-        if (Number.isInteger(parseInt(elm.html()))) {	//ctrl.$setViewValue(Number.isInteger(parseInt(elm.html())));                
+        if (Number.isInteger(parseInt(elm.html()))) {	//ctrl.$setViewValue(Number.isInteger(parseInt(elm.html())));
           ctrl.$setViewValue(parseInt(elm.html()));
           //elm.html(parseInt(elm.html()));
         }
@@ -3920,7 +3948,7 @@ function SelectText(element) {
     , text = element
     , range, selection
     ;
-  //text = doc.getElementById(element)    
+  //text = doc.getElementById(element)
   if (doc.body.createTextRange) {
     range = document.body.createTextRange();
     range.moveToElementText(text);
@@ -3938,7 +3966,7 @@ app.filter('INR', function () {
   return function (input) {
     if (!isNaN(input)) {
       var currencySymbol = '₹ ';
-      //var output = Number(input).toLocaleString('en-IN');   <-- This method is not working fine in all browsers!  
+      //var output = Number(input).toLocaleString('en-IN');   <-- This method is not working fine in all browsers!
       var result = input.toFixed(2).split('.');
 
       var lastThree = result[0].substring(result[0].length - 3);
