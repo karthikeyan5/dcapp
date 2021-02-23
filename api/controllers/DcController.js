@@ -142,6 +142,7 @@ module.exports = {
         // console.log(q,d);
 
         Dc.query(q, d, function (err, results) {
+            let q1, q2, d1, d2;
             if (err) return res.serverError(err);
             else {
                 let temp = {};
@@ -173,13 +174,13 @@ module.exports = {
                             });
                             // console.log("del_list: ",del_list,"--insert_list: ",insert_list);
                             if (insert_list.length < 1) {
-                                let q1 = "Select 'No inserts';";
-                                let d1 = [];
+                                q1 = "Select 'No inserts';";
+                                d1 = [];
                             }
                             else {
                                 flag = 0
-                                let d1 = [];
-                                let q1 = "INSERT INTO supplierdepartment (iddept, idsup, blame_user) VALUES ";
+                                d1 = [];
+                                q1 = "INSERT INTO supplierdepartment (iddept, idsup, blame_user) VALUES ";
                                 insert_list.map(function (dept) {
                                     if (flag == 1) {
                                         q1 = q1.concat(",");
@@ -191,8 +192,8 @@ module.exports = {
                                 q = q.concat(";");
                             }
                             if (del_list.length < 1) {
-                                let q2 = "Select 'No Deletes';";
-                                let d2 = [];
+                                q2 = "Select 'No Deletes';";
+                                d2 = [];
                             }
                             else {
                                 flag = 0
