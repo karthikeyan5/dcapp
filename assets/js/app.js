@@ -2061,7 +2061,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     $scope.grn.supplier_phone2 = $scope.dynamicPopover.supplier_details.phone2;
     $scope.grn.supplier_email = $scope.dynamicPopover.supplier_details.email;
     $scope.popoverIsOpen = false;
-    callDCListAPI(Number.MAX_SAFE_INTEGER, '&status=active&idsupplier=' + $scope.grn.supplier_id)
+    callDCListAPI(100, '&status=active&idsupplier=' + $scope.grn.supplier_id)
   };
 
   $scope.focussuppliername = function (event1) {
