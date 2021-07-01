@@ -91,6 +91,15 @@
           </div>
         </div>
       </div>
+      <label for="location" class="col-md-1 control-label">From Location:</label>
+      <div class="col-md-2">
+        <select id="location" class="form-control" ng-model="dc.location" required>
+          <option value="1" ng-selected="dc.location == 1">Tirupur</option>
+          <option value="2" ng-selected="dc.location == 2">Chengapalli Warehouse</option>
+          <option value="3" ng-selected="dc.location == 3">Chengapalli Stiching Unit - 1</option>
+          <option value="4" ng-selected="dc.location == 4">Chengapalli Stiching Unit - 2</option>
+        </select>
+      </div>
     </div>
 
 

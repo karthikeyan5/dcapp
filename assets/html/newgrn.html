@@ -75,11 +75,28 @@
         </div>
       </div>
 
-      <label for="against" class="col-md-2 control-label">GRN Against:</label>
-      <div id="against" class="btn-group col-md-4 col-md-offset-0">
-        <label class="btn btn-primary" ng-model="grn.against" uib-btn-radio="'dc'" ng-click="grn.against_other = null">DC</label>
-        <!-- <label class="btn btn-primary" ng-model="against" uib-btn-radio="'po'" ng-click="temp_storage.dcnumbers = null">P.O.</label> -->
-        <label class="btn btn-primary" ng-model="grn.against" uib-btn-radio="'other'" ng-click="temp_storage.dcnumbers = null">Other</label>
+      <div class="col-md-6">
+        <div class="row">
+          <label for="against" class="col-md-4 control-label">GRN Against:</label>
+          <div id="against" class="btn-group col-md-8 col-md-offset-0">
+            <label class="btn btn-primary" ng-model="grn.against" uib-btn-radio="'dc'"
+              ng-click="grn.against_other = null">DC</label>
+            <!-- <label class="btn btn-primary" ng-model="against" uib-btn-radio="'po'" ng-click="temp_storage.dcnumbers = null">P.O.</label> -->
+            <label class="btn btn-primary" ng-model="grn.against" uib-btn-radio="'other'"
+              ng-click="temp_storage.dcnumbers = null">Other</label>
+          </div>
+        </div>
+        <div class="row" style="margin-top: 16px;">
+          <label for="location" class="col-md-4 control-label">Receipt Location:</label>
+          <div class="btn-group col-md-6 col-md-offset-0">
+            <select id="location" class="form-control" ng-model="grn.location" required>
+              <option value="1" ng-selected="grn.location == 1">Tirupur</option>
+              <option value="2" ng-selected="grn.location == 2">Chengapalli Warehouse</option>
+              <option value="3" ng-selected="grn.location == 3">Chengapalli Stiching Unit - 1</option>
+              <option value="4" ng-selected="grn.location == 4">Chengapalli Stiching Unit - 2</option>
+            </select>
+          </div>
+        </div>
       </div>
 
     </div>

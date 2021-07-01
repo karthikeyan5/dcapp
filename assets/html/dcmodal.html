@@ -32,14 +32,24 @@
             </address>
           </div>
         </div>
-        <label for="p1in" class="col-md-2 control-label">DC No:</label>
-        <div class="col-md-3">
-          <p class="form-control" ng-if="dc.status != 'inactive'">{{dc.naming_series}}
-            <span ng-if="dc.dc_number">{{ dc.dc_number | minLength:dc.dc_no_length }}</span>
-          </p>
-          <p class="form-control" style="text-decoration: line-through;" ng-if="dc.status == 'inactive'">{{dc.naming_series}}
-            <span ng-if="dc.dc_number">{{ dc.dc_number | minLength:dc.dc_no_length }}</span>
-          </p>
+        <div class="col-md-6">
+          <div class="row">
+            <label for="p1in" class="col-md-4 control-label">DC No:</label>
+            <div class="col-md-6">
+              <p class="form-control" ng-if="dc.status != 'inactive'">{{dc.naming_series}}
+                <span ng-if="dc.dc_number">{{ dc.dc_number | minLength:dc.dc_no_length }}</span>
+              </p>
+              <p class="form-control" style="text-decoration: line-through;" ng-if="dc.status == 'inactive'">{{dc.naming_series}}
+                <span ng-if="dc.dc_number">{{ dc.dc_number | minLength:dc.dc_no_length }}</span>
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <label for="addressss" class="col-md-4 control-label">From Location:</label>
+            <div class="col-md-8 col-md-offset-0">
+              <pre>{{ dc.location }}</pre>
+            </div>
+          </div>
         </div>
       </div>
 

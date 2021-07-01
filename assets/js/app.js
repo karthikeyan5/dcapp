@@ -693,6 +693,7 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
   $scope.dynamicPopover.templateUrl = "supplierpopup.html";
   $scope.newitem = {};
   $scope.temp_storage = {};
+  $scope.dc.location = 1;
 
   let set_dc_series = function() {
     $http({
@@ -720,6 +721,20 @@ app.controller('newdcCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkeys
       });
   }
   set_dc_series()
+
+   $http({
+    method: "GET",
+    url: "api/getuserlocation",
+  }).then(
+    function successCallback(response) {
+      console.log(response);
+      if(response.data.length > 0)
+      $scope.dc.location = response.data[0].info;
+    },
+    function errorCallback(response) {
+      console.log(response);
+    }
+   );
 
   $scope.set_series = function(test) {
     $scope.dc.naming_series = undefined
@@ -2019,6 +2034,7 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
   $scope.temp_storage = {};
   let master = {};
   $scope.grn.items = {};
+  $scope.grn.location = 1;
 
   window.onbeforeunload = function () {
     return $scope.grn.items && $scope.checklength($scope.grn.items) && !$scope.grn.grn_number ? "If you leave this page you will lose your unsaved changes." : null;
@@ -2044,6 +2060,20 @@ app.controller('newgrnCtrl', ['$scope', '$http', 'ngToast', '$uibModal', 'hotkey
     function errorCallback(response) {
       console.log(response);
     });
+
+  $http({
+    method: "GET",
+    url: "api/getuserlocation",
+  }).then(
+    function successCallback(response) {
+      console.log(response);
+      if(response.data.length > 0)
+      $scope.grn.location = response.data[0].info;
+    },
+    function errorCallback(response) {
+      console.log(response);
+    }
+  );
 
   $scope.setsupplier = function () {
     if ($scope.grn.supplier_id && $scope.grn.supplier_id != $scope.dynamicPopover.supplier_details.id) {

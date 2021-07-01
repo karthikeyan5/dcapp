@@ -36,11 +36,19 @@ module.exports = {
             if (err) return res.serverError(err);
             return res.ok(results);
         });
-    },
+  },
+  getuserlocation: function (req, res) {
+    let q = "SELECT * FROM dbinfo where infoname = 'user_location_"+req.user.id+"'";
+    let d = [];
+    Dc.query(q, d, function (err, results) {
+      if (err) return res.serverError(err);
+      return res.ok(results);
+    });
+  },
     supplier: function (req, res) {
-        // ---- 
+        // ----
         // ---- param are - allfeilds,department(comma seperated ids for multiple), id
-        // ---- 
+        // ----
 
         // console.log('all', req.allParams());
         // console.log('a:', req.param('a'), '---b:', req.param('b'), '---c:', req.param('c'))
@@ -463,9 +471,9 @@ module.exports = {
     },
     savedc: function (req, res) {
         let today = new Date;
-        let q = "INSERT INTO dc (idsupplier, naming_series, department, dc_date, rateperkg, additionalvalue, vehicle_number, comment, blame_user) \
-                        VALUES (?,?,?,?,?,?,?,?,?);";
-        let d = [req.body.supplier_id, req.body.naming_series, req.body.department, dateFormat(today, 'yyyy-mm-dd'), req.body.rateperkg, req.body.additionalvalue, req.body.vehicle_number, req.body.comment, req.user.email];
+        let q = "INSERT INTO dc (idsupplier, naming_series, department, dc_date, rateperkg, additionalvalue, vehicle_number, locationId, comment, blame_user) \
+                        VALUES (?,?,?,?,?,?,?,?,?,?);";
+        let d = [req.body.supplier_id, req.body.naming_series, req.body.department, dateFormat(today, 'yyyy-mm-dd'), req.body.rateperkg, req.body.additionalvalue, req.body.vehicle_number, req.body.location, req.body.comment, req.user.email];
         let temp = {}
 
         let get_dc_number = (return_ref, iddc) => new Promise((resolve, reject) => {
@@ -591,14 +599,15 @@ module.exports = {
         });
     },
     dc: function (req, res) {
-        // ---- 
-        // ---- param are - items(available automaticaly if only one dc is returned) ,id, dc_number, naming_series, 
+        // ----
+        // ---- param are - items(available automaticaly if only one dc is returned) ,id, dc_number, naming_series,
         //-----             idsupplier, iditem(available only for pdc), lot_number, vehicle_number, dept_type, status
-        // ----             comment, department, after_dc_date (yyyymmdd), before_dc_date , limit, offset    
-        // ---- 
+        // ----             comment, department, after_dc_date (yyyymmdd), before_dc_date , limit, offset
+        // ----
 
         // ---- Warning: the order by in this query acts differently in higher versions of MySQL. watchout during Upgrade.
-        let q = "SELECT  \
+        let q =
+          "SELECT  \
         dc.id iddc,  \
         dc.naming_series,  \
         items_agg.itemlist,  \
@@ -619,6 +628,7 @@ module.exports = {
         dc.additionalvalue,  \
         dc.vehicle_number,  \
         dc.comment,  \
+        dc.locationId,  \
         dc.status,  \
         dc.modified_time,  \
         dc.blame_user,  \
@@ -763,7 +773,7 @@ module.exports = {
                 }
             });
         });
-        
+
         let get_pdcitems = (return_ref, iddc) => new Promise((resolve, reject) => {
             Dc.query('SELECT colour, lot_number, part, part_index, sizerange, iditem, iteminfo.name as itemname, iteminfo.naming_series as item_naming_series, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment FROM pdcitems,iteminfo WHERE pdcitems.iditem = iteminfo.id and iddc = ? ORDER BY pdcitems.id;', [iddc], function (err, results) {
                 if (err) return reject(err);
@@ -775,7 +785,7 @@ module.exports = {
                 }
             });
         });
-        
+
         let get_adcitems = (return_ref, iddc) => new Promise((resolve, reject) => {
             Dc.query('SELECT lot_number, lot_index, sizerange, iditem, iteminfo.name as itemname, iteminfo.naming_series as item_naming_series, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, wsize1, wsize2, wsize3, wsize4, wsize5, wsize6, wsize7, wsize8, wsize9, wsize10, comment FROM adcitems,iteminfo WHERE adcitems.iditem = iteminfo.id and iddc = ? ORDER BY adcitems.id;', [iddc], function (err, results) {
                 if (err) return reject(err);
@@ -787,7 +797,7 @@ module.exports = {
                 }
             });
         });
-        
+
         let get_pcdcitems = (return_ref, iddc) => new Promise((resolve, reject) => {
             Dc.query('SELECT colour, lot_number, part, part_index, sizerange, iditem, iteminfo.name as itemname, iteminfo.naming_series as item_naming_series, size1, size2, size3, size4, size5, size6, size7, size8, size9, size10, comment FROM pcdcitems,iteminfo WHERE pcdcitems.iditem = iteminfo.id and iddc = ? ORDER BY pcdcitems.id;', [iddc], function (err, results) {
                 if (err) return reject(err);
@@ -799,7 +809,7 @@ module.exports = {
                 }
             });
         });
-        
+
         let get_size_details = (return_ref, iddc) => new Promise((resolve, reject) => {
             Dc.query('SELECT DISTINCT sizerange.* FROM sizerange,iteminfo WHERE sizerange.idsize = iteminfo.sizerange AND iteminfo.id = any(select distinct iditem from (select distinct iditem from pcdcitems where pcdcitems.iddc = ? union all select distinct iditem from pdcitems where pdcitems.iddc = ? union all select distinct iditem from adcitems where adcitems.iddc = ? ) as a);', [iddc,iddc,iddc], function (err, results) {
                 if (err) return reject(err);
@@ -819,7 +829,24 @@ module.exports = {
                 }
             });
         });
-        
+
+      let get_location = (return_ref, locationId) =>
+        new Promise((resolve, reject) => {
+          Dc.query(
+            "SELECT info FROM dbinfo WHERE infoname=?;",
+            ["orgin_location_" + locationId],
+            function (err, results) {
+              if (err) return reject(err);
+              else {
+                if (results.length > 0) {
+                  return_ref[0].location = results[0].info;
+                }
+                resolve();
+              }
+            }
+          );
+        });
+
         Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
             else {
@@ -828,7 +855,7 @@ module.exports = {
                     temp[0].items = {};
                     temp[0].server_time = new Date();
                     temp[0].current_user = req.user.email;
-                    let promises_list = [get_cdcitems(temp, temp[0].iddc), get_pdcitems(temp, temp[0].iddc), get_pcdcitems(temp, temp[0].iddc), get_size_details(temp, temp[0].iddc, get_adcitems(temp, temp[0].iddc))];
+                    let promises_list = [get_cdcitems(temp, temp[0].iddc), get_pdcitems(temp, temp[0].iddc), get_pcdcitems(temp, temp[0].iddc), get_size_details(temp, temp[0].iddc, get_adcitems(temp, temp[0].iddc)), get_location(temp, temp[0].locationId)];
                     Promise.all(promises_list).then((result) => res.ok(temp)).catch((err) => res.serverError(err));
                 }
                 else {
@@ -874,9 +901,9 @@ module.exports = {
     },
     savegrn: function (req, res) {
         let today = new Date;
-        let q = "INSERT INTO grn (idsupplier, naming_series, grn_date, against, supplier_dc_no, against_other, vehicle_number, comment, blame_user) \
-                        VALUES (?,?,?,?,?,?,?,?,?);";
-        let d = [req.body.supplier_id, req.body.naming_series, dateFormat(today, 'yyyy-mm-dd'), req.body.against, req.body.supplier_dc_no, req.body.against_other, req.body.vehicle_number, req.body.comment, req.user.email];
+        let q = "INSERT INTO grn (idsupplier, naming_series, grn_date, against, supplier_dc_no, against_other, vehicle_number, locationId, comment, blame_user) \
+                        VALUES (?,?,?,?,?,?,?,?,?,?);";
+        let d = [req.body.supplier_id, req.body.naming_series, dateFormat(today, 'yyyy-mm-dd'), req.body.against, req.body.supplier_dc_no, req.body.against_other, req.body.vehicle_number, req.body.location, req.body.comment, req.user.email];
         let temp = {}
 
         let get_grn_number = (return_ref, idgrn) => new Promise((resolve, reject) => {
@@ -1022,14 +1049,15 @@ module.exports = {
         });
     },
     grn: function (req, res) {
-        // ---- 
-        // ---- param are - items(available automaticaly if only one grn is returned) ,id, grn_number, naming_series, 
+        // ----
+        // ---- param are - items(available automaticaly if only one grn is returned) ,id, grn_number, naming_series,
         //-----             idsupplier, iditem, lot_number, vehicle_number, status
-        // ----             comment, after_grn_date (yyyymmdd), before_grn_date , limit, offset    
-        // ---- 
+        // ----             comment, after_grn_date (yyyymmdd), before_grn_date , limit, offset
+        // ----
 
         // ---- Warning: the order by in this query acts differently in higher versions of MySQL. watchout during Upgrade.
-        let q = "SELECT \
+        let q =
+          "SELECT \
         grn.id idgrn, \
         grn.naming_series, \
         items_agg.itemlist, \
@@ -1047,6 +1075,7 @@ module.exports = {
         items_agg.lotlist, \
         grn_item_type.grn_item_type, \
         grn.vehicle_number, \
+        grn.locationId,  \
         grn.comment, \
         grn.status, \
         grn.modified_time, \
@@ -1250,6 +1279,23 @@ module.exports = {
             });
         });
 
+        let get_location = (return_ref, locationId) =>
+          new Promise((resolve, reject) => {
+            Dc.query(
+              "SELECT info FROM dbinfo WHERE infoname=?;",
+              ["orgin_location_" + locationId],
+              function (err, results) {
+                if (err) return reject(err);
+                else {
+                  if (results.length > 0) {
+                    return_ref[0].location = results[0].info;
+                  }
+                  resolve();
+                }
+              }
+            );
+          });
+
         Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
             else {
@@ -1258,7 +1304,7 @@ module.exports = {
                     temp[0].items = {};
                     temp[0].server_time = new Date();
                     temp[0].current_user = req.user.email;
-                    let promises_list = [get_cgrnitems(temp, temp[0].idgrn), get_pgrnitems(temp, temp[0].idgrn), get_pcgrnitems(temp, temp[0].idgrn), get_size_details(temp, temp[0].idgrn, get_agrnitems(temp, temp[0].idgrn))];
+                    let promises_list = [get_cgrnitems(temp, temp[0].idgrn), get_pgrnitems(temp, temp[0].idgrn), get_pcgrnitems(temp, temp[0].idgrn), get_size_details(temp, temp[0].idgrn, get_agrnitems(temp, temp[0].idgrn)), get_location(temp, temp[0].locationId)];
                     Promise.all(promises_list).then((result) => res.ok(temp)).catch((err) => res.serverError(err));
                 }
                 else {
