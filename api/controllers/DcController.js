@@ -628,7 +628,7 @@ module.exports = {
         dc.additionalvalue,  \
         dc.vehicle_number,  \
         dc.comment,  \
-        dc.locationId,  \
+        dc.locationId location,  \
         dc.status,  \
         dc.modified_time,  \
         dc.blame_user,  \
@@ -830,22 +830,6 @@ module.exports = {
             });
         });
 
-      let get_location = (return_ref, locationId) =>
-        new Promise((resolve, reject) => {
-          Dc.query(
-            "SELECT info FROM dbinfo WHERE infoname=?;",
-            ["orgin_location_" + locationId],
-            function (err, results) {
-              if (err) return reject(err);
-              else {
-                if (results.length > 0) {
-                  return_ref[0].location = results[0].info;
-                }
-                resolve();
-              }
-            }
-          );
-        });
 
         Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
@@ -855,7 +839,7 @@ module.exports = {
                     temp[0].items = {};
                     temp[0].server_time = new Date();
                     temp[0].current_user = req.user.email;
-                    let promises_list = [get_cdcitems(temp, temp[0].iddc), get_pdcitems(temp, temp[0].iddc), get_pcdcitems(temp, temp[0].iddc), get_size_details(temp, temp[0].iddc, get_adcitems(temp, temp[0].iddc)), get_location(temp, temp[0].locationId)];
+                    let promises_list = [get_cdcitems(temp, temp[0].iddc), get_pdcitems(temp, temp[0].iddc), get_pcdcitems(temp, temp[0].iddc), get_size_details(temp, temp[0].iddc, get_adcitems(temp, temp[0].iddc))];
                     Promise.all(promises_list).then((result) => res.ok(temp)).catch((err) => res.serverError(err));
                 }
                 else {
@@ -1075,7 +1059,7 @@ module.exports = {
         items_agg.lotlist, \
         grn_item_type.grn_item_type, \
         grn.vehicle_number, \
-        grn.locationId,  \
+        grn.locationId location,  \
         grn.comment, \
         grn.status, \
         grn.modified_time, \
@@ -1279,22 +1263,6 @@ module.exports = {
             });
         });
 
-        let get_location = (return_ref, locationId) =>
-          new Promise((resolve, reject) => {
-            Dc.query(
-              "SELECT info FROM dbinfo WHERE infoname=?;",
-              ["orgin_location_" + locationId],
-              function (err, results) {
-                if (err) return reject(err);
-                else {
-                  if (results.length > 0) {
-                    return_ref[0].location = results[0].info;
-                  }
-                  resolve();
-                }
-              }
-            );
-          });
 
         Dc.query(q, d, function (err, results) {
             if (err) return res.serverError(err);
@@ -1304,7 +1272,7 @@ module.exports = {
                     temp[0].items = {};
                     temp[0].server_time = new Date();
                     temp[0].current_user = req.user.email;
-                    let promises_list = [get_cgrnitems(temp, temp[0].idgrn), get_pgrnitems(temp, temp[0].idgrn), get_pcgrnitems(temp, temp[0].idgrn), get_size_details(temp, temp[0].idgrn, get_agrnitems(temp, temp[0].idgrn)), get_location(temp, temp[0].locationId)];
+                    let promises_list = [get_cgrnitems(temp, temp[0].idgrn), get_pgrnitems(temp, temp[0].idgrn), get_pcgrnitems(temp, temp[0].idgrn), get_size_details(temp, temp[0].idgrn, get_agrnitems(temp, temp[0].idgrn))];
                     Promise.all(promises_list).then((result) => res.ok(temp)).catch((err) => res.serverError(err));
                 }
                 else {

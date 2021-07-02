@@ -327,6 +327,19 @@ app.controller('dcmodalCtrl', function ($scope, $http, $uibModalInstance, $uibMo
       return true;
     }
 
+
+    $http({
+      method: 'GET',
+      url: 'api/getdbinfo?infoname=orgin_location_'+$scope.dc.location
+    }).then(function successCallback(response) {
+      console.log(response);
+      $scope.dc.location_address = response.data[0].info;
+    },
+      function errorCallback(response) {
+        console.log(response);
+      });
+
+
   $scope.save = () => {
     $scope.disablesave = true;
     $http({
@@ -1952,6 +1965,18 @@ app.controller('grnmodalCtrl', function ($scope, $http, $uibModalInstance, $uibM
     $scope.total(b.partlist, 'wsize9', 3) +
     $scope.total(b.partlist, 'wsize10', 3), 0)
 
+
+  $http({
+    method: 'GET',
+    url: 'api/getdbinfo?infoname=orgin_location_'+$scope.grn.location
+  }).then(function successCallback(response) {
+    console.log(response);
+    $scope.grn.location_address = response.data[0].info;
+  },
+    function errorCallback(response) {
+      console.log(response);
+    });
+  
   $scope.save = () => {
     $scope.disablesave = true;
     $http({
